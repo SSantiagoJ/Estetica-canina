@@ -46,6 +46,13 @@ Route::middleware(['auth'])->group(function () {
     return view('catalogo');
     });
 });
+// menu
+Route::get('/menu', function () {
+    // Si el archivo es 'resources/views/catalogo.blade.php'
+    return view('menu');
+
+});
+
 
 // Reserva
 Route::middleware(['auth'])->group(function () {
