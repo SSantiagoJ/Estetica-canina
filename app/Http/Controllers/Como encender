@@ -1,0 +1,3 @@
+Para poder encender el Laravel ejecutar php artisan serve
+
+Para poder generar un controlador poner php artisan make:controller "nombre"

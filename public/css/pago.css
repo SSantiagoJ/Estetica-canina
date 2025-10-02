@@ -1,0 +1,144 @@
+/* Contenedor principal */
+.reserva-container {
+    background: #f8fbff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Progress bar */
+.progressbar ul {
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    padding: 0;
+}
+.progressbar li {
+    width: 25%;
+    text-align: center;
+    position: relative;
+    font-weight: 500;
+    color: #a0a0a0;
+}
+.progressbar li.active {
+    color: #4a6cf7;
+    font-weight: 700;
+}
+.progressbar li::before {
+    content: '';
+    width: 20px;
+    height: 20px;
+    border: 2px solid #a0a0a0;
+    border-radius: 50%;
+    display: block;
+    margin: 0 auto 10px;
+    background: #fff;
+}
+.progressbar li.active::before {
+    border-color: #4a6cf7;
+    background: #4a6cf7;
+}
+.progressbar li::after {
+    content: '';
+    position: absolute;
+    top: 9px;
+    left: -50%;
+    width: 100%;
+    height: 2px;
+    background: #a0a0a0;
+    z-index: -1;
+}
+.progressbar li:first-child::after {
+    content: none;
+}
+.progressbar li.active + li::after {
+    background: #4a6cf7;
+}
+
+/* Cards de método de pago */
+.metodo-card {
+    background: #fff;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 2px solid #e0e0e0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.metodo-card:hover {
+    border-color: #4a6cf7;
+    box-shadow: 0 5px 15px rgba(74,108,247,0.3);
+}
+.metodo-card h5 {
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+/* QR */
+.qr-yape {
+    margin-top: 15px;
+    border: 2px dashed #4a6cf7;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+/* Caja de resumen */
+.detalles-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid #ddd;
+}
+.detalles-box h5 {
+    margin-bottom: 15px;
+    color: #4a6cf7;
+}
+.detalles-box ul {
+    padding-left: 20px;
+}
+
+/* Botones */
+.btn-siguiente, .btn-cancelar {
+    padding: 10px 25px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    color: #fff;
+    background: #4a6cf7;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+.btn-siguiente:hover, .btn-cancelar:hover {
+    background: #3b57d9;
+}
+.btn-cancelar {
+    background: #a0a0a0;
+}
+.btn-cancelar:hover {
+    background: #7a7a7a;
+}
+
+/* Modales */
+.modal-content {
+    border-radius: 15px;
+    text-align: center;
+}
+.modal-content h5 {
+    margin-bottom: 20px;
+}
+.modal-content .btn {
+    margin: 0 10px;
+    padding: 8px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+#form-tarjeta input {
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+}
+#form-tarjeta input:focus {
+    border-color: #4a6cf7;
+    box-shadow: 0 0 5px rgba(74,108,247,0.5);
+}

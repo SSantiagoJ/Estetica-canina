@@ -6,7 +6,7 @@
 
     <nav class="navbar">
         <a href="{{ url('/') }}">Inicio</a>
-        <a href="{{ url('/about') }}">Quiénes somos</a>
+        <a href="{{ route('reservas.seleccionMascota') }}" class="btn btn-primary">Generar Reserva</a>
         <a href="{{ url('/contact') }}">Contacto</a>
 
         @auth

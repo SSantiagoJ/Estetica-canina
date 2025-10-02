@@ -8,6 +8,7 @@
     <!-- CSS global -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
+
 <body>
     {{-- HEADER dinámico --}}
     @yield('header')
@@ -16,5 +17,6 @@
     <div class="main-container">
         @yield('content')
     </div>
+    @yield('scripts')
 </body>
 </html>

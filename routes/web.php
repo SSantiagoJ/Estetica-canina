@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ReservaController;
+use App\Http\Controllers\PerfilController;
 
 // Inicio de Sesion 
 Route::get('/login', function () {
@@ -39,4 +41,33 @@ Route::middleware(['auth'])->group(function () {
         }
         return view('admin_dashboard');
     });
+    Route::get('/catalogo', function () {
+    // Si el archivo es 'resources/views/catalogo.blade.php'
+    return view('catalogo');
+    });
+});
+
+// Reserva
+Route::middleware(['auth'])->group(function () {
+    Route::get('/reservas/seleccion-mascota', [ReservaController::class, 'seleccionMascota'])
+        ->name('reservas.seleccionMascota');
+
+    Route::post('/reservas/seleccion-servicio', [ReservaController::class, 'seleccionServicio'])
+        ->name('reservas.seleccionServicio');
+
+    Route::post('/reservas/pago', [ReservaController::class, 'pago'])
+        ->name('reservas.pago');
+
+    Route::post('/reservas/finalizar', [ReservaController::class, 'finalizar'])
+        ->name('reservas.finalizar');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil.index');
+    Route::post('/perfil/mascotas', [PerfilController::class, 'storeMascota'])->name('perfil.mascotas.store');
+    Route::put('/perfil/mascotas/{id}', [PerfilController::class, 'updateMascota'])->name('perfil.mascotas.update');
+    Route::put('/perfil/actualizar', [PerfilController::class, 'updatePerfil'])->name('perfil.update');
+    Route::delete('/mascotas/{id}', [PerfilController::class, 'destroy'])
+    ->name('mascotas.destroy')
+    ->middleware('auth');
 });
