@@ -1,60 +1,403 @@
-.site-header {
+/* Reset para el admin header */
+* {
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Admin Header Principal */
+header.admin-site-header {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1000 !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Navbar Container */
+nav.admin-navbar {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+div.admin-nav-container {
+  max-width: 1400px !important;
+  margin: 0 auto !important;
+  padding: 1rem 2rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 2rem !important;
+}
+
+/* Logo y Brand */
+a.admin-logo-link {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  text-decoration: none !important;
+  transition: transform 0.2s ease !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+a.admin-logo-link:hover {
+  transform: scale(1.05) !important;
+}
+
+div.admin-logo {
+  width: 48px !important;
+  height: 48px !important;
+  background: white !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+div.admin-logo i {
+  color: #2563eb !important;
+  font-size: 24px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+div.admin-brand-container {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.25rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+span.admin-brand-text {
+  color: white !important;
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+span.admin-badge {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  font-size: 0.65rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.1em !important;
+  padding: 0.15rem 0.5rem !important;
+  border-radius: 9999px !important;
+  text-align: center !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  backdrop-filter: blur(10px) !important;
+  margin: 0 !important;
+}
+
+/* Menú Desktop */
+div.admin-nav-menu {
+  display: flex !important;
+  gap: 0.5rem !important;
+  align-items: center !important;
+  flex: 1 !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+a.admin-nav-link {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  padding: 0.75rem 1.25rem !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 500 !important;
+  font-size: 0.95rem !important;
+  border-radius: 0.5rem !important;
+  transition: all 0.2s ease !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  margin: 0 !important;
+}
+
+a.admin-nav-link:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  transform: translateY(-2px) !important;
+}
+
+a.admin-nav-link i {
+  font-size: 1rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Sección de Usuario Admin */
+div.admin-user-section {
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+div.admin-user-info {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  padding: 0.75rem 1.25rem !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 9999px !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(10px) !important;
+  margin: 0 !important;
+}
+
+i.admin-user-icon {
+  color: white !important;
+  font-size: 1.5rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+div.admin-user-details {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.15rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+span.admin-user-name {
+  color: white !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  line-height: 1 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+span.admin-user-role {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 0.75rem !important;
+  line-height: 1 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Botón Menú Mobile */
+button.admin-mobile-menu-btn {
+  display: none !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  padding: 0.75rem !important;
+  border-radius: 0.5rem !important;
+  cursor: pointer !important;
+  font-size: 1.25rem !important;
+  transition: all 0.2s ease !important;
+  margin: 0 !important;
+}
+
+button.admin-mobile-menu-btn:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+button.admin-mobile-menu-btn i {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Menú Mobile */
+div.admin-mobile-menu {
+  display: none !important;
+  flex-direction: column !important;
+  gap: 0.5rem !important;
+  padding: 1rem 2rem !important;
+  background: rgba(30, 64, 175, 0.95) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  margin: 0 !important;
+}
+
+div.admin-mobile-menu.active {
+  display: flex !important;
+}
+
+a.admin-mobile-link {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  padding: 1rem !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 500 !important;
+  border-radius: 0.5rem !important;
+  transition: all 0.2s ease !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  margin: 0 !important;
+}
+
+a.admin-mobile-link:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+a.admin-mobile-link i {
+  font-size: 1.25rem !important;
+  width: 24px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+div.admin-mobile-user {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  padding: 1rem !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 0.5rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  margin-top: 0.5rem !important;
+}
+
+div.admin-mobile-user i {
+  color: white !important;
+  font-size: 1.5rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+div.admin-mobile-user > div {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.25rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+span.admin-mobile-user-name {
+  color: white !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+span.admin-mobile-user-role {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 0.75rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  div.admin-nav-menu {
+    display: none !important;
+  }
+
+  div.admin-user-section {
+    display: none !important;
+  }
+
+  button.admin-mobile-menu-btn {
+    display: block !important;
+  }
+}
+
+@media (max-width: 640px) {
+  div.admin-nav-container {
+    padding: 1rem !important;
+  }
+
+  span.admin-brand-text {
+    font-size: 1.25rem !important;
+  }
+
+  div.admin-logo {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  div.admin-logo i {
+    font-size: 20px !important;
+  }
+}
+/* Botón Logout */
+button.btn-logout {
+  background: #ef4444 !important; /* Rojo */
+  border: none !important;
+  color: #fff !important;
+  padding: 0.6rem 1.2rem !important;
+  border-radius: 0.5rem !important;
+  font-weight: 500 !important;
+  font-size: 0.9rem !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  transition: background 0.2s ease !important;
+}
+
+button.btn-logout:hover {
+  background: #dc2626 !important; /* Rojo más oscuro */
+}
+/* Toolbar */
+.admin-toolbar {
+    background: #f8f9fa;
+    border-top: 1px solid rgba(0,0,0,0.1);
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #a7c7e7; /* Azul pastel */
-    border-bottom: 3px solid #6b9ac4;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+    justify-content: center;
+    gap: 2rem;
+    padding: 10px 0;
 }
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: bold;
-    font-size: 1.3rem;
-    color: #fff;
-}
-.logo img {
-    height: 42px;
-}
-.navbar {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-.navbar a {
-    text-decoration: none;
-    color: #fff;
+
+.admin-toolbar a {
+    color: #333;
     font-weight: 500;
-    transition: all 0.3s ease;
-}
-.navbar a:hover {
-    color: #ffeb99;
-    transform: scale(1.05);
-}
-.profile {
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     gap: 6px;
-    font-weight: bold;
-    color: #fff;
 }
-.profile i {
-    font-size: 1.3rem;
-    color: #ffeb99;
+
+.admin-toolbar a:hover {
+    background: #2563eb;
+    color: white;
 }
+
+.admin-toolbar i {
+    font-size: 1rem;
+}
+
+/* Botón Logout */
 .btn-logout {
-    padding: 6px 12px;
-    border: 1px solid #fff;
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 8px 16px;
     border-radius: 6px;
-    background: #6b9ac4;
-    color: #fff;
-    text-decoration: none;
-    transition: 0.3s;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.2s;
 }
+
 .btn-logout:hover {
-    background: #557da0;
+    background: #dc2626;
 }

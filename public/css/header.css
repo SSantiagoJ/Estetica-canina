@@ -1,209 +1,211 @@
 /* Reset de márgenes del body para eliminar el espacio superior */
 body {
-  margin: 0;
-  padding: 0;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
+/* Haciendo los selectores más específicos y agregando !important para evitar conflictos */
 /* Header Principal */
-.site-header {
-  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  /* Asegurando que no haya márgenes en el header */
-  margin: 0;
+header.site-header {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1000 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
 }
 
-.header-container {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 1rem;
+.site-header .header-container {
+  max-width: 1280px !important;
+  margin: 0 auto !important;
+  padding: 0 1rem !important;
 }
 
-.header-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 5rem;
+.site-header .header-content {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  height: 5rem !important;
 }
 
 /* Logo */
-.logo-link {
-  text-decoration: none;
-  transition: opacity 0.2s;
+.site-header .logo-link {
+  text-decoration: none !important;
+  transition: opacity 0.2s !important;
 }
 
-.logo-link:hover {
-  opacity: 0.9;
+.site-header .logo-link:hover {
+  opacity: 0.9 !important;
 }
 
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+.site-header .logo {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
 }
 
-.logo-icon {
-  width: 3rem;
-  height: 3rem;
-  background: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+.site-header .logo-icon {
+  width: 3rem !important;
+  height: 3rem !important;
+  background: white !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
 }
 
-.logo-icon i {
-  color: #f97316;
-  font-size: 1.5rem;
+.site-header .logo-icon i {
+  color: #f97316 !important;
+  font-size: 1.5rem !important;
 }
 
-.logo-text {
-  color: white;
-  font-weight: 700;
-  font-size: 1.25rem;
+.site-header .logo-text {
+  color: white !important;
+  font-weight: 700 !important;
+  font-size: 1.25rem !important;
 }
 
 /* Navegación Desktop */
-.navbar-desktop {
-  display: none;
-  align-items: center;
-  gap: 0.5rem;
+.site-header .navbar-desktop {
+  display: none !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
 }
 
 @media (min-width: 768px) {
-  .navbar-desktop {
-    display: flex;
+  .site-header .navbar-desktop {
+    display: flex !important;
   }
 }
 
-.nav-link {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  color: white;
-  text-decoration: none;
-  border-radius: 0.5rem;
-  transition: all 0.2s;
-  font-weight: 500;
+.site-header .nav-link {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  padding: 0.5rem 1rem !important;
+  color: white !important;
+  text-decoration: none !important;
+  border-radius: 0.5rem !important;
+  transition: all 0.2s !important;
+  font-weight: 500 !important;
 }
 
-.nav-link:hover {
-  background: rgba(255, 255, 255, 0.1);
+.site-header .nav-link:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
 }
 
-.nav-link-primary {
-  background: white;
-  color: #f97316;
-  padding: 0.625rem 1.25rem;
-  font-weight: 600;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+.site-header .nav-link-primary {
+  background: white !important;
+  color: #f97316 !important;
+  padding: 0.625rem 1.25rem !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
 }
 
-.nav-link-primary:hover {
-  background: #fff7ed;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+.site-header .nav-link-primary:hover {
+  background: #fff7ed !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* Información del Usuario */
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-left: 1rem;
-  padding-left: 1rem;
-  border-left: 1px solid rgba(255, 255, 255, 0.3);
+.site-header .user-info {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  margin-left: 1rem !important;
+  padding-left: 1rem !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.3) !important;
 }
 
-.user-avatar {
-  width: 2.5rem;
-  height: 2.5rem;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.site-header .user-avatar {
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
-.user-avatar i {
-  color: white;
-  font-size: 1.5rem;
+.site-header .user-avatar i {
+  color: white !important;
+  font-size: 1.5rem !important;
 }
 
-.user-details {
-  display: flex;
-  flex-direction: column;
+.site-header .user-details {
+  display: flex !important;
+  flex-direction: column !important;
 }
 
-.user-name {
-  color: white;
-  font-weight: 500;
-  font-size: 0.875rem;
+.site-header .user-name {
+  color: white !important;
+  font-weight: 500 !important;
+  font-size: 0.875rem !important;
 }
 
-.user-role {
-  color: #fed7aa;
-  font-size: 0.75rem;
+.site-header .user-role {
+  color: #fed7aa !important;
+  font-size: 0.75rem !important;
 }
 
 /* Estilos para botón secundario de Register */
-.nav-link-secondary {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  padding: 0.625rem 1.25rem;
-  font-weight: 600;
-  border: 2px solid white;
+.site-header .nav-link-secondary {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  padding: 0.625rem 1.25rem !important;
+  font-weight: 600 !important;
+  border: 2px solid white !important;
 }
 
-.nav-link-secondary:hover {
-  background: white;
-  color: #f97316;
+.site-header .nav-link-secondary:hover {
+  background: white !important;
+  color: #f97316 !important;
 }
 
 /* Botón Menú Móvil */
-.mobile-menu-btn {
-  display: block;
-  background: none;
-  border: none;
-  color: white;
-  padding: 0.5rem;
-  cursor: pointer;
-  border-radius: 0.5rem;
-  transition: background 0.2s;
+.site-header .mobile-menu-btn {
+  display: block !important;
+  background: none !important;
+  border: none !important;
+  color: white !important;
+  padding: 0.5rem !important;
+  cursor: pointer !important;
+  border-radius: 0.5rem !important;
+  transition: background 0.2s !important;
 }
 
-.mobile-menu-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+.site-header .mobile-menu-btn:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
 }
 
-.mobile-menu-btn i {
-  font-size: 1.25rem;
+.site-header .mobile-menu-btn i {
+  font-size: 1.25rem !important;
 }
 
 @media (min-width: 768px) {
-  .mobile-menu-btn {
-    display: none;
+  .site-header .mobile-menu-btn {
+    display: none !important;
   }
 
-  .logo-text {
-    display: block;
+  .site-header .logo-text {
+    display: block !important;
   }
 }
 
 /* Navegación Móvil */
-.navbar-mobile {
-  display: none;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding-bottom: 1rem;
-  animation: slideDown 0.2s ease-out;
+.site-header .navbar-mobile {
+  display: none !important;
+  flex-direction: column !important;
+  gap: 0.5rem !important;
+  padding-bottom: 1rem !important;
+  animation: slideDown 0.2s ease-out !important;
 }
 
-.navbar-mobile.active {
-  display: flex;
+.site-header .navbar-mobile.active {
+  display: flex !important;
 }
 
 @keyframes slideDown {
@@ -217,107 +219,109 @@ body {
   }
 }
 
-.user-info-mobile {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 0.5rem;
-  margin-bottom: 0.5rem;
+.site-header .user-info-mobile {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  padding: 0.75rem 1rem !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
 }
 
-.user-avatar-mobile {
-  width: 3rem;
-  height: 3rem;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.site-header .user-avatar-mobile {
+  width: 3rem !important;
+  height: 3rem !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
-.user-avatar-mobile i {
-  color: white;
-  font-size: 1.5rem;
+.site-header .user-avatar-mobile i {
+  color: white !important;
+  font-size: 1.5rem !important;
 }
 
-.user-details-mobile {
-  display: flex;
-  flex-direction: column;
+.site-header .user-details-mobile {
+  display: flex !important;
+  flex-direction: column !important;
 }
 
-.user-name-mobile {
-  color: white;
-  font-weight: 500;
+.site-header .user-name-mobile {
+  color: white !important;
+  font-weight: 500 !important;
 }
 
-.user-role-mobile {
-  color: #fed7aa;
-  font-size: 0.875rem;
+.site-header .user-role-mobile {
+  color: #fed7aa !important;
+  font-size: 0.875rem !important;
 }
 
 /* Links de autenticación en móvil */
-.auth-links-mobile {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+.site-header .auth-links-mobile {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.5rem !important;
+  margin-top: 0.5rem !important;
+  padding-top: 0.5rem !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
 }
 
-.nav-link-mobile {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  color: white;
-  text-decoration: none;
-  border-radius: 0.5rem;
-  transition: background 0.2s;
+.site-header .nav-link-mobile {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  padding: 0.75rem 1rem !important;
+  color: white !important;
+  text-decoration: none !important;
+  border-radius: 0.5rem !important;
+  transition: background 0.2s !important;
 }
 
-.nav-link-mobile:hover {
-  background: rgba(255, 255, 255, 0.1);
+.site-header .nav-link-mobile:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
 }
 
-.nav-link-mobile i {
-  width: 1.25rem;
+.site-header .nav-link-mobile i {
+  width: 1.25rem !important;
 }
 
-.nav-link-mobile-primary {
-  background: white;
-  color: #f97316;
-  font-weight: 600;
+.site-header .nav-link-mobile-primary {
+  background: white !important;
+  color: #f97316 !important;
+  font-weight: 600 !important;
 }
 
-.nav-link-mobile-primary:hover {
-  background: #fff7ed;
+.site-header .nav-link-mobile-primary:hover {
+  background: #fff7ed !important;
 }
 
 /* Estilo para botón secundario en móvil */
-.nav-link-mobile-secondary {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  font-weight: 600;
-  border: 2px solid white;
+.site-header .nav-link-mobile-secondary {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  font-weight: 600 !important;
+  border: 2px solid white !important;
 }
 
-.nav-link-mobile-secondary:hover {
-  background: white;
-  color: #f97316;
+.site-header .nav-link-mobile-secondary:hover {
+  background: white !important;
+  color: #f97316 !important;
 }
 
 @media (min-width: 768px) {
-  .navbar-mobile {
+  .site-header .navbar-mobile {
     display: none !important;
   }
 }
 
 /* Ocultar logo text en móvil */
 @media (max-width: 640px) {
-  .logo-text {
-    display: none;
+  .site-header .logo-text {
+    display: none !important;
   }
 }
+
+

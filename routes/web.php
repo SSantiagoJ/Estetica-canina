@@ -21,9 +21,6 @@ Route::post('/register', [AuthController::class, 'register'])->name('register.pr
 //logout
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Dashboards
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
 
 Route::get('/header', function () {
     return view('header');
@@ -33,7 +30,9 @@ Route::get('/header', function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
-    });
+    })->name('dashboard'); 
+});
+
 
     Route::get('/admin_dashboard', function () {
         if (auth()->user()->rol !== 'Admin' && auth()->user()->rol !== 'Empleado') {
@@ -45,7 +44,6 @@ Route::middleware(['auth'])->group(function () {
     // Si el archivo es 'resources/views/catalogo.blade.php'
     return view('catalogo');
     });
-});
 
 // Reserva
 Route::middleware(['auth'])->group(function () {

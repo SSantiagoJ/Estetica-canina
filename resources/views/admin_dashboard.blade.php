@@ -6,24 +6,6 @@
 @endsection
 @section('content')
 <main class="dashboard">
-    <section class="welcome">
-        <h1>
-            Bienvenido,
-            @auth
-                {{ auth()->user()->nombres }} 👋
-                <small>({{ auth()->user()->rol }})</small>
-            @else
-                Invitado 👋
-            @endauth
-        </h1>
-
-        @auth
-            <p>ID de usuario: <strong>{{ auth()->user()->id_usuario }}</strong></p>
-        @else
-            <p>No has iniciado sesión. <a href="{{ route('login') }}">Inicia sesión aquí</a></p>
-        @endauth
-    </section>
-
     <section class="card-container">
         <div class="card">
             <h2>Gestión de Usuarios</h2>
