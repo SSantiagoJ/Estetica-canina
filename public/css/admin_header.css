@@ -2,7 +2,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 24px;
     background: #a7c7e7; /* Azul pastel */
     border-bottom: 3px solid #6b9ac4;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);

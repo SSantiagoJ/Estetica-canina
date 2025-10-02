@@ -1,85 +1,323 @@
+/* Reset de márgenes del body para eliminar el espacio superior */
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Header Principal */
 .site-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 24px;
-    background: #fff;
-    border-bottom: 3px solid #ffb347;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  /* Asegurando que no haya márgenes en el header */
+  margin: 0;
+}
+
+.header-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 5rem;
+}
+
+/* Logo */
+.logo-link {
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.logo-link:hover {
+  opacity: 0.9;
 }
 
 .logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logo-icon {
+  width: 3rem;
+  height: 3rem;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.logo-icon i {
+  color: #f97316;
+  font-size: 1.5rem;
+}
+
+.logo-text {
+  color: white;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+/* Navegación Desktop */
+.navbar-desktop {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .navbar-desktop {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: bold;
-    font-size: 1.3rem;
-    color: #444;
-}
-.logo img {
-    height: 42px;
+  }
 }
 
-.navbar {
-    display: flex;
-    align-items: center;
-    gap: 16px;
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  color: white;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  font-weight: 500;
 }
 
-.navbar a {
-    text-decoration: none;
-    color: #444;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
-.navbar a:hover {
-    color: #ff6600;
-    transform: scale(1.05);
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
-.btn {
-    padding: 6px 12px;
-    border: 1px solid #444;
-    border-radius: 6px;
-    transition: all 0.3s;
-}
-.btn:hover {
-    background: #444;
-    color: #fff;
-}
-.btn-primary {
-    background: #ff6600;
-    border-color: #ff6600;
-    color: #fff;
-}
-.btn-primary:hover {
-    background: #e55a00;
+.nav-link-primary {
+  background: white;
+  color: #f97316;
+  padding: 0.625rem 1.25rem;
+  font-weight: 600;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-.btn-logout {
-    padding: 6px 12px;
-    border: 1px solid #d9534f;
-    border-radius: 6px;
-    background: #d9534f;
-    color: #fff;
-    text-decoration: none;
-    transition: 0.3s;
-}
-.btn-logout:hover {
-    background: #c9302c;
+.nav-link-primary:hover {
+  background: #fff7ed;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
-.profile {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-weight: bold;
-    color: #333;
+/* Información del Usuario */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 1rem;
+  padding-left: 1rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
 }
-.profile i {
-    font-size: 1.3rem;
-    color: #ff6600;
+
+.user-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-avatar i {
+  color: white;
+  font-size: 1.5rem;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  color: white;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.user-role {
+  color: #fed7aa;
+  font-size: 0.75rem;
+}
+
+/* Estilos para botón secundario de Register */
+.nav-link-secondary {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.625rem 1.25rem;
+  font-weight: 600;
+  border: 2px solid white;
+}
+
+.nav-link-secondary:hover {
+  background: white;
+  color: #f97316;
+}
+
+/* Botón Menú Móvil */
+.mobile-menu-btn {
+  display: block;
+  background: none;
+  border: none;
+  color: white;
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  transition: background 0.2s;
+}
+
+.mobile-menu-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.mobile-menu-btn i {
+  font-size: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .mobile-menu-btn {
+    display: none;
+  }
+
+  .logo-text {
+    display: block;
+  }
+}
+
+/* Navegación Móvil */
+.navbar-mobile {
+  display: none;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-bottom: 1rem;
+  animation: slideDown 0.2s ease-out;
+}
+
+.navbar-mobile.active {
+  display: flex;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.user-info-mobile {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.user-avatar-mobile {
+  width: 3rem;
+  height: 3rem;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-avatar-mobile i {
+  color: white;
+  font-size: 1.5rem;
+}
+
+.user-details-mobile {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name-mobile {
+  color: white;
+  font-weight: 500;
+}
+
+.user-role-mobile {
+  color: #fed7aa;
+  font-size: 0.875rem;
+}
+
+/* Links de autenticación en móvil */
+.auth-links-mobile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.nav-link-mobile {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: white;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  transition: background 0.2s;
+}
+
+.nav-link-mobile:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link-mobile i {
+  width: 1.25rem;
+}
+
+.nav-link-mobile-primary {
+  background: white;
+  color: #f97316;
+  font-weight: 600;
+}
+
+.nav-link-mobile-primary:hover {
+  background: #fff7ed;
+}
+
+/* Estilo para botón secundario en móvil */
+.nav-link-mobile-secondary {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-weight: 600;
+  border: 2px solid white;
+}
+
+.nav-link-mobile-secondary:hover {
+  background: white;
+  color: #f97316;
+}
+
+@media (min-width: 768px) {
+  .navbar-mobile {
+    display: none !important;
+  }
+}
+
+/* Ocultar logo text en móvil */
+@media (max-width: 640px) {
+  .logo-text {
+    display: none;
+  }
 }
