@@ -30,4 +30,9 @@ class Cliente extends Model
     {
         return $this->hasMany(Mascota::class, 'id_cliente', 'id_cliente');
     }
+    public function reservas()
+    {
+        return $this->hasMany(Reserva::class, 'id_cliente', 'id_cliente');
+    }
+
 }

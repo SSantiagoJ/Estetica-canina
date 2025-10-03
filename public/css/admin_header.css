@@ -354,36 +354,12 @@ button.btn-logout {
 button.btn-logout:hover {
   background: #dc2626 !important; /* Rojo más oscuro */
 }
-/* Toolbar */
-.admin-toolbar {
-    background: #f8f9fa;
-    border-top: 1px solid rgba(0,0,0,0.1);
+/* Layout general */
+.admin-layout {
     display: flex;
-    justify-content: center;
-    gap: 2rem;
-    padding: 10px 0;
+  min-height: calc(100vh - 70px); 
 }
 
-.admin-toolbar a {
-    color: #333;
-    font-weight: 500;
-    text-decoration: none;
-    padding: 6px 12px;
-    border-radius: 6px;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.admin-toolbar a:hover {
-    background: #2563eb;
-    color: white;
-}
-
-.admin-toolbar i {
-    font-size: 1rem;
-}
 
 /* Botón Logout */
 .btn-logout {
@@ -400,4 +376,13 @@ button.btn-logout:hover {
 
 .btn-logout:hover {
     background: #dc2626;
+}
+header.admin-site-header {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%) !important;
+  height: 70px; /* altura fija */
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
 }

@@ -11,8 +11,18 @@ class Mascota extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'nombre', 'fecha_nacimiento', 'sexo', 'raza',
-        'tamano', 'especie', 'peso', 'descripcion',
-        'id_cliente', 'usuario_creacion'
+        'nombre','fecha_nacimiento','sexo','raza','tamano',
+        'especie','peso','descripcion','id_cliente','usuario_creacion'
     ];
+
+    // 🔗 Relaciones
+    public function cliente()
+    {
+        return $this->belongsTo(Cliente::class, 'id_cliente', 'id_cliente');
+    }
+
+    public function reservas()
+    {
+        return $this->hasMany(Reserva::class, 'id_mascota', 'id_mascota');
+    }
 }

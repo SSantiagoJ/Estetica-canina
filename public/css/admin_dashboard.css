@@ -1,57 +1,63 @@
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f4f8fc;
-    color: #333;
+/* ==== CONTENIDO PRINCIPAL ==== */
+.admin-content {
+  /* Agregando padding en lugar de margin para evitar conflictos con position fixed */
+  padding-left: 250px !important; /* deja espacio para la toolbar fija */
+  padding-top: 70px !important; /* deja espacio para el header fijo */
+  padding-right: 30px !important;
+  padding-bottom: 30px !important;
+  background: #f8fafc;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
-.dashboard {
-    padding: 40px;
-    max-width: 1100px;
-    margin: 0 auto;
+/* ==== TABLA ==== */
+.table {
+  background: #fff;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  overflow: hidden;
 }
 
-.welcome {
-    margin-bottom: 40px;
-    text-align: center;
-}
-.welcome h1 {
-    font-size: 2rem;
-    color: #3b5d8d;
-    margin-bottom: 10px;
-}
-.welcome p {
-    font-size: 1.1rem;
-    color: #555;
+.table thead {
+  background: #2563eb;
+  color: #fff;
 }
 
-.card-container {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
+.table td,
+.table th {
+  text-align: center;
+  vertical-align: middle;
+  padding: 12px;
+}
+
+.table .badge {
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
 }
 
 .card {
-    flex: 1;
-    min-width: 250px;
-    max-width: 300px;
-    padding: 20px;
-    border-radius: 12px;
-    background: #e3f2fd;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    text-align: center;
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+
+.table-responsive {
+  overflow-x: auto;
 }
-.card h2 {
-    color: #3b5d8d;
-    margin-bottom: 10px;
-}
-.card p {
-    color: #555;
-    font-size: 0.95rem;
+
+/* Responsive para pantallas pequeñas */
+@media (max-width: 768px) {
+  .admin-content {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+
+  .admin-toolbar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .admin-toolbar.show {
+    transform: translateX(0);
+  }
 }

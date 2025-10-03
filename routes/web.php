@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\PerfilController;
+use App\Http\Controllers\GestorController;
 
 // Inicio de Sesion 
 Route::get('/login', function () {
@@ -44,9 +45,7 @@ Route::middleware(['auth'])->group(function () {
     // Si el archivo es 'resources/views/catalogo.blade.php'
     return view('catalogo');
     });
-<<<<<<< HEAD
-=======
-});
+
 // menu
 Route::get('/menu', function () {
     // Si el archivo es 'resources/views/catalogo.blade.php'
@@ -54,7 +53,6 @@ Route::get('/menu', function () {
 
 });
 
->>>>>>> 655234a6193ea57c62e68082280ec76778e5fb93
 
 // Reserva
 Route::middleware(['auth'])->group(function () {
@@ -80,3 +78,14 @@ Route::middleware(['auth'])->group(function () {
     ->name('mascotas.destroy')
     ->middleware('auth');
 });
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin_dashboard', [GestorController::class, 'index'])->name('admin.dashboard');
+    Route::get('/admin/usuarios', [GestorController::class, 'usuarios'])->name('admin.usuarios');
+    Route::get('/admin/mascotas', [GestorController::class, 'mascotas'])->name('admin.mascotas');
+    Route::get('/admin/reservas', [GestorController::class, 'reservas'])->name('admin.reservas');
+    Route::get('/admin/servicios', [GestorController::class, 'servicios'])->name('admin.servicios');
+});
+
+Route::post('/admin/reservas/update', [App\Http\Controllers\GestorController::class, 'update'])
+    ->name('admin.reservas.update');
