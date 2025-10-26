@@ -37,5 +37,14 @@ public function cliente()
 {
     return $this->belongsTo(Cliente::class, 'id_cliente', 'id_cliente');
 }
+public function empleado()
+{
+    return $this->belongsTo(Empleado::class, 'id_empleado', 'id_empleado');
+}
+
+public function usuario()
+{
+    return $this->belongsTo(User::class, 'id_usuario', 'id');
+}
 
 }
