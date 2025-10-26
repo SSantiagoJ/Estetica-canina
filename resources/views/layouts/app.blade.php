@@ -24,6 +24,9 @@
     <div class="main-container">
         @yield('content')
     </div>
+     {{-- Footer --}}
+    @include('partials.footer')
     @yield('scripts')
 </body>
+
 </html>
