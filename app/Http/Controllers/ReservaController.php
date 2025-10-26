@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Mascota;
 use App\Models\Cliente;
 use App\Models\Reserva;
 use App\Models\DetalleReserva;
 use App\Models\Servicio;
+use App\Models\Pago; // modelo del pago
+use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReservaController extends Controller
 {
@@ -159,4 +163,91 @@ class ReservaController extends Controller
             return view('reservas.pendiente');
         }
     }
+    public function resumenPago()
+{
+    $mascotas = Mascota::whereIn('id_mascota', session('mascotas_seleccionadas', []))->get();
+    $servicios = Servicio::whereIn('id_servicio', session('servicios_seleccionados', []))->get();
+    $adicionales = Servicio::whereIn('id_servicio', session('adicionales_seleccionados', []))->get();
+
+    return view('reservas.pago_resumen', compact('mascotas', 'servicios', 'adicionales'));
+}
+public function guardarPago()
+{
+    // 1) Trae la última reserva del usuario
+    $reserva = \App\Models\Reserva::where('id_usuario', auth()->id())->latest('id_reserva')->first();
+    if (!$reserva) {
+        return redirect()->route('reservas.pago')->with('error', 'No se encontró la reserva.');
+    }
+
+    // 2) Calcula el total REAL (usa el campo 'total' del detalle si lo tienes)
+    //    Si aún no guardas IGV/total en detalle, usa sum('precio_unitario')
+    $total = $reserva->detalles->sum('total'); 
+    if ($total == 0) {
+        $total = $reserva->detalles->sum('precio_unitario') * 1.18; // fallback
+    }
+
+    // 3) Genera serie
+    $serie = 'BOL-' . str_pad(Pago::count() + 1, 5, '0', STR_PAD_LEFT);
+
+    // 4) Crea el pago
+    $pago = Pago::create([
+        'id_reserva'        => $reserva->id_reserva,
+        'monto'             => $total,           // 💡 Ya no 50%
+        'metodo_pago'       => 'paypal',
+        'fecha'             => Carbon::now()->toDateString(),
+        'hora'              => Carbon::now()->toTimeString(),
+        'estado'            => 'P',
+        'usuario_creacion'  => auth()->user()->correo,
+        'series'            => $serie,
+    ]);
+
+    // 5) Genera PDF y guarda en storage/app/public/boletas
+    $pdf = Pdf::loadView('reservas.boleta', [
+        'reserva'   => $reserva,
+        'pago'      => $pago,
+        'cliente'   => $reserva->cliente,
+        'servicios' => $reserva->detalles,
+    ])->setPaper('A4', 'portrait');
+
+    $dir = storage_path('app/public/boletas');
+    if (!File::exists($dir)) {
+        File::makeDirectory($dir, 0777, true);
+    }
+    $path = $dir . DIRECTORY_SEPARATOR . $pago->series . '.pdf';
+    $pdf->save($path);
+
+    // 6) Muestra la vista "completada" PASANDO $pago (para evitar "Undefined variable $pago")
+    return view('reservas.completada', compact('pago'));
+}
+public function generarBoleta($id_pago)
+{
+    $pago = Pago::findOrFail($id_pago);
+    $reserva = $pago->reserva;
+    $cliente = $reserva->cliente;
+    $servicios = $reserva->detalles;
+
+    $pdf = Pdf::loadView('reservas.boleta', compact('pago', 'reserva', 'cliente', 'servicios'))
+              ->setPaper('A4', 'portrait');
+
+    // 📂 Ruta personalizada (no storage)
+    $directory = base_path('app/public/Boletas');
+
+    // 🔒 Crear la carpeta si no existe
+    if (!File::exists($directory)) {
+        File::makeDirectory($directory, 0777, true);
+    }
+
+    // 📄 Nombre del archivo
+    $fileName = 'BOL-' . str_pad($pago->id_pago, 5, '0', STR_PAD_LEFT) . '.pdf';
+
+    // 🧭 Ruta completa personalizada
+    $path = $directory . DIRECTORY_SEPARATOR . $fileName;
+
+    // 💾 Guarda directamente en app/public/Boletas/
+    $pdf->save($path);
+
+    // ✅ Muestra el PDF en navegador
+    return response()->file($path);
+}
+
 }

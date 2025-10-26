@@ -1,13 +1,14 @@
 @extends('layouts.app')
+
 @section('header')
     @include('partials.header')
 @endsection
+
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/pago.css') }}">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<div class="container reserva-container">
-    <!-- Progress bar -->
+<div class="container reserva-container mt-4">
     <div class="progressbar mb-5">
         <ul class="steps">
             <li>Selección de Mascotas</li>
@@ -17,158 +18,120 @@
         </ul>
     </div>
 
-    <h2 class="titulo-seccion">Métodos de Pago</h2>
+    <h2 class="titulo-seccion text-center mb-4">Resumen y Pago</h2>
 
-    <form id="form-pago" action="{{ route('reservas.finalizar') }}" method="POST">
-        @csrf
-        <input type="hidden" name="metodo_pago" id="metodo_pago">
-
-        <div class="row">
-            <!-- Columna izquierda -->
-            <div class="col-md-8">
-                <!-- Tarjeta -->
-                <div class="metodo-card" onclick="selectPago('tarjeta')">
-                    <h5>💳 Tarjeta de Crédito/Débito</h5>
-                    <div id="form-tarjeta" class="d-none mt-3">
-                        <div class="mb-2">
-                            <label class="form-label">Número de tarjeta</label>
-                            <input type="text" class="form-control" name="num_tarjeta" placeholder="XXXX-XXXX-XXXX-XXXX">
-                        </div>
-                        <div class="row">
-                            <div class="col-6 mb-2">
-                                <label class="form-label">F. Vencimiento</label>
-                                <input type="text" class="form-control" name="fecha_venc" placeholder="MM/AA">
-                            </div>
-                            <div class="col-6 mb-2">
-                                <label class="form-label">CVV</label>
-                                <input type="password" class="form-control" name="cvv" maxlength="3" placeholder="***">
-                            </div>
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label">Nombre del propietario</label>
-                            <input type="text" class="form-control" name="titular" placeholder="Juan Pérez">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Yape -->
-                <div class="metodo-card" onclick="selectPago('yape')">
-                    <h5>📱 Yape</h5>
-                    <p>Escanee el QR para pagar con Yape</p>
-                    <img src="{{ asset('images/qr-yape.png') }}" alt="QR Yape" class="qr-yape d-none" width="200">
-                </div>
+    <div class="row">
+        <!-- Columna izquierda -->
+        <div class="col-md-8">
+            <div class="card shadow-sm p-3 mb-4">
+                <h5 class="mb-3">👤 Datos del Cliente</h5>
+                <p><strong>Nombre:</strong> {{ Auth::user()->persona->nombres }} {{ Auth::user()->persona->apellidos }}</p>
+                <p><strong>Correo:</strong> {{ Auth::user()->correo }}</p>
             </div>
 
-            
-            <!-- Columna derecha (Resumen tipo boleta) -->
-                <div class="col-md-4">
-                    <div class="detalles-box">
-                        <h5>Resumen de Reserva</h5>
-                        <table class="table table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Concepto</th>
-                                    <th class="text-end">Precio (S/)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($servicios as $s)
-                                    <tr>
-                                        <td>{{ $s->nombre_servicio }}</td>
-                                        <td class="text-end">{{ number_format($s->costo, 2) }}</td>
-                                    </tr>
-                                @endforeach
-                                @foreach($adicionales as $a)
-                                    <tr>
-                                        <td>{{ $a->nombre_servicio }}</td>
-                                        <td class="text-end">{{ number_format($a->costo, 2) }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                            <tfoot>
-                                @php
-                                    $total = $servicios->sum('costo') + $adicionales->sum('costo');
-                                    $reserva = $total / 2;
-                                @endphp
-                                <tr>
-                                    <th>Total</th>
-                                    <th class="text-end">S/ {{ number_format($total, 2) }}</th>
-                                </tr>
-                                <tr class="table-primary">
-                                    <th>Pagar ahora (50%)</th>
-                                    <th class="text-end">S/ {{ number_format($reserva, 2) }}</th>
-                                </tr>
-                            </tfoot>
-                        </table>
+            <div class="card shadow-sm p-3 mb-4">
+                <h5 class="mb-3">🐾 Mascotas Seleccionadas</h5>
+                @foreach($mascotas as $m)
+                    <div class="border rounded p-2 mb-2 bg-light">
+                        <p><strong>Nombre:</strong> {{ $m->nombre }}</p>
+                        <p><strong>Especie:</strong> {{ $m->especie }}</p>
+                        <p><strong>Raza:</strong> {{ $m->raza }}</p>
                     </div>
+                @endforeach
+            </div>
+
+            <div class="card shadow-sm p-3">
+                <h5 class="mb-3">🧴 Servicios Seleccionados</h5>
+                <div class="row">
+                    @foreach($servicios as $s)
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-0 shadow-sm h-100">
+                                <img src="{{ asset('img/servicios/'.$s->imagen_referencial) }}" class="card-img-top" alt="{{ $s->nombre_servicio }}">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ $s->nombre_servicio }}</h6>
+                                    <p class="card-text">S/ {{ number_format($s->costo, 2) }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                    @foreach($adicionales as $a)
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-0 shadow-sm h-100">
+                                <img src="{{ asset('img/servicios/'.$a->imagen_referencial) }}" class="card-img-top" alt="{{ $a->nombre_servicio }}">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ $a->nombre_servicio }}</h6>
+                                    <p class="card-text">S/ {{ number_format($a->costo, 2) }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
-
+            </div>
         </div>
 
-        <!-- Botones -->
-        <div class="acciones mt-4 d-flex justify-content-between">
-            <a href="{{ route('reservas.seleccionServicio') }}" class="btn-cancelar">Retroceder</a>
-            <button type="button" class="btn-siguiente" onclick="procesarPago()">Pagar</button>
+        <!-- Columna derecha -->
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 text-center">
+                <h5>💰 Total a Pagar</h5>
+                @php
+                    $total = $servicios->sum('costo') + $adicionales->sum('costo');
+                @endphp
+                <h3 class="text-success mt-3">S/ {{ number_format($total, 2) }}</h3>
+                <p class="text-muted">Monto total</p>
+
+                <!-- 🟡 CONTENEDOR DONDE IRÁ EL BOTÓN -->
+                <div id="paypal-button-container" class="mt-4"></div>
+
+                <a href="{{ route('reservas.seleccionServicio') }}" class="btn btn-outline-secondary mt-3">⬅ Volver</a>
+            </div>
         </div>
-    </form>
-</div>
-
-<!-- Modal Confirmación Tarjeta -->
-<div class="modal fade" id="modalTarjeta" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content p-4 text-center">
-      <h5>¿Está seguro de pagar con tarjeta?</h5>
-      <div class="mt-3">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-        <button class="btn btn-primary" onclick="confirmarPago('tarjeta')">Sí</button>
-      </div>
     </div>
-  </div>
 </div>
-
-<!-- Modal Confirmación Yape -->
-<div class="modal fade" id="modalYape" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content p-4 text-center">
-      <h5>¿Ha realizado el pago en Yape?</h5>
-      <div class="mt-3">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-        <button class="btn btn-primary" onclick="confirmarPago('yape')">Sí, Confirmar</button>
-      </div>
-    </div>
-  </div>
-</div>
-<script>
-    let metodo = '';
-
-    function selectPago(tipo) {
-        metodo = tipo;
-        document.getElementById('metodo_pago').value = tipo;
-
-        if (tipo === 'tarjeta') {
-            document.getElementById('form-tarjeta').classList.remove('d-none');
-            document.querySelector('.qr-yape').classList.add('d-none');
-        } else if (tipo === 'yape') {
-            document.querySelector('.qr-yape').classList.remove('d-none');
-            document.getElementById('form-tarjeta').classList.add('d-none');
-        }
-    }
-
-    function procesarPago() {
-        if (metodo === '') {
-            alert('Seleccione un método de pago');
-            return;
-        }
-        if (metodo === 'tarjeta') {
-            new bootstrap.Modal(document.getElementById('modalTarjeta')).show();
-        } else if (metodo === 'yape') {
-            new bootstrap.Modal(document.getElementById('modalYape')).show();
-        }
-    }
-
-    function confirmarPago(tipo) {
-        document.getElementById('form-pago').submit();
-    }
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 @endsection
+
+
+@push('scripts')
+<!-- SDK de PayPal -->
+<script src="https://www.paypal.com/sdk/js?client-id=ARTxzEbR-GgKPnQdy64P9D3zeGlcj9zRJgCTy8ewKh3ZSyhr-lsh20yrYCfP2j-Jr8rAc9ysyLyRB3Xc&currency=USD"></script>
+
+<script>
+window.addEventListener('load', function() {
+    if (typeof paypal === 'undefined') {
+        console.error("⚠️ El SDK de PayPal no se cargó correctamente.");
+        alert("El SDK de PayPal no se cargó. Revisa tu conexión o el Client ID.");
+        return;
+    }
+
+    paypal.Buttons({
+        style: {
+            layout: 'vertical',
+            color: 'gold',
+            shape: 'rect',
+            label: 'paypal'
+        },
+        createOrder: function(data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    description: 'Pago PetSpa',
+                    amount:{
+                        currency_code:'USD',
+                        // convierte tus soles a dólares solo para la prueba
+                        value:"{{ number_format($total / 3.80, 2, '.', '') }}"
+                        }
+                }]
+            });
+        },
+        onApprove: function(data, actions) {
+            return actions.order.capture().then(function(details) {
+                alert('✅ Pago completado por ' + details.payer.name.given_name);
+                window.location.href = "{{ route('reservas.guardarPago') }}";
+            });
+        },
+        onError: function(err) {
+            console.error("Error en PayPal:", err);
+            alert("❌ Ocurrió un error al procesar el pago.");
+        }
+    }).render('#paypal-button-container');
+});
+</script>
+@endpush

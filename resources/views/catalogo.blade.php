@@ -313,8 +313,7 @@
 
         </section>
     </main>
-
-    {{-- Moved script inside @section('content') to fix duplicate @endsection error --}}
+        
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.categoria-item').forEach(function (categoria) {

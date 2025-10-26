@@ -6,6 +6,12 @@ use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\GestorController;
 
+// Prueba
+Route::get('/pruebaPaypal', function () {
+    return view('pruebaPaypal');
+})->name('pruebaPaypal');
+
+
 // Inicio de Sesion 
 Route::get('/login', function () {
     return view('login');
@@ -69,6 +75,9 @@ Route::middleware(['auth'])->group(function () {
         ->name('reservas.finalizar');
 });
 
+Route::get('/reservas/resumen', [ReservaController::class, 'resumenPago'])->name('reservas.resumen');
+Route::get('/reservas/guardar-pago', [ReservaController::class, 'guardarPago'])->name('reservas.guardarPago');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil.index');
     Route::post('/perfil/mascotas', [PerfilController::class, 'storeMascota'])->name('perfil.mascotas.store');
@@ -89,3 +98,15 @@ Route::middleware(['auth'])->group(function () {
 
 Route::post('/admin/reservas/update', [App\Http\Controllers\GestorController::class, 'update'])
     ->name('admin.reservas.update');
+
+    //Boleta
+Route::get('/reservas/boleta/{id_pago}', [ReservaController::class, 'generarBoleta'])->name('reservas.boleta');
+
+    //Tester
+    Route::get('/test-pdf', function () {
+    $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadHTML('<h1>Hola Mundo PDF</h1>');
+    $path = storage_path('app/public/boletas/test.pdf');
+    \Illuminate\Support\Facades\File::ensureDirectoryExists(storage_path('app/public/boletas'));
+    $pdf->save($path);
+    return 'PDF generado en: ' . $path;
+});

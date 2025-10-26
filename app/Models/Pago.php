@@ -18,8 +18,11 @@ class Pago extends Model
         'hora',
         'estado',
         'usuario_creacion',
-        'fecha_creacion',
-        'usuario_actualizacion',
-        'fecha_actualizacion'
+        'series'
     ];
+
+    public function reserva()
+    {
+        return $this->belongsTo(Reserva::class, 'id_reserva', 'id_reserva');
+    }
 }
