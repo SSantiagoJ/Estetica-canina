@@ -56,11 +56,11 @@ class ReservaController extends Controller
             ]);
 
             // Consultamos los servicios
-            $servicios = \App\Models\Servicio::where('estado', 'A')
+            $servicios = Servicio::where('estado', 'A')
                 ->where('tipo_servicio', '!=', 'Adicional')
                 ->get();
 
-            $adicionales = \App\Models\Servicio::where('estado', 'A')
+            $adicionales = Servicio::where('estado', 'A')
                 ->where('tipo_servicio', 'Adicional')
                 ->get();
 
@@ -102,16 +102,28 @@ class ReservaController extends Controller
 
     // 4. Finalizar Reserva
     public function finalizar(Request $request)
-    {
-        $metodo = $request->input('metodo_pago');
+{
+    try {
+        // 🧩 Verificar usuario autenticado
+        if (!Auth::check()) {
+            return $this->handleResponse($request, false, 'Sesión expirada. Inicia sesión nuevamente.');
+        }
 
-        // Insertar en tabla reservas
-        $reserva = new Reserva();
-        $reserva->id_mascota = session('mascotas_seleccionadas')[0]; // primera mascota
+        // 🐾 Verificar mascotas seleccionadas
+        $mascotasSeleccionadas = session('mascotas_seleccionadas', []);
+        if (empty($mascotasSeleccionadas)) {
+            return $this->handleResponse($request, false, 'No hay mascotas seleccionadas en la sesión.');
+        }
+
+        // 👤 Verificar cliente asociado
         $cliente = Cliente::where('id_persona', Auth::user()->id_persona)->first();
         if (!$cliente) {
-            return redirect()->back()->with('error', 'No se encontró cliente asociado.');
+            return $this->handleResponse($request, false, 'No se encontró cliente asociado al usuario.');
         }
+
+        // 📅 Crear reserva
+        $reserva = new Reserva();
+        $reserva->id_mascota = $mascotasSeleccionadas[0];
         $reserva->id_cliente = $cliente->id_cliente;
         $reserva->id_usuario = Auth::id();
         $reserva->fecha = session('fecha');
@@ -120,11 +132,11 @@ class ReservaController extends Controller
         $reserva->vacuna = session('vacuna', 0);
         $reserva->alergia = session('alergia', 0);
         $reserva->descripcion_alergia = session('descripcion_alergia', null);
-        $reserva->estado = ($metodo === 'tarjeta') ? 'P' : 'N'; // P = Pagado, N = Pendiente
+        $reserva->estado = 'P'; // Pendiente
         $reserva->usuario_creacion = Auth::user()->correo;
         $reserva->save();
 
-        // Insertar detalles de servicios
+        // 🧴 Detalles de servicios
         foreach (session('servicios_seleccionados', []) as $idServicio) {
             $servicio = Servicio::find($idServicio);
             if ($servicio) {
@@ -140,7 +152,7 @@ class ReservaController extends Controller
             }
         }
 
-        // Insertar detalles de adicionales
+        // 🎁 Detalles adicionales
         foreach (session('adicionales_seleccionados', []) as $idServicio) {
             $servicio = Servicio::find($idServicio);
             if ($servicio) {
@@ -156,13 +168,38 @@ class ReservaController extends Controller
             }
         }
 
-        // Dependiendo del método de pago mostramos confirmación o pendiente
-        if ($metodo === 'tarjeta') {
-            return view('reservas.completada');
-        } else {
-            return view('reservas.pendiente');
-        }
+        // ✅ Respuesta
+        return $this->handleResponse($request, true, 'Reserva creada correctamente.', [
+            'reserva_id' => $reserva->id_reserva
+        ]);
+
+    } catch (\Exception $e) {
+        return $this->handleResponse($request, false, 'Error interno: ' . $e->getMessage());
     }
+}
+
+/**
+ * 🔧 Helper que decide si devolver JSON (PayPal) o vista normal (Yape/tarjeta)
+ */
+private function handleResponse(Request $request, $success, $message, $extra = [])
+{
+    // Si la petición vino de fetch (PayPal)
+    if ($request->expectsJson() || $request->ajax()) {
+        return response()->json(array_merge([
+            'success' => $success,
+            'message' => $message,
+        ], $extra));
+    }
+
+    // Si vino de un formulario tradicional
+    if ($success) {
+        return view('reservas.completada')->with('success', $message);
+    } else {
+        return redirect()->back()->with('error', $message);
+    }
+}
+
+
     public function resumenPago()
 {
     $mascotas = Mascota::whereIn('id_mascota', session('mascotas_seleccionadas', []))->get();
@@ -174,7 +211,7 @@ class ReservaController extends Controller
 public function guardarPago()
 {
     // 1) Trae la última reserva del usuario
-    $reserva = \App\Models\Reserva::where('id_usuario', auth()->id())->latest('id_reserva')->first();
+    $reserva = Reserva::where('id_usuario', auth()->id())->latest('id_reserva')->first();
     if (!$reserva) {
         return redirect()->route('reservas.pago')->with('error', 'No se encontró la reserva.');
     }

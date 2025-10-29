@@ -46,7 +46,7 @@
                     @foreach($servicios as $s)
                         <div class="col-md-6 mb-3">
                             <div class="card border-0 shadow-sm h-100">
-                                <img src="{{ asset('img/servicios/'.$s->imagen_referencial) }}" class="card-img-top" alt="{{ $s->nombre_servicio }}">
+                                <img src="{{ asset('images/razas/'.$s->imagen_referencial) }}" class="card-img-top" alt="{{ $s->nombre_servicio }}">
                                 <div class="card-body">
                                     <h6 class="card-title">{{ $s->nombre_servicio }}</h6>
                                     <p class="card-text">S/ {{ number_format($s->costo, 2) }}</p>
@@ -57,7 +57,7 @@
                     @foreach($adicionales as $a)
                         <div class="col-md-6 mb-3">
                             <div class="card border-0 shadow-sm h-100">
-                                <img src="{{ asset('img/servicios/'.$a->imagen_referencial) }}" class="card-img-top" alt="{{ $a->nombre_servicio }}">
+                                <img src="{{ asset('images/razas/'.$a->imagen_referencial) }}" class="card-img-top" alt="{{ $a->nombre_servicio }}">
                                 <div class="card-body">
                                     <h6 class="card-title">{{ $a->nombre_servicio }}</h6>
                                     <p class="card-text">S/ {{ number_format($a->costo, 2) }}</p>
@@ -109,23 +109,59 @@ window.addEventListener('load', function() {
             shape: 'rect',
             label: 'paypal'
         },
+
+        // ✅ Crea el pedido en PayPal
         createOrder: function(data, actions) {
             return actions.order.create({
                 purchase_units: [{
                     description: 'Pago PetSpa',
                     amount:{
                         currency_code:'USD',
-                        // convierte tus soles a dólares solo para la prueba
-                        value:"{{ number_format($total / 3.80, 2, '.', '') }}"
-                        }
+                        value:"{{ number_format($total / 3.80, 2, '.', '') }}" // Convierte S/ a USD aprox.
+                    }
                 }]
             });
         },
+
+        // ✅ Cuando el usuario aprueba el pago
         onApprove: function(data, actions) {
             return actions.order.capture().then(function(details) {
-                alert('✅ Pago completado por ' + details.payer.name.given_name);
-                window.location.href = "{{ route('reservas.guardarPago') }}";
+
+                // 1️⃣ Primero: guardar la reserva en tu BD llamando a finalizar()
+                fetch("{{ route('reservas.finalizar') }}", {
+                    method: "POST",
+                    headers: {
+                        "Accept": "application/json", //    
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({ metodo_pago: "paypal" })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        alert("❌ Ocurrió un error al guardar la reserva.");
+                        return;
+                    }
+
+                    // 2️⃣ Segundo: redirigir a guardarPago()
+                    alert('✅ Pago completado correctamente por ' + details.payer.name.given_name);
+
+                    // Espera un instante para que el servidor termine de guardar todo
+                    setTimeout(() => {
+                        window.location.href = "{{ route('reservas.guardarPago') }}";
+                    }, 800);
+                })
+                .catch(err => {
+                    console.error("Error al crear la reserva:", err);
+                    alert("❌ Ocurrió un error al crear la reserva en el servidor.");
+                });
             });
+        },
+
+        // ⚠️ Manejo de errores y cancelaciones
+        onCancel: function() {
+            alert("⚠️ El pago fue cancelado por el usuario.");
         },
         onError: function(err) {
             console.error("Error en PayPal:", err);

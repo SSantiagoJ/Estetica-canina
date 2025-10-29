@@ -68,8 +68,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/reservas/seleccion-servicio', [ReservaController::class, 'seleccionServicio'])
         ->name('reservas.seleccionServicio');
 
-    Route::post('/reservas/pago', [ReservaController::class, 'pago'])
-        ->name('reservas.pago');
+    Route::match(['get', 'post'], '/reservas/pago', [ReservaController::class, 'pago'])
+    ->name('reservas.pago');
+
 
     Route::post('/reservas/finalizar', [ReservaController::class, 'finalizar'])
         ->name('reservas.finalizar');
