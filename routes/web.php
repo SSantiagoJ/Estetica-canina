@@ -38,7 +38,9 @@ Route::get('/header', function () {
 //Proteccion mediante rol
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        return view('dashboard', [
+            'calificaciones' => app(\App\Http\Controllers\CalificacionController::class)->calificacionesDestacadas()
+        ]);
     })->name('dashboard'); 
 });
 
