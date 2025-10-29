@@ -6,6 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Console\\Commands\\EnviarNotificacionVacuna' => $baseDir . '/app/Console/Commands/EnviarNotificacionVacuna.php',
     'App\\Http\\Controllers\\AuthController' => $baseDir . '/app/Http/Controllers/AuthController.php',
     'App\\Http\\Controllers\\Controller' => $baseDir . '/app/Http/Controllers/Controller.php',
     'App\\Http\\Controllers\\GestorController' => $baseDir . '/app/Http/Controllers/GestorController.php',
@@ -20,6 +21,7 @@ return array(
     'App\\Models\\Servicio' => $baseDir . '/app/Models/Servicio.php',
     'App\\Models\\User' => $baseDir . '/app/Models/User.php',
     'App\\Models\\Usuario' => $baseDir . '/app/Models/Usuario.php',
+    'App\\Notifications\\RecordatorioVacuna' => $baseDir . '/app/Notifications/RecordatorioVacuna.php',
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'Barryvdh\\DomPDF\\Facade\\Pdf' => $vendorDir . '/barryvdh/laravel-dompdf/src/Facade/Pdf.php',

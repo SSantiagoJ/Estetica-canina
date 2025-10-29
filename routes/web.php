@@ -5,6 +5,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\GestorController;
+use App\Http\Controllers\TratamientosController;
+use App\Http\Controllers\CalificacionController;
 
 // Prueba
 Route::get('/pruebaPaypal', function () {
@@ -54,9 +56,9 @@ Route::middleware(['auth'])->group(function () {
 
 // menu
 Route::get('/menu', function () {
-    // Si el archivo es 'resources/views/catalogo.blade.php'
-    return view('menu');
-
+    return view('menu', [
+        'calificaciones' => app(CalificacionController::class)->calificacionesDestacadas()
+    ]);
 });
 
 
@@ -121,4 +123,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reservas/{id}', [ReservaController::class, 'show'])->name('reservas.show');
     Route::get('/reservas/{id}/editar', [ReservaController::class, 'edit'])->name('reservas.edit');
     Route::put('/reservas/{id}', [ReservaController::class, 'update'])->name('reservas.update');
+});
+
+// Rutas para Tratamientos
+Route::middleware(['auth'])->group(function () {
+    Route::get('/mis-tratamientos', [TratamientosController::class, 'misTratamientos'])
+        ->name('tratamientos.index');
+});
+
+// Rutas para Calificaciones
+Route::middleware(['auth'])->group(function () {
+    Route::post('/calificacion/guardar', [CalificacionController::class, 'guardarCalificacion'])
+        ->name('calificacion.guardar');
+    Route::get('/calificaciones-destacadas', [CalificacionController::class, 'calificacionesDestacadas'])
+        ->name('calificaciones.destacadas');
 });
