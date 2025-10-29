@@ -250,4 +250,182 @@ public function generarBoleta($id_pago)
     return response()->file($path);
 }
 
+//BELEN
+
+/**
+ * Muestra la vista de "Mis Reservas" con próximas reservas e historial
+ */
+public function misReservas()
+{
+    if (!Auth::check()) {
+        return redirect()->route('login')->with('error', 'Debes iniciar sesión para ver tus reservas.');
+    }
+
+    $cliente = Cliente::where('id_persona', Auth::user()->id_persona)->first();
+
+    if (!$cliente) {
+        return redirect()->back()->with('error', 'No se encontró cliente asociado.');
+    }
+
+    $hoy = Carbon::now()->toDateString();
+
+    // Próximas reservas (fecha >= hoy)
+    $proximasReservas = Reserva::with(['mascota', 'detalles.servicio'])
+        ->where('id_cliente', $cliente->id_cliente)
+        ->where('fecha', '>=', $hoy)
+        ->whereIn('estado', ['P', 'N']) // Pagado o Pendiente
+        ->orderBy('fecha', 'asc')
+        ->orderBy('hora', 'asc')
+        ->get()
+        ->map(function($reserva) {
+            $reserva->fecha_formateada = $this->formatearFecha($reserva->fecha);
+            $reserva->servicios_texto = $this->formatearServicios($reserva->detalles);
+            return $reserva;
+        });
+
+    // Historial (fecha < hoy o estado completado)
+    $historialReservas = Reserva::with(['mascota', 'detalles.servicio'])
+        ->where('id_cliente', $cliente->id_cliente)
+        ->where(function($query) use ($hoy) {
+            $query->where('fecha', '<', $hoy)
+                  ->orWhere('estado', 'C'); // Completado
+        })
+        ->orderBy('fecha', 'desc')
+        ->orderBy('hora', 'desc')
+        ->get()
+        ->map(function($reserva) {
+            $reserva->fecha_formateada = $this->formatearFecha($reserva->fecha);
+            $reserva->servicios_texto = $this->formatearServicios($reserva->detalles);
+            return $reserva;
+        });
+
+    return view('reservas.mis-reservas', compact('proximasReservas', 'historialReservas'));
+}
+
+/**
+ * Formatea la fecha en español (ej: "Miércoles 15 de Octubre del 2025")
+ */
+private function formatearFecha($fecha)
+{
+    $carbon = Carbon::parse($fecha);
+    $dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+    $meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+              'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    
+    return $dias[$carbon->dayOfWeek] . ' ' . $carbon->day . ' de ' . $meses[$carbon->month - 1] . ' del ' . $carbon->year;
+}
+
+/**
+ * Formatea los servicios de una reserva (ej: "Baño Básico + Corte + Limado de Uñas")
+ */
+private function formatearServicios($detalles)
+{
+    if ($detalles->isEmpty()) {
+        return 'Sin servicios';
+    }
+    
+    $servicios = $detalles->map(function($detalle) {
+        return $detalle->servicio->nombre_servicio ?? 'Servicio';
+    })->toArray();
+    
+    return implode(' + ', $servicios);
+}
+
+/**
+ * Muestra el detalle de una reserva específica
+ */
+public function show($id)
+{
+    $reserva = Reserva::with(['mascota', 'detalles.servicio', 'cliente'])
+        ->findOrFail($id);
+
+    // Verificar que la reserva pertenece al usuario actual
+    $cliente = Cliente::where('id_persona', Auth::user()->id_persona)->first();
+    
+    if ($reserva->id_cliente !== $cliente->id_cliente) {
+        return redirect()->route('reservas.mis-reservas')
+            ->with('error', 'No tienes permiso para ver esta reserva.');
+    }
+
+    $reserva->fecha_formateada = $this->formatearFecha($reserva->fecha);
+    $reserva->servicios_texto = $this->formatearServicios($reserva->detalles);
+
+    return view('reservas.detalle', compact('reserva'));
+}
+
+/**
+ * Muestra el formulario de edición de una reserva
+ */
+public function edit($id)
+{
+    $reserva = Reserva::with(['mascota', 'detalles.servicio'])
+        ->findOrFail($id);
+
+    // Verificar que la reserva pertenece al usuario actual
+    $cliente = Cliente::where('id_persona', Auth::user()->id_persona)->first();
+    
+    if ($reserva->id_cliente !== $cliente->id_cliente) {
+        return redirect()->route('reservas.mis-reservas')
+            ->with('error', 'No tienes permiso para editar esta reserva.');
+    }
+
+    // Solo permitir editar reservas futuras
+    if ($reserva->fecha < Carbon::now()->toDateString()) {
+        return redirect()->route('reservas.mis-reservas')
+            ->with('error', 'No puedes editar reservas pasadas.');
+    }
+
+    $servicios = Servicio::where('estado', 'A')
+        ->where('tipo_servicio', '!=', 'Adicional')
+        ->get();
+
+    $adicionales = Servicio::where('estado', 'A')
+        ->where('tipo_servicio', 'Adicional')
+        ->get();
+
+    return view('reservas.editar', compact('reserva', 'servicios', 'adicionales'));
+}
+
+/**
+ * Actualiza una reserva existente
+ */
+public function update(Request $request, $id)
+{
+    $reserva = Reserva::findOrFail($id);
+
+    // Verificar que la reserva pertenece al usuario actual
+    $cliente = Cliente::where('id_persona', Auth::user()->id_persona)->first();
+    
+    if ($reserva->id_cliente !== $cliente->id_cliente) {
+        return redirect()->route('reservas.mis-reservas')
+            ->with('error', 'No tienes permiso para editar esta reserva.');
+    }
+
+    // Solo permitir editar reservas futuras
+    if ($reserva->fecha < Carbon::now()->toDateString()) {
+        return redirect()->route('reservas.mis-reservas')
+            ->with('error', 'No puedes editar reservas pasadas.');
+    }
+
+    // Actualizar los datos de la reserva
+    $reserva->enfermedad = $request->has('enfermedad') ? $request->input('enfermedad') : 0;
+    $reserva->vacuna = $request->has('vacuna') ? $request->input('vacuna') : 0;
+    $reserva->alergia = $request->has('alergia') ? $request->input('alergia') : 0;
+    $reserva->descripcion_alergia = $request->input('descripcion_alergia');
+    
+    // Solo agregar usuario_actualizacion si existe en la tabla
+    if (\Schema::hasColumn('reservas', 'usuario_actualizacion')) {
+        $reserva->usuario_actualizacion = Auth::user()->correo;
+    }
+    
+    if (\Schema::hasColumn('reservas', 'fecha_actualizacion')) {
+        $reserva->fecha_actualizacion = Carbon::now();
+    }
+    
+    $reserva->save();
+
+    return redirect()->route('reservas.mis-reservas')
+        ->with('success', 'Reserva actualizada correctamente.');
+}
+
 }

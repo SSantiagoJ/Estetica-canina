@@ -52,7 +52,10 @@ class PerfilController extends Controller
         $cliente = Cliente::where('id_persona', $persona->id_persona)->first();
 
         if (!$cliente) {
-            return response()->json(['error' => 'Cliente no encontrado'], 404);
+            $cliente = new Cliente();
+            $cliente->id_persona = $persona->id_persona;
+            $cliente->fecha_creacion = now();
+            $cliente->save();
         }
 
         $mascota = new Mascota();
@@ -91,7 +94,6 @@ class PerfilController extends Controller
             return response()->json(['error' => 'Mascota no encontrada'], 404);
         }
 
-        // Verificar que la mascota pertenece al cliente del usuario actual
         $persona = $usuario->persona;
         $cliente = Cliente::where('id_persona', $persona->id_persona)->first();
 

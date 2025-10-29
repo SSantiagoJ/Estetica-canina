@@ -24,6 +24,11 @@
                     <span>Genera tu Reserva</span>
                 </a>
 
+                <a href="{{ route('reservas.mis-reservas') }}" class="nav-link">
+                    <i class="fas fa-history"></i>
+                    <span>Mis Reservas</span>
+                </a>
+
                 <a href="{{ url('/perfil') }}" class="nav-link">
                     <i class="fas fa-user"></i>
                     <span>Perfil</span>
@@ -82,6 +87,11 @@
             <a href="{{ route('reservas.seleccionMascota') }}" class="nav-link-mobile nav-link-mobile-primary">
                 <i class="fas fa-calendar-plus"></i>
                 <span>Genera tu Reserva</span>
+            </a>
+
+            <a href="{{ route('reservas.mis-reservas') }}" class="nav-link-mobile">
+                <i class="fas fa-history"></i>
+                <span>Mis Reservas</span>
             </a>
 
             <a href="{{ url('/perfil') }}" class="nav-link-mobile">

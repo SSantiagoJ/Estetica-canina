@@ -1,0 +1,957 @@
+/* Mis Reservas Styles */
+.mis-reservas-container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.reservas-header {
+    background: linear-gradient(135deg, #ff9f43 0%, #ff8c3a 100%);
+    padding: 2rem 3rem;
+    margin: 0;
+}
+
+.reservas-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+    margin: 0;
+}
+
+/* Tabs */
+.tabs-container {
+    display: flex;
+    gap: 2rem;
+    padding: 1.5rem 3rem 0;
+    background-color: #fef5f0;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.tab-button {
+    background: none;
+    border: none;
+    padding: 0.75rem 0;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #666;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.tab-button:hover {
+    color: #4a5568;
+}
+
+.tab-button.active {
+    color: #4a5568;
+    font-weight: 600;
+}
+
+.tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: #4a5568;
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+    padding: 2rem 3rem;
+    background-color: #fef5f0;
+    min-height: 500px;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Reservas List */
+.reservas-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Reserva Card */
+.reserva-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.3s ease;
+}
+
+.reserva-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.reserva-info {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex: 1;
+}
+
+.pet-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #f0f0f0;
+}
+
+.reserva-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.pet-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2c2c2c;
+    margin: 0;
+}
+
+.reserva-fecha {
+    font-size: 0.95rem;
+    color: #666;
+    margin: 0;
+}
+
+.reserva-servicios {
+    font-size: 0.9rem;
+    color: #888;
+    margin: 0;
+}
+
+/* Action Buttons */
+.btn-action {
+    padding: 0.65rem 1.75rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-editar {
+    background-color: #4F5C92;
+    color: white;
+}
+
+.btn-editar:hover {
+    background-color: #607cae;
+    transform: translateY(-1px);
+}
+
+.btn-detalles {
+    background-color: #4F5C92;
+    color: white;
+}
+
+.btn-detalles:hover {
+    background-color: #607cae;
+    transform: translateY(-1px);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #999;
+}
+
+.empty-state p {
+    font-size: 1.1rem;
+}
+
+/* Modal Styles */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    animation: modalSlideIn 0.3s ease-out;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-title {
+    background: linear-gradient(135deg, #4F5C92 0%, #3d4a7a 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    margin: 0;
+    border-radius: 16px 16px 0 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.modal-subtitle {
+    background: #e8eaf6;
+    color: #4F5C92;
+    padding: 0.75rem 2rem;
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+.modal-body {
+    padding: 2rem;
+    max-height: calc(90vh - 250px);
+    overflow-y: auto;
+    flex: 1;
+}
+
+.modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: #4F5C92;
+    border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: #3d4a7a;
+}
+
+.modal-section {
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c2c2c;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.health-check {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.health-check-alergia {
+    margin-bottom: 1rem;
+}
+
+.health-check-alergia .health-check {
+    margin-bottom: 0;
+}
+
+.health-check-alergia .alergia-input {
+    margin-top: 0.75rem;
+    margin-left: 0;
+    width: 100%;
+}
+
+.health-icon {
+    color: #4F5C92;
+    font-size: 1.25rem;
+    width: 30px;
+    text-align: center;
+}
+
+.health-check label {
+    flex: 1;
+    margin: 0;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.radio-group {
+    display: flex;
+    gap: 1rem;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin: 0 !important;
+}
+
+.radio-label input[type="radio"] {
+    cursor: pointer;
+    accent-color: #4F5C92;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #4F5C92;
+    box-shadow: 0 0 0 3px rgba(79, 92, 146, 0.1);
+}
+
+.form-control::placeholder {
+    color: #999;
+    opacity: 1;
+}
+
+.alergia-input {
+    margin-top: 0.75rem;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1.5rem 2rem;
+    background-color: #f8f9fa;
+    border-radius: 0 0 16px 16px;
+}
+
+.btn-cancelar {
+    padding: 0.75rem 2rem;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-cancelar:hover {
+    background-color: #5a6268;
+    transform: translateY(-1px);
+}
+
+.btn-actualizar {
+    padding: 0.75rem 2rem;
+    background-color: #4F5C92;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-actualizar:hover {
+    background-color: #3d4a7a;
+    transform: translateY(-1px);
+}
+
+/* Modal de Detalles */
+.modal-detalles {
+    max-width: 700px;
+}
+
+.modal-content.modal-detalles {
+    max-width: 700px;
+}
+
+.modal-header-detalles {
+    background: linear-gradient(135deg, #4F5C92 0%, #3d4a7a 100%);
+    padding: 1.5rem 2rem;
+    border-radius: 16px 16px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-title-detalles {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.btn-close-modal {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.btn-close-modal:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+.modal-body-detalles {
+    padding: 2rem;
+    max-height: calc(90vh - 200px);
+    overflow-y: auto;
+    flex: 1;
+}
+
+.modal-body-detalles::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-body-detalles::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.modal-body-detalles::-webkit-scrollbar-thumb {
+    background: #4F5C92;
+    border-radius: 10px;
+}
+
+.modal-body-detalles::-webkit-scrollbar-thumb:hover {
+    background: #3d4a7a;
+}
+
+.detalle-section {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.detalle-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.mascota-info-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+}
+
+.mascota-avatar-grande {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.mascota-nombre-grande {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #2c2c2c;
+    margin: 0 0 0.5rem 0;
+}
+
+.detalle-fecha-hora {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #666;
+    font-size: 1rem;
+    margin: 0.25rem 0;
+}
+
+.detalle-fecha-hora i {
+    color: #4F5C92;
+    width: 20px;
+}
+
+.section-subtitle {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2c2c2c;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.section-subtitle i {
+    color: #4F5C92;
+}
+
+.servicios-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.servicio-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #4F5C92;
+}
+
+.servicio-info {
+    flex: 1;
+}
+
+.servicio-nombre {
+    font-weight: 600;
+    color: #2c2c2c;
+    font-size: 1rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.servicio-detalles {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.servicio-detalle-linea {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.servicio-precio-total {
+    font-weight: 700;
+    color: #4F5C92;
+    font-size: 1.1rem;
+    text-align: right;
+    margin-left: 1rem;
+}
+
+.total-resumen {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.total-row:last-child {
+    border-bottom: none;
+}
+
+.total-label {
+    font-size: 1rem;
+    color: #666;
+}
+
+.total-valor {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2c2c2c;
+}
+
+.total-final {
+    margin-top: 0.5rem;
+    padding-top: 1rem;
+    border-top: 2px solid #4F5C92 !important;
+    background: linear-gradient(135deg, #4F5C92 0%, #3d4a7a 100%);
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.total-label-final {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: white;
+}
+
+.total-monto-final {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+}
+
+.recomendaciones-section {
+    background: linear-gradient(135deg, #fff8f0 0%, #fff3e6 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 2px dashed #ff9f43;
+}
+
+.recomendacion-intro {
+    color: #666;
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+.recomendaciones-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.recomendacion-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.recomendacion-servicio {
+    flex: 1;
+}
+
+.recomendacion-nombre {
+    font-weight: 600;
+    color: #2c2c2c;
+    margin-bottom: 0.25rem;
+}
+
+.recomendacion-tiempo {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.recomendacion-fecha {
+    text-align: right;
+}
+
+.recomendacion-fecha-label {
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 0.25rem;
+}
+
+.recomendacion-fecha-valor {
+    font-weight: 700;
+    color: #ff9f43;
+    font-size: 1rem;
+}
+
+.modal-footer-detalles {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1.5rem 2rem;
+    background-color: #f8f9fa;
+    border-radius: 0 0 16px 16px;
+}
+
+.btn-cerrar-detalles {
+    padding: 0.75rem 2rem;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-cerrar-detalles:hover {
+    background-color: #5a6268;
+    transform: translateY(-1px);
+}
+
+.btn-nueva-reserva {
+    padding: 0.75rem 2rem;
+    background: linear-gradient(135deg, #ff9f43 0%, #ff8c3a 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-nueva-reserva:hover {
+    background: linear-gradient(135deg, #ff8c3a 0%, #ff7a27 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 159, 67, 0.3);
+}
+
+/* Footer */
+.footer {
+    background-color: #2E324D;
+    color: white;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    padding: 40px 20px;
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.footer-column {
+    flex: 1;
+    min-width: 250px;
+    margin: 20px;
+}
+
+.footer h3 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    color: #fff;
+}
+
+.footer p {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #ddd;
+}
+
+/* Redes sociales */
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    color: white;
+    text-decoration: none;
+    font-size: 1.25rem;
+    transition: all 0.3s ease;
+}
+
+.social-link:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .reservas-header {
+        padding: 1.5rem 1.5rem;
+    }
+
+    .reservas-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .tabs-container {
+        padding: 1rem 1.5rem 0;
+        gap: 1rem;
+    }
+
+    .tab-content {
+        padding: 1.5rem;
+    }
+
+    .reserva-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .reserva-info {
+        width: 100%;
+    }
+
+    .btn-action {
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Modal responsive */
+    .modal-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+
+    .modal-title {
+        font-size: 1.1rem;
+        padding: 1rem 1.5rem;
+    }
+
+    .modal-subtitle {
+        padding: 0.5rem 1.5rem;
+        font-size: 0.85rem;
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+    }
+
+    .health-check {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .radio-group {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .btn-cancelar,
+    .btn-actualizar {
+        width: 100%;
+    }
+
+    /* Modal detalles responsive */
+    .modal-detalles {
+        width: 95%;
+    }
+
+    .modal-header-detalles {
+        padding: 1rem 1.5rem;
+    }
+
+    .modal-title-detalles {
+        font-size: 1.2rem;
+    }
+
+    .modal-body-detalles {
+        padding: 1.5rem;
+    }
+
+    .mascota-info-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .mascota-avatar-grande {
+        width: 80px;
+        height: 80px;
+    }
+
+    .mascota-nombre-grande {
+        font-size: 1.5rem;
+    }
+
+    .servicio-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .servicio-precio-total {
+        margin-left: 0;
+        margin-top: 0.5rem;
+        font-size: 1.2rem;
+    }
+
+    .total-resumen {
+        padding: 0.75rem;
+    }
+
+    .total-row {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .total-final {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+
+    .recomendacion-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .recomendacion-fecha {
+        text-align: left;
+        width: 100%;
+    }
+
+    .modal-footer-detalles {
+        flex-direction: column;
+    }
+
+    .btn-cerrar-detalles,
+    .btn-nueva-reserva {
+        width: 100%;
+        justify-content: center;
+    }
+}

@@ -109,4 +109,15 @@ Route::get('/reservas/boleta/{id_pago}', [ReservaController::class, 'generarBole
     \Illuminate\Support\Facades\File::ensureDirectoryExists(storage_path('app/public/boletas'));
     $pdf->save($path);
     return 'PDF generado en: ' . $path;
+
+    
+});
+
+// MIS RESERVAS
+Route::middleware(['auth'])->group(function () {
+    // Nuevas rutas para Mis Reservas
+    Route::get('/mis-reservas', [ReservaController::class, 'misReservas'])->name('reservas.mis-reservas');
+    Route::get('/reservas/{id}', [ReservaController::class, 'show'])->name('reservas.show');
+    Route::get('/reservas/{id}/editar', [ReservaController::class, 'edit'])->name('reservas.edit');
+    Route::put('/reservas/{id}', [ReservaController::class, 'update'])->name('reservas.update');
 });

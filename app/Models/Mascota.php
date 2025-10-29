@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Mascota extends Model
 {
@@ -15,6 +16,11 @@ class Mascota extends Model
         'especie','peso','descripcion','id_cliente','usuario_creacion'
     ];
 
+  
+    protected $dates = [
+        'fecha_nacimiento',
+    ];
+
     // 🔗 Relaciones
     public function cliente()
     {
@@ -24,5 +30,16 @@ class Mascota extends Model
     public function reservas()
     {
         return $this->hasMany(Reserva::class, 'id_mascota', 'id_mascota');
+    }
+
+ 
+    public function getEdadAttribute()
+    {
+        if (empty($this->fecha_nacimiento)) {
+            return null;
+        }
+
+        $dt = $this->fecha_nacimiento instanceof Carbon ? $this->fecha_nacimiento : Carbon::parse($this->fecha_nacimiento);
+        return $dt->age;
     }
 }

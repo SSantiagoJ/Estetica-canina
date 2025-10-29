@@ -251,6 +251,6 @@
 
 @endsection
 
-    @section('scripts')
+    @push('scripts')
         <script src="{{ asset('js/perfil.js') }}"></script>
-    @endsection
+    @endpush
