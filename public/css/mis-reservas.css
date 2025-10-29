@@ -6,7 +6,7 @@
 }
 
 .reservas-header {
-    background: linear-gradient(135deg, #ff9f43 0%, #ff8c3a 100%);
+    background: linear-gradient(135deg, #434cff 0%, #3a51ff 100%);
     padding: 2rem 3rem;
     margin: 0;
 }
@@ -641,7 +641,7 @@
     background: linear-gradient(135deg, #fff8f0 0%, #fff3e6 100%);
     padding: 1.5rem;
     border-radius: 12px;
-    border: 2px dashed #ff9f43;
+    border: 2px dashed #4359ff;
 }
 
 .recomendacion-intro {
@@ -693,7 +693,7 @@
 
 .recomendacion-fecha-valor {
     font-weight: 700;
-    color: #ff9f43;
+    color: #5043ff;
     font-size: 1rem;
 }
 
@@ -725,7 +725,7 @@
 
 .btn-nueva-reserva {
     padding: 0.75rem 2rem;
-    background: linear-gradient(135deg, #ff9f43 0%, #ff8c3a 100%);
+    background: linear-gradient(135deg, #434cff 0%, #3a51ff 100%);
     color: white;
     border: none;
     border-radius: 8px;
@@ -740,7 +740,7 @@
 }
 
 .btn-nueva-reserva:hover {
-    background: linear-gradient(135deg, #ff8c3a 0%, #ff7a27 100%);
+    background: linear-gradient(135deg, #3a47ff 0%, #274bff 100%);
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(255, 159, 67, 0.3);
 }

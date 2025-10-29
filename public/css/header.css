@@ -7,7 +7,7 @@ body {
 /* Haciendo los selectores más específicos y agregando !important para evitar conflictos */
 /* Header Principal */
 header.site-header {
-  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%) !important;
+  background: linear-gradient(135deg, #4144ff 0%, #4144ff 100%) !important;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
   position: sticky !important;
   top: 0 !important;
@@ -58,7 +58,7 @@ header.site-header {
 }
 
 .site-header .logo-icon i {
-  color: #f97316 !important;
+  color: #4144ff !important;
   font-size: 1.5rem !important;
 }
 
@@ -99,8 +99,8 @@ header.site-header {
 
 .site-header .nav-link-primary {
   background: white !important;
-  color: #f97316 !important;
-  padding: 0.625rem 1.25rem !important;
+  color: #4144ff !important;
+  padding: 0.6251rem 1.25rem !important;
   font-weight: 600 !important;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
 }
@@ -147,7 +147,7 @@ header.site-header {
 }
 
 .site-header .user-role {
-  color: #fed7aa !important;
+  color: #aabcfe !important;
   font-size: 0.75rem !important;
 }
 
@@ -162,7 +162,7 @@ header.site-header {
 
 .site-header .nav-link-secondary:hover {
   background: white !important;
-  color: #f97316 !important;
+  color: #4144ff !important;
 }
 
 /* Botón Menú Móvil */
