@@ -20,22 +20,31 @@ class Reserva extends Model
 
     // 🔗 Relaciones
     public function mascota()
+    {
+        return $this->belongsTo(Mascota::class, 'id_mascota', 'id_mascota');
+    }
+
+    public function cliente()
+    {
+        return $this->belongsTo(Cliente::class, 'id_cliente', 'id_cliente');
+    }
+
+    public function usuario()
 {
-    return $this->belongsTo(Mascota::class, 'id_mascota', 'id_mascota');
+    return $this->belongsTo(\App\Models\Usuario::class, 'id_usuario', 'id_usuario');
 }
 
-public function detalles()
-{
-    return $this->hasMany(DetalleReserva::class, 'id_reserva', 'id_reserva');
+    
+
+    public function detalles()
+    {
+        return $this->hasMany(DetalleReserva::class, 'id_reserva', 'id_reserva');
+    }
+
+    // Relación muchos a muchos opcional
+    public function servicios()
+    {
+        return $this->belongsToMany(Servicio::class, 'detalles_reservas', 'id_reserva', 'id_servicio');
+    }
 }
 
-public function servicios()
-{
-    return $this->belongsToMany(Servicio::class, 'detalles_reservas', 'id_reserva', 'id_servicio');
-}
-public function cliente()
-{
-    return $this->belongsTo(Cliente::class, 'id_cliente', 'id_cliente');
-}
-
-}

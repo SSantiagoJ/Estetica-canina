@@ -3,12 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 class Usuario extends Authenticatable
 {
-    protected $table = 'usuarios';          //  tabla
-    protected $primaryKey = 'id_usuario';   // tu PK real
-    public $timestamps = false;             //si no usas created_at / updated_at
+    use Notifiable; // ✅ Esto debe ir aquí, justo dentro de la clase, al inicio
+
+    protected $table = 'usuarios';
+    protected $primaryKey = 'id_usuario';
+    public $timestamps = false;
 
     protected $fillable = [
         'id_persona',
@@ -29,19 +32,26 @@ class Usuario extends Authenticatable
     {
         return $this->contrasena;
     }
+
     public function getAuthIdentifierName()
     {
         return 'id_usuario';
     }
-    
-    // IMPORTANTE: Esta relación debe existir
+
+    // 🔗 Relaciones
     public function persona()
     {
         return $this->belongsTo(Persona::class, 'id_persona', 'id_persona');
     }
-    
+
     public function rol()
     {
         return $this->belongsTo(Rol::class, 'id_rol', 'id_rol');
+    }
+
+    // ⚡️ Campo usado para enviar correos de notificación
+    public function routeNotificationForMail($notification)
+    {
+        return $this->correo;
     }
 }
