@@ -8,6 +8,13 @@ use App\Http\Controllers\GestorController;
 use App\Http\Controllers\TratamientosController;
 use App\Http\Controllers\CalificacionController;
 
+// Ruta raíz - Mostrar menú
+Route::get('/', function () {
+    return view('menu', [
+        'calificaciones' => app(CalificacionController::class)->calificacionesDestacadas()
+    ]);
+})->name('home');
+
 // Prueba
 Route::get('/pruebaPaypal', function () {
     return view('pruebaPaypal');
