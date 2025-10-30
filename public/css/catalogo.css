@@ -334,24 +334,14 @@
 .social-icons {
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 15px;
 }
-
-.social-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    color: white;
-    text-decoration: none;
-    font-size: 1.25rem;
-    transition: all 0.3s ease;
+.social-icons img {
+    width: 30px;
+    height: 30px;
+    filter: brightness(0) invert(1); /* convierte íconos a blanco */
+    transition: transform 0.3s ease;
 }
-
-.social-link:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+.social-icons img:hover {
     transform: scale(1.1);
 }

@@ -102,6 +102,7 @@
                 if (cards.length === 0) return;
 
                 const cardWidth = cards[0].offsetWidth + 20; // 20px gap
+                let scrollInterval;
                 let isDown = false;
                 let startX;
                 let scrollLeft;
@@ -122,10 +123,39 @@
                     });
                 });
 
+                // Auto-scroll (opcional)
+                const startAutoScroll = () => {
+                    scrollInterval = setInterval(() => {
+                        if (track.scrollLeft >= track.scrollWidth - track.clientWidth) {
+                            track.scrollTo({ left: 0, behavior: 'smooth' });
+                        } else {
+                            track.scrollBy({ left: cardWidth, behavior: 'smooth' });
+                        }
+                    }, 3000);
+                };
+
+                // Pausar auto-scroll al hover
+                categoria.addEventListener('mouseenter', () => {
+                    if (scrollInterval) {
+                        clearInterval(scrollInterval);
+                        scrollInterval = null;
+                    }
+                });
+
+                categoria.addEventListener('mouseleave', () => {
+                    if (!scrollInterval && !isDown) {
+                        startAutoScroll();
+                    }
+                });
+
                 // Drag to scroll
                 track.style.cursor = 'grab';
 
                 track.addEventListener('mousedown', (e) => {
+                    if (scrollInterval) {
+                        clearInterval(scrollInterval);
+                        scrollInterval = null;
+                    }
                     isDown = true;
                     track.style.cursor = 'grabbing';
                     startX = e.pageX - track.offsetLeft;
@@ -137,11 +167,6 @@
                     track.style.cursor = 'grab';
                 });
 
-                track.addEventListener('mouseleave', () => {
-                    isDown = false;
-                    track.style.cursor = 'grab';
-                });
-
                 track.addEventListener('mousemove', (e) => {
                     if (!isDown) return;
                     e.preventDefault();
@@ -149,6 +174,9 @@
                     const walk = (x - startX) * 2;
                     track.scrollLeft = scrollLeft - walk;
                 });
+
+                // Iniciar auto-scroll
+                startAutoScroll();
             });
         });
     </script>

@@ -37,9 +37,22 @@
                                 <label class="servicio-card">
                                     <input type="checkbox" name="servicios[]" value="{{ $servicio->id_servicio }}">
                                     <div class="card-body text-center">
-                                        <img src="{{ asset('images/servicios/' . $servicio->imagen_referencial) }}"
-                                             alt="{{ $servicio->nombre_servicio }}"
-                                             class="servicio-img">
+                                        @if($servicio->imagen_referencial)
+                                            @php
+                                                if (str_starts_with($servicio->imagen_referencial, 'servicios/')) {
+                                                    $imagenUrl = asset('storage/' . $servicio->imagen_referencial);
+                                                } else {
+                                                    $imagenUrl = asset('images/servicios/' . $servicio->imagen_referencial);
+                                                }
+                                            @endphp
+                                            <img src="{{ $imagenUrl }}"
+                                                 alt="{{ $servicio->nombre_servicio }}"
+                                                 class="servicio-img">
+                                        @else
+                                            <img src="{{ asset('images/servicios/default.jpg') }}"
+                                                 alt="{{ $servicio->nombre_servicio }}"
+                                                 class="servicio-img">
+                                        @endif
                                         <h5 class="mt-2">{{ $servicio->nombre_servicio }}</h5>
                                         <p class="text-muted">S/ {{ number_format($servicio->costo, 2) }}</p>
                                     </div>
@@ -58,9 +71,22 @@
                                 <label class="servicio-card">
                                     <input type="checkbox" name="adicionales[]" value="{{ $servicio->id_servicio }}">
                                     <div class="card-body text-center">
-                                        <img src="{{ asset('images/servicios/' . $servicio->imagen_referencial) }}"
-                                             alt="{{ $servicio->nombre_servicio }}"
-                                             class="servicio-img">
+                                        @if($servicio->imagen_referencial)
+                                            @php
+                                                if (str_starts_with($servicio->imagen_referencial, 'servicios/')) {
+                                                    $imagenUrl = asset('storage/' . $servicio->imagen_referencial);
+                                                } else {
+                                                    $imagenUrl = asset('images/servicios/' . $servicio->imagen_referencial);
+                                                }
+                                            @endphp
+                                            <img src="{{ $imagenUrl }}"
+                                                 alt="{{ $servicio->nombre_servicio }}"
+                                                 class="servicio-img">
+                                        @else
+                                            <img src="{{ asset('images/servicios/default.jpg') }}"
+                                                 alt="{{ $servicio->nombre_servicio }}"
+                                                 class="servicio-img">
+                                        @endif
                                         <h5 class="mt-2">{{ $servicio->nombre_servicio }}</h5>
                                         <p class="text-muted">S/ {{ number_format($servicio->costo, 2) }}</p>
                                     </div>

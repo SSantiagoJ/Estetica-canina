@@ -5,8 +5,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\GestorController;
-use App\Http\Controllers\TratamientosController;
-use App\Http\Controllers\CalificacionController;
+use App\Http\Controllers\ServicioController;
+use App\Http\Controllers\CatalogoController;
 
 // Prueba
 Route::get('/pruebaPaypal', function () {
@@ -49,16 +49,14 @@ Route::middleware(['auth'])->group(function () {
         }
         return view('admin_dashboard');
     });
-    Route::get('/catalogo', function () {
-    // Si el archivo es 'resources/views/catalogo.blade.php'
-    return view('catalogo');
-    });
+    
+    Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo');
 
 // menu
 Route::get('/menu', function () {
-    return view('menu', [
-        'calificaciones' => app(CalificacionController::class)->calificacionesDestacadas()
-    ]);
+    // Si el archivo es 'resources/views/catalogo.blade.php'
+    return view('menu');
+
 });
 
 
@@ -70,9 +68,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/reservas/seleccion-servicio', [ReservaController::class, 'seleccionServicio'])
         ->name('reservas.seleccionServicio');
 
-    Route::match(['get', 'post'], '/reservas/pago', [ReservaController::class, 'pago'])
-    ->name('reservas.pago');
-
+    Route::post('/reservas/pago', [ReservaController::class, 'pago'])
+        ->name('reservas.pago');
 
     Route::post('/reservas/finalizar', [ReservaController::class, 'finalizar'])
         ->name('reservas.finalizar');
@@ -99,7 +96,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/servicios', [GestorController::class, 'servicios'])->name('admin.servicios');
 });
 
-Route::post('/admin/reservas/update', [App\Http\Controllers\GestorController::class, 'update'])
+// Rutas CRUD de Servicios
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/servicios/crear', [ServicioController::class, 'create'])->name('admin.servicios.create');
+    Route::post('/admin/servicios', [ServicioController::class, 'store'])->name('admin.servicios.store');
+    Route::get('/admin/servicios/{id}/editar', [ServicioController::class, 'edit'])->name('admin.servicios.edit');
+    Route::put('/admin/servicios/{id}', [ServicioController::class, 'update'])->name('admin.servicios.update');
+    Route::delete('/admin/servicios/{id}', [ServicioController::class, 'destroy'])->name('admin.servicios.destroy');
+    Route::post('/admin/servicios/upload-image', [ServicioController::class, 'uploadImage'])->name('admin.servicios.uploadImage');
+});
+
+Route::post('/admin/reservas/update', [GestorController::class, 'update'])
     ->name('admin.reservas.update');
 
     //Boleta
@@ -122,19 +129,4 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/mis-reservas', [ReservaController::class, 'misReservas'])->name('reservas.mis-reservas');
     Route::get('/reservas/{id}', [ReservaController::class, 'show'])->name('reservas.show');
     Route::get('/reservas/{id}/editar', [ReservaController::class, 'edit'])->name('reservas.edit');
-    Route::put('/reservas/{id}', [ReservaController::class, 'update'])->name('reservas.update');
-});
-
-// Rutas para Tratamientos
-Route::middleware(['auth'])->group(function () {
-    Route::get('/mis-tratamientos', [TratamientosController::class, 'misTratamientos'])
-        ->name('tratamientos.index');
-});
-
-// Rutas para Calificaciones
-Route::middleware(['auth'])->group(function () {
-    Route::post('/calificacion/guardar', [CalificacionController::class, 'guardarCalificacion'])
-        ->name('calificacion.guardar');
-    Route::get('/calificaciones-destacadas', [CalificacionController::class, 'calificacionesDestacadas'])
-        ->name('calificaciones.destacadas');
 });

@@ -45,7 +45,11 @@ class GestorController extends Controller
     // Gestor de Servicios
     public function servicios()
     {
-        $servicios = Servicio::all();
+        $servicios = Servicio::orderBy('categoria')
+            ->orderBy('nombre_servicio')
+            ->get()
+            ->groupBy('categoria');
+        
         return view('admin_servicios', compact('servicios'));
     }
       public function update(Request $request)

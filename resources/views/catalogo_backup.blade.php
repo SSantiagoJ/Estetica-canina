@@ -1,26 +1,36 @@
+{{-- resources/views/catalogo.blade.php --}}
 
+@extends('layouts.app')
 
+@section('title', 'Catálogo de Servicios')
 
+@section('header')
+    @include('partials.header')
+@endsection
 
-<?php $__env->startSection('title', 'Catálogo de Servicios'); ?>
-
-<?php $__env->startSection('header'); ?>
-    <?php echo $__env->make('partials.header', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
-<?php $__env->stopSection(); ?>
-
-<?php $__env->startSection('content'); ?>
-<link rel="stylesheet" href="<?php echo e(asset('css/catalogo.css')); ?>">
+@section('content')
+<link rel="stylesheet" href="{{ asset('css/catalogo.css') }}">
     <main class="main-catalogo-page">
         <section class="catalogo-servicios">
 
-            
+            @php
+                $descripcionesCategorias = [
+                    'Baños' => 'Desde baños básicos de limpieza hasta terapéuticos y relajantes con productos hipoalergénicos, diseñados para cada tipo de piel y pelaje, dejando a tu mascota fresca, suave y con un aroma encantador.',
+                    'Peluquería' => 'Cortes profesionales adaptados a cada raza y estilo, desde un look clásico hasta uno moderno y divertido. Resaltamos la belleza natural de tu mascota, cuidando siempre su comodidad.',
+                    'Tratamientos' => 'Tratamientos especializados para el cuidado integral de tu mascota, desde spa hasta tratamientos dermatológicos y de belleza avanzada.',
+                    'Servicios Adicionales' => 'Servicios complementarios para el bienestar y cuidado completo de tu mascota.'
+                ];
+            @endphp
+
+            @forelse($servicios as $categoria => $listaServicios)
+            {{-- CATEGORÍA DINÁMICA --}}
             <div class="categoria-item">
                 <div class="categoria-row">
                     <div class="categoria-info">
-                        <h2 class="categoria-titulo">Baños</h2>
-                        <p class="categoria-descripcion">Desde baños básicos de limpieza hasta terapéuticos y relajantes con
-                            productos hipoalergénicos, diseñados para cada tipo de piel y pelaje, dejando a tu mascota
-                            fresca, suave y con un aroma encantador.</p>
+                        <h2 class="categoria-titulo">{{ $categoria }}</h2>
+                        <p class="categoria-descripcion">
+                            {{ $descripcionesCategorias[$categoria] ?? 'Servicios de calidad para tu mascota.' }}
+                        </p>
                     </div>
 
                     <div class="carousel-container">
@@ -32,40 +42,28 @@
                         </button>
 
                         <div class="servicios-carrusel">
-                            <div class="servicio-card">
-                                <img src="<?php echo e(asset('images/bano_basico.jpg')); ?>" alt="Baño Básico">
-                                <div class="servicio-overlay">
-                                    <p class="servicio-nombre">Baño Básico</p>
-                                    <p class="servicio-detalle">Limpieza con shampoo neutro, secado y cepillado ligero.</p>
+                            @foreach($listaServicios as $servicio)
+                                @if($servicio->descripcion) {{-- Solo mostrar servicios con descripción --}}
+                                <div class="servicio-card">
+                                    @if($servicio->imagen_referencial)
+                                        @php
+                                            if (str_starts_with($servicio->imagen_referencial, 'servicios/')) {
+                                                $imagenUrl = asset('storage/' . $servicio->imagen_referencial);
+                                            } else {
+                                                $imagenUrl = asset('images/servicios/' . $servicio->imagen_referencial);
+                                            }
+                                        @endphp
+                                        <img src="{{ $imagenUrl }}" alt="{{ $servicio->nombre_servicio }}">
+                                    @else
+                                        <img src="{{ asset('images/servicios/default.jpg') }}" alt="{{ $servicio->nombre_servicio }}">
+                                    @endif
+                                    <div class="servicio-overlay">
+                                        <p class="servicio-nombre">{{ $servicio->nombre_servicio }}</p>
+                                        <p class="servicio-detalle">{{ $servicio->descripcion }}</p>
+                                    </div>
                                 </div>
-                            </div>
-
-                            <div class="servicio-card">
-                                <img src="<?php echo e(asset('images/bano_medicado.jpg')); ?>" alt="Baño Medicado">
-                                <div class="servicio-overlay">
-                                    <p class="servicio-nombre">Baño Medicado</p>
-                                    <p class="servicio-detalle">Uso de shampoo especial para piel sensible, resequedad o
-                                        alergias.</p>
-                                </div>
-                            </div>
-
-                            <div class="servicio-card">
-                                <img src="<?php echo e(asset('images/bano_antipulgas.jpg')); ?>" alt="Baño Antipulgas">
-                                <div class="servicio-overlay">
-                                    <p class="servicio-nombre">Baño Antipulgas</p>
-                                    <p class="servicio-detalle">Baño con productos específicos contra pulgas y garrapatas.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="servicio-card">
-                                <img src="<?php echo e(asset('images/bano_ozonoterapia.jpg')); ?>" alt="Baño Ozonoterapia">
-                                <div class="servicio-overlay">
-                                    <p class="servicio-nombre"> Baño Ozonoterapia</p>
-                                    <p class="servicio-detalle">Agua ozonizada que ayuda a desinfectar y regenerar la piel.
-                                    </p>
-                                </div>
-                            </div>
+                                @endif
+                            @endforeach
                         </div>
 
                         <button class="carousel-btn carousel-next" aria-label="Siguiente">
@@ -78,9 +76,16 @@
                 </div>
             </div>
 
+            @if(!$loop->last)
             <hr class="categoria-divider">
+            @endif
+            @empty
+            <div class="text-center py-5">
+                <h3>No hay servicios disponibles en este momento</h3>
+            </div>
+            @endforelse
 
-            
+            {{-- PELUQUERÍA --}}
             <div class="categoria-item">
                 <div class="categoria-row">
                     <div class="categoria-info">
@@ -100,7 +105,7 @@
 
                         <div class="servicios-carrusel">
                             <div class="servicio-card">
-                                <img src="<?php echo e(asset('images/corte_puppy.jpg')); ?>" alt="Corte Puppy">
+                                <img src="{{ asset('images/corte_puppy.jpg') }}" alt="Corte Puppy">
                                 <div class="servicio-overlay">
                                     <p class="servicio-nombre">Corte Puppy</p>
                                     <p class="servicio-detalle">Estilo que mantiene un look tierno y juvenil, con pelo
@@ -109,7 +114,7 @@
                             </div>
 
                             <div class="servicio-card">
-                                <img src="<?php echo e(asset('images/corte_teddybear.jpg')); ?>" alt="Corte Teddy Bear">
+                                <img src="{{ asset('images/corte_teddybear.jpg') }}" alt="Corte Teddy Bear">
                                 <div class="servicio-overlay">
                                     <p class="servicio-nombre">Corte Teddy Bear</p>
                                     <p class="servicio-detalle">Patas y cara redondeadas con estilo tierno y elegante
@@ -119,7 +124,7 @@
                             </div>
 
                             <div class="servicio-card">
-                                <img src="<?php echo e(asset('images/corte_exhibicion.jpg')); ?>" alt="Corte de Exhibición">
+                                <img src="{{ asset('images/corte_exhibicion.jpg') }}" alt="Corte de Exhibición">
                                 <div class="servicio-overlay">
                                     <p class="servicio-nombre">Corte de Exhibición</p>
                                     <p class="servicio-detalle">Estándares de raza para concursos y eventos.</p>
@@ -127,7 +132,7 @@
                             </div>
 
                             <div class="servicio-card">
-                                <img src="<?php echo e(asset('images/corte_creativo.jpg')); ?>" alt="Corte Creativo">
+                                <img src="{{ asset('images/corte_creativo.jpg') }}" alt="Corte Creativo">
                                 <div class="servicio-overlay">
                                     <p class="servicio-nombre">Corte Creativo</p>
                                     <p class="servicio-detalle">Diseños y colores personalizados para ocasiones especiales.
@@ -136,7 +141,7 @@
                             </div>
 
                             <div class="servicio-card">
-                                <img src="<?php echo e(asset('images/corte_verano.jpg')); ?>" alt="Corte Verano">
+                                <img src="{{ asset('images/corte_verano.jpg') }}" alt="Corte Verano">
                                 <div class="servicio-overlay">
                                     <p class="servicio-nombre">Corte de Verano</p>
                                     <p class="servicio-detalle">Rebajado para mayor frescura en temporadas calurosas.
@@ -157,7 +162,7 @@
 
             <hr class="categoria-divider">
 
-            
+            {{-- TRATAMIENTOS --}}
             <div class="categoria-item">
                 <div class="categoria-row">
                     <div class="categoria-info">
@@ -177,7 +182,7 @@
 
                         <div class="servicios-carrusel">
                             <div class="servicio-card">
-                                <img src="<?php echo e(asset('images/tratamiento_termal.png')); ?>" alt="Tratamiento Termal">
+                                <img src="{{ asset('images/tratamiento_termal.png') }}" alt="Tratamiento Termal">
                                 <div class="servicio-overlay">
                                     <p class="servicio-nombre">Tratamiento Termal</p>
                                     <p class="servicio-detalle">Mascarilla nutritiva que se aplica con calor húmedo. El
@@ -186,7 +191,7 @@
                             </div>
 
                             <div class="servicio-card">
-                                <img src="<?php echo e(asset('images/hidroterapia.png')); ?>" alt="Hidroterapia con Sales">
+                                <img src="{{ asset('images/hidroterapia.png') }}" alt="Hidroterapia con Sales">
                                 <div class="servicio-overlay">
                                     <p class="servicio-nombre">Hidroterapia con Sales Minerales</p>
                                     <p class="servicio-detalle">Bañera de hidromasaje que combina agua tibia y sales para
@@ -196,7 +201,7 @@
                             </div>
 
                             <div class="servicio-card">
-                                <img src="<?php echo e(asset('images/tratamiento_argan.png')); ?>" alt="Tratamiento Argan y Coco">
+                                <img src="{{ asset('images/tratamiento_argan.png') }}" alt="Tratamiento Argan y Coco">
                                 <div class="servicio-overlay">
                                     <p class="servicio-nombre">Tratamiento de Argán y Coco</p>
                                     <p class="servicio-detalle">Se usan aceites vegetales de alta calidad para un acabado de
@@ -205,7 +210,7 @@
                             </div>
 
                             <div class="servicio-card">
-                                <img src="<?php echo e(asset('images/tratamiento_anticaida.png')); ?>" alt="Tratamiento Anti Caída">
+                                <img src="{{ asset('images/tratamiento_anticaida.png') }}" alt="Tratamiento Anti Caída">
                                 <div class="servicio-overlay">
                                     <p class="servicio-nombre">Anti Caída y Mudanza</p>
                                     <p class="servicio-detalle">Uso de complejos vitamínicos y extractos naturales que
@@ -215,7 +220,7 @@
                             </div>
 
                             <div class="servicio-card">
-                                <img src="<?php echo e(asset('images/barro_mineral.png')); ?>" alt="Envoltura de Barro Minera">
+                                <img src="{{ asset('images/barro_mineral.png') }}" alt="Envoltura de Barro Minera">
                                 <div class="servicio-overlay">
                                     <p class="servicio-nombre">Envoltura de Barro Mineral</p>
                                     <p class="servicio-detalle">Aplicación de arcilla y barros terapéuticos naturales que
@@ -237,7 +242,7 @@
 
             <hr class="categoria-divider">
 
-            
+            {{-- SERVICIOS ADICIONALES --}}
             <div class="categoria-item">
                 <div class="categoria-row">
                     <div class="categoria-info">
@@ -256,7 +261,7 @@
 
                         <div class="servicios-carrusel">
                             <div class="servicio-card">
-                                <img src="<?php echo e(asset('images/corte_unas.jpg')); ?>" alt="Corte y Limado de Uñas">
+                                <img src="{{ asset('images/corte_unas.jpg') }}" alt="Corte y Limado de Uñas">
                                 <div class="servicio-overlay">
                                     <p class="servicio-nombre">Corte y Limado de Uñas</p>
                                     <p class="servicio-detalle">Corte de uñas para prevenir dolor y problemas posturales; el
@@ -265,7 +270,7 @@
                             </div>
 
                             <div class="servicio-card">
-                                <img src="<?php echo e(asset('images/limpieza_oidos.jpg')); ?>" alt="Limpieza de Oídos">
+                                <img src="{{ asset('images/limpieza_oidos.jpg') }}" alt="Limpieza de Oídos">
                                 <div class="servicio-overlay">
                                     <p class="servicio-nombre">Limpieza de Oídos</p>
                                     <p class="servicio-detalle">Retiro de cera y vello del canal auditivo para prevenir
@@ -274,7 +279,7 @@
                             </div>
 
                             <div class="servicio-card">
-                                <img src="<?php echo e(asset('images/cepillado_dientes.jpg')); ?>" alt="Cepillado de Dientes">
+                                <img src="{{ asset('images/cepillado_dientes.jpg') }}" alt="Cepillado de Dientes">
                                 <div class="servicio-overlay">
                                     <p class="servicio-nombre">Cepillado de Dientes</p>
                                     <p class="servicio-detalle">Limpieza bucal para reducir sarro superficial, prevenir el
@@ -283,7 +288,7 @@
                             </div>
 
                             <div class="servicio-card">
-                                <img src="<?php echo e(asset('images/hidratacion_patas.jpg')); ?>" alt="Hidratación de Almohadillas">
+                                <img src="{{ asset('images/hidratacion_patas.jpg') }}" alt="Hidratación de Almohadillas">
                                 <div class="servicio-overlay">
                                     <p class="servicio-nombre">Hidratación de Almohadillas</p>
                                     <p class="servicio-detalle">Aplicación de bálsamo especial para proteger y suavizar las
@@ -292,7 +297,7 @@
                             </div>
 
                             <div class="servicio-card">
-                                <img src="<?php echo e(asset('images/despigmentacion.png')); ?>" alt="Despigmentacion de Lagrimal">
+                                <img src="{{ asset('images/despigmentacion.png') }}" alt="Despigmentacion de Lagrimal">
                                 <div class="servicio-overlay">
                                     <p class="servicio-nombre">Despigmentacion de Lagrimal</p>
                                     <p class="servicio-detalle">Limpieza para reducir las manchas marrones causadas por las
@@ -421,5 +426,4 @@
             });
         });
     </script>
-<?php $__env->stopSection(); ?>
-<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\ProyectoSpa\Estetica-canina\resources\views/catalogo.blade.php ENDPATH**/ ?>
+@endsection

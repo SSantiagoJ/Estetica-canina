@@ -10,6 +10,12 @@
   box-sizing: border-box;
 }
 
+/* Sobreescribir para servicios */
+.admin-content.servicios-container {
+  padding-left: 270px !important;
+  padding-right: 30px !important;
+}
+
 /* ==== TABLA ==== */
 .table {
   background: #fff;
