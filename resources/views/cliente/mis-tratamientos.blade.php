@@ -1,69 +1,64 @@
 @extends('layouts.app')
 
+@section('header')
+    @include('partials.header')
+@endsection
+
+@section('title', 'Mis Tratamientos')
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/mis-reservas.css') }}">
+@endpush
+
 @section('content')
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-md-12">
-            <h2 class="mb-4">
-                <i class="fas fa-history"></i> Mis Tratamientos Comprados
-            </h2>
-            
-            @if($tratamientos->isEmpty())
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle"></i> 
-                    No tienes tratamientos registrados aún.
+<div class="mis-reservas-container">
+    <header class="reservas-header">
+        <h1><i class="fas fa-history"></i> Mis Tratamientos Comprados</h1>
+    </header>
+
+    <div class="reservas-list mt-3">
+        @forelse($tratamientos as $tratamiento)
+            <div class="reserva-card">
+                <div class="reserva-info">
+                    <img src="{{ asset('images/default-pet.png') }}" 
+                         alt="{{ $tratamiento->mascota_nombre }}" 
+                         class="pet-avatar">
+                    <div class="reserva-details">
+                        <h3 class="pet-name">{{ strtoupper($tratamiento->mascota_nombre) }}</h3>
+                        <p class="reserva-fecha">{{ \Carbon\Carbon::parse($tratamiento->fecha)->format('d/m/Y') }} <small class="text-muted">{{ $tratamiento->hora }}</small></p>
+                        <p class="reserva-servicios">{{ $tratamiento->nombre_servicio }} <span class="badge bg-primary">{{ $tratamiento->categoria }}</span></p>
+                    </div>
                 </div>
-            @else
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Mascota</th>
-                                <th>Tratamiento</th>
-                                <th>Categoría</th>
-                                <th>Precio</th>
-                                <th>Total</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($tratamientos as $tratamiento)
-                                <tr>
-                                    <td>
-                                        {{ \Carbon\Carbon::parse($tratamiento->fecha)->format('d/m/Y') }}
-                                        <br>
-                                        <small class="text-muted">{{ $tratamiento->hora }}</small>
-                                    </td>
-                                    <td>
-                                        <strong>{{ $tratamiento->mascota_nombre }}</strong>
-                                    </td>
-                                    <td>{{ $tratamiento->nombre_servicio }}</td>
-                                    <td>
-                                        <span class="badge bg-primary">
-                                            {{ $tratamiento->categoria }}
-                                        </span>
-                                    </td>
-                                    <td>S/. {{ number_format($tratamiento->precio_unitario, 2) }}</td>
-                                    <td>
-                                        <strong>S/. {{ number_format($tratamiento->total, 2) }}</strong>
-                                    </td>
-                                    <td>
-                                        @if($tratamiento->estado == 'A')
-                                            <span class="badge bg-success">Activo</span>
-                                        @elseif($tratamiento->estado == 'P')
-                                            <span class="badge bg-warning">Pendiente</span>
-                                        @else
-                                            <span class="badge bg-danger">Cancelado</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+
+                <div class="d-flex align-items-center gap-3">
+                    <div>
+                        <div>Precio: <strong>S/. {{ number_format($tratamiento->precio_unitario, 2) }}</strong></div>
+                        <div>Total: <strong>S/. {{ number_format($tratamiento->total, 2) }}</strong></div>
+                    </div>
+
+                    <div>
+                        @if($tratamiento->estado == 'A')
+                            <span class="badge bg-success">Activo</span>
+                        @elseif($tratamiento->estado == 'P')
+                            <span class="badge bg-warning">Pendiente</span>
+                        @else
+                            <span class="badge bg-danger">Cancelado</span>
+                        @endif
+                    </div>
+
+                    <div>
+                        @if(isset($tratamiento->id_reserva))
+                            <a href="{{ route('reservas.show', $tratamiento->id_reserva) }}" class="btn-action btn-detalles">Ver Reserva</a>
+                        @endif
+                    </div>
                 </div>
-            @endif
-        </div>
+            </div>
+        @empty
+            <div class="empty-state">
+                <p>No tienes tratamientos registrados aún.</p>
+            </div>
+        @endforelse
     </div>
 </div>
+
 @endsection

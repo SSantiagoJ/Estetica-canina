@@ -8,6 +8,13 @@ use App\Http\Controllers\GestorController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\CatalogoController;
 
+// Ruta raíz - Mostrar menú
+Route::get('/', function () {
+    return view('menu', [
+        'calificaciones' => app(CalificacionController::class)->calificacionesDestacadas()
+    ]);
+})->name('home');
+
 // Prueba
 Route::get('/pruebaPaypal', function () {
     return view('pruebaPaypal');
@@ -38,7 +45,9 @@ Route::get('/header', function () {
 //Proteccion mediante rol
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        return view('dashboard', [
+            'calificaciones' => app(\App\Http\Controllers\CalificacionController::class)->calificacionesDestacadas()
+        ]);
     })->name('dashboard'); 
 });
 
