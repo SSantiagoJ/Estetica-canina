@@ -57,11 +57,13 @@
 
     <!-- Historial de Servicios -->
     <div class="tab-content" id="historial">
+        {{-- Botón comentado temporalmente - ruta no definida
         <div class="d-flex justify-content-end mb-3">
             <a href="{{ route('tratamientos.index') }}" class="btn btn-outline-primary">
                 <i class="fas fa-history"></i> Ver Historial de Tratamientos
             </a>
         </div>
+        --}}
 
         <div class="reservas-list">
             @forelse($historialReservas as $reserva)
