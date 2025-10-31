@@ -28,13 +28,16 @@ class Reserva extends Model
     {
         return $this->belongsTo(Cliente::class, 'id_cliente', 'id_cliente');
     }
-
+ public function empleado()
+{
+    return $this->belongsTo(Empleado::class, 'id_empleado', 'id_empleado');
+}   
     public function usuario()
 {
     return $this->belongsTo(\App\Models\Usuario::class, 'id_usuario', 'id_usuario');
 }
 
-    
+
 
     public function detalles()
     {
@@ -46,5 +49,6 @@ class Reserva extends Model
     {
         return $this->belongsToMany(Servicio::class, 'detalles_reservas', 'id_reserva', 'id_servicio');
     }
+
 }
 

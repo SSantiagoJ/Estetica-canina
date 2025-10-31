@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\EmpleadoController;
 use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\GestorController;
@@ -138,4 +139,67 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/mis-reservas', [ReservaController::class, 'misReservas'])->name('reservas.mis-reservas');
     Route::get('/reservas/{id}', [ReservaController::class, 'show'])->name('reservas.show');
     Route::get('/reservas/{id}/editar', [ReservaController::class, 'edit'])->name('reservas.edit');
+});
+
+
+// ============================================
+// RUTAS PARA EMPLEADO - GESTIÓN DE TURNOS
+// ============================================
+Route::prefix('empleado')->name('empleado.')->group(function () {
+    
+    // Vista principal de gestionar turnos
+    Route::get('/gestionar-turnos', [EmpleadoController::class, 'gestionarTurnos'])
+        ->name('gestionar.turnos');
+    
+    // Crear nuevo turno
+    Route::post('/turnos', [EmpleadoController::class, 'storeTurno'])
+        ->name('turnos.store');
+    
+    // Actualizar turno existente
+    Route::put('/turnos/{id}', [EmpleadoController::class, 'updateTurno'])
+        ->name('turnos.update');
+    
+    // Eliminar turno
+    Route::delete('/turnos/{id}', [EmpleadoController::class, 'destroyTurno'])
+        ->name('turnos.destroy');
+});
+
+// ============================================
+// RUTAS PARA EMPLEADO - GESTIÓN DE NOVEDADES
+// ============================================
+Route::prefix('empleado')->name('empleado.')->group(function () {
+    
+    // Vista principal de gestionar novedades
+    Route::get('/gestionar-novedades', [EmpleadoController::class, 'gestionarNovedades'])
+        ->name('gestionar.novedades');
+    
+    // Crear nueva novedad
+    Route::post('/novedades', [EmpleadoController::class, 'storeNovedad'])
+        ->name('novedades.store');
+    
+    // Actualizar novedad existente
+    Route::put('/novedades/{id}', [EmpleadoController::class, 'updateNovedad'])
+        ->name('novedades.update');
+    
+    // Eliminar novedad
+    Route::delete('/novedades/{id}', [EmpleadoController::class, 'destroyNovedad'])
+        ->name('novedades.destroy');
+});
+
+// ============================================
+// RUTAS PARA EMPLEADO - BANDEJA DE RESERVAS
+// ============================================
+Route::prefix('empleado')->name('empleado.')->group(function () {
+    
+    // Vista principal de bandeja de reservas
+    Route::get('/bandeja-reservas', [EmpleadoController::class, 'bandejaReservas'])
+        ->name('bandeja.reservas');
+    
+    // Ver detalles de una reserva
+    Route::get('/reservas/{id}', [EmpleadoController::class, 'verReserva'])
+        ->name('reservas.ver');
+    
+    // Atender una reserva (cambiar estado)
+    Route::put('/reservas/{id}/atender', [EmpleadoController::class, 'atenderReserva'])
+        ->name('reservas.atender');
 });
