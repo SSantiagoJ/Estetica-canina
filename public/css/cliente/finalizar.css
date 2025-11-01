@@ -1,0 +1,107 @@
+/*Completada*/
+body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--color-background-light);
+}
+
+.completada-box {
+    background: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-2xl);
+    max-width: 500px;
+    margin: 80px auto;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+}
+
+.completada-box img {
+    max-width: 180px;
+    margin-bottom: var(--spacing-lg);
+}
+
+.completada-box h2 {
+    color: var(--color-success);
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+}
+
+.completada-box p {
+    font-size: var(--font-size-base);
+    color: var(--color-primary);
+}
+
+.btn-finalizar {
+    background: var(--color-success);
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-xl);
+    color: var(--color-white);
+    border-radius: var(--border-radius-md);
+    font-weight: 500;
+    margin-top: var(--spacing-lg);
+    transition: var(--transition-base);
+}
+.btn-finalizar:hover {
+    background: var(--color-primary);
+}
+/* Pendiente*/
+
+.pendiente-box {
+    background: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-2xl);
+    max-width: 500px;
+    margin: 80px auto;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+}
+
+.pendiente-box img {
+    max-width: 180px;
+    margin-bottom: 20px;
+}
+
+.pendiente-box h2 {
+    color: var(--color-warning);
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+}
+
+.pendiente-box p {
+    font-size: var(--font-size-base);
+    color: var(--color-primary-light);
+}
+
+.btn-volver {
+    background: var(--color-warning);
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-xl);
+    color: var(--color-white);
+    border-radius: var(--border-radius-md);
+    font-weight: 500;
+    margin-top: var(--spacing-lg);
+    transition: var(--transition-base);
+}
+.btn-volver:hover {
+    background: var(--color-primary);
+}.card.completada {
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-2xl);
+    text-align: center;
+    background: var(--color-white);
+    box-shadow: var(--shadow-lg);
+}
+.card.completada h2 {
+    color: var(--color-success);
+}
+
+.card.pendiente {
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-2xl);
+    text-align: center;
+    background: var(--color-white);
+    box-shadow: var(--shadow-lg);
+}
+.card.pendiente h2 {
+    color: var(--color-warning);
+}
+/* Footer styles are provided globally via core/estilo_menu.css */

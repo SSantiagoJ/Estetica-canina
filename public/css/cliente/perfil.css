@@ -1,0 +1,411 @@
+/* Perfil: layout base */
+.perfil-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-lg);
+    background-color: var(--color-background-light);
+    min-height: 100vh;
+}
+
+.perfil-card {
+    background-color: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    padding: calc(var(--spacing-xl) + 8px) var(--spacing-xl) var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+    box-shadow: var(--shadow-md);
+    position: relative;
+}
+
+.perfil-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    border-top-left-radius: var(--border-radius-lg);
+    border-top-right-radius: var(--border-radius-lg);
+    background: var(--gradient-primary);
+}
+
+.perfil-card h2 {
+    margin: 0 0 var(--spacing-lg);
+    color: var(--color-primary);
+}
+
+.perfil-content {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: var(--spacing-xl);
+    align-items: center;
+}
+
+.perfil-avatar { flex-shrink: 0; }
+
+.perfil-avatar img {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid var(--color-white);
+    box-shadow: 0 0 0 4px var(--color-primary-light), var(--shadow-lg);
+}
+
+.perfil-info h3 {
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-sm);
+    font-size: 26px;
+}
+
+.perfil-info p {
+    margin: 6px 0;
+    color: var(--color-primary-light);
+    font-size: var(--font-size-base);
+}
+
+.perfil-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--spacing-md) var(--spacing-xl);
+    margin-top: var(--spacing-sm);
+}
+
+.perfil-field-label {
+    display: block;
+    color: var(--color-text-light);
+    font-size: 12px;
+    letter-spacing: .3px;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+.perfil-field-value {
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+.perfil-actions { margin-top: var(--spacing-md); }
+
+.btn-edit {
+    background: var(--gradient-primary);
+    border: none;
+    color: var(--color-white);
+    padding: var(--spacing-sm) var(--spacing-xl);
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.btn-edit:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+.mascotas-section {
+    background-color: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-md);
+}
+.btn-add-mascota {
+    background: var(--gradient-primary);
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-xl);
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    color: var(--color-white);
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-add-mascota:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+.mascota-card {
+    background-color: var(--color-background-light);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+    text-align: center;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+    box-shadow: var(--shadow-sm);
+}
+
+.mascota-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+.mascota-actions { display:flex; gap: var(--spacing-sm); margin-top: var(--spacing-sm); }
+
+.btn-edit-mascota {
+    background: var(--color-warning);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    width: 100%;
+    color: var(--color-white);
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.btn-edit-mascota:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.btn-delete-mascota {
+    background-color: var(--color-danger);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    width: 100%;
+    color: var(--color-white);
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.btn-delete-mascota:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.modal-content {
+    background-color: var(--color-background);
+    padding: 28px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border: 2px solid var(--color-primary-light);
+    box-shadow: var(--shadow-xl);
+}
+.btn-cancel {
+    background-color: var(--color-white);
+    border: 2px solid var(--color-primary-light);
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn-save {
+    background: var(--gradient-success);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--color-white);
+}
+
+.btn-save:hover { filter: brightness(0.97); }
+
+@media (max-width: 768px) {
+    .perfil-content { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+    .perfil-fields { grid-template-columns: 1fr; }
+}
+.mascota-info h3 strong {
+    font-weight: bold;
+}
+/* Footer styles are provided globally via core/estilo_menu.css */
+
+
+.mascotas-section {
+    background-color: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-sm);
+}
+
+.mascotas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.mascotas-header h2 {
+    color: var(--color-primary);
+    font-size: 28px;
+}
+
+.btn-add-mascota {
+    background-color: var(--color-primary-light);
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    color: var(--color-white);
+    transition: background-color var(--transition-base);
+}
+
+.btn-add-mascota:hover {
+    background-color: var(--color-primary);
+}
+
+.mascotas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.mascota-card {
+    background-color: var(--color-background-light);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+    text-align: center;
+    transition: transform var(--transition-base);
+}
+
+.mascota-card:hover {
+    transform: translateY(-5px);
+}
+
+.mascota-image img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: var(--spacing-md);
+}
+
+.mascota-info h3 {
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-sm);
+    font-size: var(--font-size-xl);
+}
+
+.mascota-info p {
+    margin: var(--spacing-xs) 0;
+    color: var(--color-primary-light);
+    font-size: var(--font-size-sm);
+}
+
+.no-mascotas {
+    text-align: center;
+    color: #999;
+    font-size: 18px;
+    padding: 40px;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #FFE4E1;
+    padding: 30px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border: 3px solid #333;
+}
+
+.modal-content h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-cancel {
+    background-color: white;
+    border: 2px solid #333;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn-save {
+    background-color: #87CEEB;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    color: white;
+}
+
+.btn-save:hover {
+    background-color: #6BB6D6;
+}
+
+.btn-edit-mascota {
+    background-color: #FFD700;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+.btn-edit-mascota:hover {
+    background-color: #FFC700;
+}
+
+.btn-delete-mascota {
+    background-color: #e74c3c;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+.btn-delete-mascota:hover {
+    background-color: #c0392b;
+}
+
+.mascota-info h3 {
+    font-weight: normal;
+}
+
+.mascota-info h3 strong {
+    font-weight: bold;
+}
+
+/* Footer styles are provided globally via core/estilo_menu.css */

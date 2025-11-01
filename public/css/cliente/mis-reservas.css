@@ -6,45 +6,84 @@
 }
 
 .reservas-header {
-    background: linear-gradient(135deg, #434cff 0%, #3a51ff 100%);
-    padding: 2rem 3rem;
+    background: var(--gradient-primary);
+    padding: var(--spacing-xl) var(--spacing-2xl);
     margin: 0;
 }
 
 .reservas-header h1 {
-    font-size: 2rem;
+    font-size: var(--font-size-3xl);
     font-weight: 700;
-    color: white;
+    color: var(--color-white);
     margin: 0;
+}
+
+/* Alertas de notificación */
+.alert {
+    padding: var(--spacing-md) var(--spacing-lg);
+    margin: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--border-radius-md);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--font-size-base);
+    animation: slideDown 0.3s ease;
+}
+
+.alert i {
+    font-size: 1.2em;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Tabs */
 .tabs-container {
     display: flex;
-    gap: 2rem;
-    padding: 1.5rem 3rem 0;
-    background-color: #fef5f0;
-    border-bottom: 2px solid #e0e0e0;
+    gap: var(--spacing-xl);
+    padding: var(--spacing-lg) var(--spacing-2xl) 0;
+    background-color: var(--color-background-light);
+    border-bottom: 2px solid var(--color-gray);
 }
 
 .tab-button {
     background: none;
     border: none;
-    padding: 0.75rem 0;
-    font-size: 1rem;
+    padding: var(--spacing-sm) 0;
+    font-size: var(--font-size-base);
     font-weight: 500;
-    color: #666;
+    color: var(--color-text-light);
     cursor: pointer;
     position: relative;
-    transition: color 0.3s ease;
+    transition: color var(--transition-base);
 }
 
 .tab-button:hover {
-    color: #4a5568;
+    color: var(--color-text-primary);
 }
 
 .tab-button.active {
-    color: #4a5568;
+    color: var(--color-text-primary);
     font-weight: 600;
 }
 
@@ -55,14 +94,14 @@
     left: 0;
     right: 0;
     height: 3px;
-    background-color: #4a5568;
+    background-color: var(--color-primary);
 }
 
 /* Tab Content */
 .tab-content {
     display: none;
-    padding: 2rem 3rem;
-    background-color: #fef5f0;
+    padding: var(--spacing-xl) var(--spacing-2xl);
+    background-color: var(--color-background);
     min-height: 500px;
 }
 
@@ -74,23 +113,23 @@
 .reservas-list {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: var(--spacing-lg);
 }
 
 /* Reserva Card */
 .reserva-card {
-    background: white;
-    border-radius: 12px;
-    padding: 1.5rem;
+    background: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    transition: box-shadow 0.3s ease;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--transition-base);
 }
 
 .reserva-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--shadow-md);
 }
 
 .reserva-info {
@@ -133,36 +172,142 @@
     margin: 0;
 }
 
+/* Action Buttons Container */
+.reserva-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
 /* Action Buttons */
 .btn-action {
     padding: 0.65rem 1.75rem;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 0.95rem;
     font-weight: 600;
     text-decoration: none;
     transition: all 0.3s ease;
     border: none;
     cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-action i {
+    font-size: 1rem;
 }
 
 .btn-editar {
-    background-color: #4F5C92;
-    color: white;
+    background-color: var(--color-primary-light);
+    color: var(--color-white);
 }
 
 .btn-editar:hover {
-    background-color: #607cae;
-    transform: translateY(-1px);
+    background-color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-primary);
 }
 
 .btn-detalles {
-    background-color: #4F5C92;
-    color: white;
+    background: var(--gradient-primary-light);
+    color: var(--color-white);
 }
 
 .btn-detalles:hover {
-    background-color: #607cae;
-    transform: translateY(-1px);
+    background: var(--gradient-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-primary);
+}
+
+/* Botón Calificar */
+.btn-calificar {
+    padding: 0.65rem 1.75rem;
+    border-radius: var(--border-radius-md);
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all var(--transition-base);
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: var(--gradient-warning);
+    color: var(--color-white);
+    box-shadow: var(--shadow-warning);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-calificar:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
+}
+
+.btn-calificar:hover:before {
+    left: 100%;
+}
+
+.btn-calificar:hover {
+    background: linear-gradient(135deg, var(--color-warning-dark) 0%, var(--color-warning) 100%);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    color: var(--color-white);
+}
+
+.btn-calificar i {
+    font-size: var(--font-size-lg);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+/* Badge Calificado */
+.badge-calificado {
+    padding: 0.65rem 1.5rem;
+    border-radius: var(--border-radius-md);
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: var(--gradient-success);
+    color: var(--color-white);
+    box-shadow: var(--shadow-success);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.badge-calificado i {
+    font-size: 1.1rem;
+    animation: checkmark 0.5s ease-out;
+}
+
+@keyframes checkmark {
+    0% {
+        transform: scale(0) rotate(-45deg);
+    }
+    50% {
+        transform: scale(1.2) rotate(5deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
 }
 
 /* Empty State */
@@ -219,22 +364,22 @@
 }
 
 .modal-title {
-    background: linear-gradient(135deg, #4F5C92 0%, #3d4a7a 100%);
-    color: white;
-    padding: 1.5rem 2rem;
+    background: var(--gradient-primary-light);
+    color: var(--color-white);
+    padding: var(--spacing-lg) var(--spacing-xl);
     margin: 0;
-    border-radius: 16px 16px 0 0;
-    font-size: 1.25rem;
+    border-radius: var(--border-radius-xl) var(--border-radius-xl) 0 0;
+    font-size: var(--font-size-xl);
     font-weight: 600;
     text-align: center;
 }
 
 .modal-subtitle {
-    background: #e8eaf6;
-    color: #4F5C92;
-    padding: 0.75rem 2rem;
+    background: var(--color-light-gray);
+    color: var(--color-primary-light);
+    padding: var(--spacing-sm) var(--spacing-xl);
     margin: 0;
-    font-size: 0.95rem;
+    font-size: var(--font-size-base);
     font-weight: 500;
     text-align: center;
 }
@@ -745,61 +890,7 @@
     box-shadow: 0 4px 12px rgba(255, 159, 67, 0.3);
 }
 
-/* Footer */
-.footer {
-    background-color: #2E324D;
-    color: white;
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    padding: 40px 20px;
-    text-align: center;
-    margin-top: 3rem;
-}
-
-.footer-column {
-    flex: 1;
-    min-width: 250px;
-    margin: 20px;
-}
-
-.footer h3 {
-    margin-bottom: 15px;
-    font-size: 20px;
-    color: #fff;
-}
-
-.footer p {
-    font-size: 14px;
-    line-height: 1.5;
-    color: #ddd;
-}
-
-/* Redes sociales */
-.social-icons {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-.social-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    color: white;
-    text-decoration: none;
-    font-size: 1.25rem;
-    transition: all 0.3s ease;
-}
-
-.social-link:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    transform: scale(1.1);
-}
+/* Footer styles are provided globally via core/estilo_menu.css */
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -830,9 +921,21 @@
         width: 100%;
     }
 
-    .btn-action {
+    .reserva-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .btn-action,
+    .btn-calificar {
         width: 100%;
         text-align: center;
+        justify-content: center;
+    }
+
+    .badge-calificado {
+        width: 100%;
+        justify-content: center;
     }
 
     /* Modal responsive */
@@ -954,4 +1057,71 @@
         width: 100%;
         justify-content: center;
     }
+
+    /* Modal de Calificación responsive */
+    .modal-calificacion {
+        max-width: 95%;
+        margin: 1rem;
+    }
+
+    .star-label {
+        font-size: 2.5rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn-guardar,
+    .btn-cancelar-modal {
+        width: 100%;
+    }
+}
+
+/* ===== Estilos para Modal de Calificación ===== */
+.modal-calificacion {
+    max-width: 600px;
+}
+
+.modal-calificacion .modal-body {
+    padding: var(--spacing-lg);
+}
+
+.modal-calificacion .reserva-info-card {
+    background: var(--color-background-light);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.modal-calificacion .reserva-info-card h3 {
+    color: var(--color-primary);
+    font-size: 1.2rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.modal-calificacion .reserva-detalle {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    margin: var(--spacing-xs) 0;
+    color: var(--color-primary-light);
+    font-size: 0.95rem;
+}
+
+.btn-cancelar-modal {
+    background: var(--color-text-light);
+    color: var(--color-white);
+    padding: var(--spacing-sm) var(--spacing-xl);
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    font-weight: 500;
+}
+
+.btn-cancelar-modal:hover {
+    background: var(--color-primary);
+    transform: translateY(-2px);
 }
