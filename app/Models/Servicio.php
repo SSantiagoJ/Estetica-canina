@@ -10,9 +10,19 @@ class Servicio extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'categoria', 'tipo_servicio', 'nombre_servicio',
-        'costo', 'especie', 'duracion', 'imagen_referencial',
-        'estado', 'usuario_creacion', 'fecha_creacion'
+        'categoria', 
+        'tipo_servicio', 
+        'nombre_servicio',
+        'descripcion',
+        'costo', 
+        'especie', 
+        'duracion', 
+        'imagen_referencial',
+        'estado', 
+        'usuario_creacion', 
+        'fecha_creacion',
+        'usuario_actualizacion',
+        'fecha_actualizacion'
     ];
 
     public function detalles()

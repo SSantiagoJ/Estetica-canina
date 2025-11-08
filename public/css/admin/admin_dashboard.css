@@ -1,0 +1,122 @@
+/* ==== CONTENIDO PRINCIPAL ==== */
+.admin-content {
+  /* Agregando padding en lugar de margin para evitar conflictos con position fixed */
+  padding-left: 250px !important; /* deja espacio para la toolbar fija */
+  padding-top: 70px !important; /* deja espacio para el header fijo */
+  padding-right: 30px !important;
+  padding-bottom: 30px !important;
+  background: #f8fafc;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Sobreescribir para servicios */
+.admin-content.servicios-container {
+  padding-left: 270px !important;
+  padding-right: 30px !important;
+}
+
+/* ==== TABLA ==== */
+.table {
+  background: #fff;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  overflow: hidden;
+}
+
+.table thead {
+  background: #2563eb;
+  color: #fff;
+}
+
+.table td,
+.table th {
+  text-align: center;
+  vertical-align: middle;
+  padding: 12px;
+}
+
+.table .badge {
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+}
+
+.card {
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+/* Responsive para pantallas pequeñas */
+@media (max-width: 768px) {
+  .admin-content {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+
+  .admin-toolbar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .admin-toolbar.show {
+    transform: translateX(0);
+  }
+}
+/* Footer */
+.footer {
+    background-color: #2E324D;
+    color: white;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.footer-column {
+    flex: 1;
+    min-width: 250px;
+    margin: 20px;
+}
+
+.footer h3 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    color: #fff;
+}
+
+.footer p {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #ddd;
+}
+
+/* Redes sociales */
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+.social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    color: white;
+    text-decoration: none;
+    font-size: 1.25rem;
+    transition: all 0.3s ease;
+}
+
+.social-link:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}

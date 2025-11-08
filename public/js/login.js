@@ -82,9 +82,11 @@ async function handleLogin(e) {
       setTimeout(() => {
         switch (result.usuario.rol) {
           case "Admin":
-          case "Empleado":
             window.location.href = "/admin_dashboard"
             break
+          case "Empleado":
+            window.location.href = "/empleado/bandeja-reservas"
+             break
           default:
             window.location.href = "/dashboard"
         }

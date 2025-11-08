@@ -40,7 +40,8 @@ class AuthController extends Controller
 
                 // ✅ Solo dos dashboards
                 $redirect = match ($user->rol) {
-                    'Admin', 'Empleado' => '/admin_dashboard',
+                     'Admin'    => '/admin_dashboard',
+                    'Empleado' => '/Empleado/bandeja-reservas',
                     default             => '/dashboard',
                 };
 

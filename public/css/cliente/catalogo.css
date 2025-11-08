@@ -1,0 +1,304 @@
+/* Added box-sizing and overflow control for proper viewport containment */
+* {
+  box-sizing: border-box;
+}
+
+/* Contenedor principal */
+.catalogo-servicios {
+  padding: 0;
+  background-color: var(--color-white);
+  max-width: 100%;
+  margin: 0 auto;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Added colored backgrounds for each category section */
+.categoria-item {
+  margin-bottom: 0;
+  width: 100%;
+  padding: var(--spacing-2xl) var(--spacing-xl);
+  transition: background-color var(--transition-base);
+}
+
+/* Baños - Soft Pink (basado en paleta principal) */
+.categoria-item:nth-child(1) {
+  background-color: var(--color-background);
+}
+
+/* Peluquería - Light */
+.categoria-item:nth-child(3) {
+  background-color: var(--color-background-light);
+}
+
+/* Tratamientos - Light Gray */
+.categoria-item:nth-child(5) {
+  background-color: var(--color-light-gray);
+}
+
+/* Servicios Adicionales - Background */
+.categoria-item:nth-child(7) {
+  background-color: var(--color-background);
+}
+
+.categoria-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Información de la categoría */
+.categoria-info {
+  flex: 0 0 35%;
+  max-width: 400px;
+}
+
+/* Updated title styling for better visual hierarchy */
+.categoria-titulo {
+  font-size: 2.8em;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-lg);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.categoria-descripcion {
+  font-size: 1.1em;
+  color: var(--color-primary-light);
+  line-height: 1.8;
+}
+
+/* Contenedor del carrusel con botones */
+.carousel-container {
+  flex: 1;
+  position: relative;
+  padding: 0 50px;
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* Carrusel */
+.servicios-carrusel {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-sm) 0;
+  cursor: grab;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  width: 100%;
+}
+
+.servicios-carrusel::-webkit-scrollbar {
+  display: none;
+}
+
+.servicios-carrusel:active {
+  cursor: grabbing;
+}
+
+/* Enhanced card styling with better shadows and hover effects */
+.servicio-card {
+  flex: 0 0 280px;
+  width: 280px;
+  height: 240px;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  scroll-snap-align: start;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.servicio-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-xl);
+}
+
+.servicio-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Improved overlay gradient for better text readability */
+.servicio-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.5) 60%, transparent 100%);
+  color: var(--color-white);
+  padding: var(--spacing-lg) var(--spacing-md) var(--spacing-md);
+}
+
+.servicio-nombre {
+  font-weight: 700;
+  font-size: 1.2em;
+  margin-bottom: var(--spacing-xs);
+  letter-spacing: 0.3px;
+}
+
+.servicio-detalle {
+  font-size: 0.92em;
+  opacity: 0.95;
+  line-height: 1.5;
+}
+
+/* Enhanced button styling with better contrast */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.98);
+  border: 2px solid rgba(61, 74, 92, 0.1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-base);
+  z-index: 10;
+}
+
+.carousel-btn:hover {
+  background-color: var(--color-primary-light);
+  border-color: var(--color-primary-light);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-btn svg {
+  color: var(--color-primary-light);
+  transition: color var(--transition-base);
+}
+
+.carousel-btn:hover svg {
+  color: var(--color-white);
+}
+
+.carousel-prev {
+  left: 0;
+}
+
+.carousel-next {
+  right: 0;
+}
+
+/* Removed divider as colored sections provide natural separation */
+.categoria-divider {
+  display: none;
+}
+
+/* Improved responsive breakpoints with better overflow handling */
+@media (max-width: 1200px) {
+  .categoria-item {
+    padding: var(--spacing-2xl) var(--spacing-xl);
+  }
+
+  .categoria-info {
+    flex: 0 0 30%;
+  }
+
+  .categoria-titulo {
+    font-size: 2.4em;
+  }
+}
+
+@media (max-width: 1024px) {
+  .categoria-item {
+    padding: var(--spacing-xl) var(--spacing-lg);
+  }
+
+  .categoria-row {
+    flex-direction: column;
+    gap: var(--spacing-xl);
+  }
+
+  .categoria-info {
+    flex: 1 1 auto;
+    max-width: 100%;
+  }
+
+  .carousel-container {
+    padding: 0 var(--spacing-xl);
+    width: 100%;
+  }
+
+  .servicio-card {
+    flex: 0 0 240px;
+    width: 240px;
+    height: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .categoria-item {
+    padding: var(--spacing-lg) var(--spacing-lg);
+  }
+
+  .categoria-titulo {
+    font-size: 2em;
+  }
+
+  .categoria-descripcion {
+    font-size: 1em;
+  }
+
+  .carousel-container {
+    padding: 0 35px;
+  }
+
+  .carousel-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .servicio-card {
+    flex: 0 0 200px;
+    width: 200px;
+    height: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  .categoria-item {
+    padding: var(--spacing-xl) var(--spacing-md);
+  }
+
+  .categoria-titulo {
+    font-size: 1.8em;
+  }
+
+  .carousel-container {
+    padding: 0 var(--spacing-xl);
+  }
+
+  .carousel-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .servicio-card {
+    flex: 0 0 180px;
+    width: 180px;
+    height: 160px;
+  }
+
+  .servicio-nombre {
+    font-size: 1em;
+  }
+
+  .servicio-detalle {
+    font-size: 0.85em;
+  }
+}
+/* Footer styles are defined globally in core/estilo_menu.css */

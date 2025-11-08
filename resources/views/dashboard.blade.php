@@ -76,45 +76,40 @@
     </div>
 
     <div class="opiniones-carrusel">
-        <div class="opinion-card">
-            <span class="fecha">01/10/2025</span>
-            <span class="estrellas">⭐⭐⭐⭐⭐</span>
-            <h3 class="usuario">María López</h3>
-            <p class="comentario">Excelente servicio, mi perrito quedó hermoso y feliz.</p>
-        </div>
-
-        <div class="opinion-card">
-            <span class="fecha">25/09/2025</span>
-            <span class="estrellas">⭐⭐⭐⭐</span>
-            <h3 class="usuario">Carlos Fernández</h3>
-            <p class="comentario">Muy buena atención, aunque demoraron un poco con la cita.</p>
-        </div>
-
-        <div class="opinion-card">
-            <span class="fecha">15/09/2025</span>
-            <span class="estrellas">⭐⭐⭐⭐⭐</span>
-            <h3 class="usuario">Ana Ramírez</h3>
-            <p class="comentario">Recomiendo totalmente, muy profesionales y amables.</p>
-        </div>
-        <div class="opinion-card">
-            <span class="fecha">01/10/2025</span>
-            <span class="estrellas">⭐⭐⭐⭐⭐</span>
-            <h3 class="usuario">María López</h3>
-            <p class="comentario">Excelente servicio, mi perrito quedó hermoso y feliz.</p>
-        </div>
-
-        <div class="opinion-card">
-            <span class="fecha">25/09/2025</span>
-            <span class="estrellas">⭐⭐⭐⭐</span>
-            <h3 class="usuario">Carlos Fernández</h3>
-            <p class="comentario">Muy buena atención, aunque demoraron un poco con la cita.</p>
-        </div>
-
-        <div class="opinion-card">
-            <span class="fecha">15/09/2025</span>
-            <span class="estrellas">⭐⭐⭐⭐⭐</span>
-            <h3 class="usuario">Ana Ramírez</h3>
-            <p class="comentario">Recomiendo totalmente, muy profesionales y amables.</p>
+        <div class="container">
+            <div class="row">
+                @forelse($calificaciones as $calificacion)
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="opinion-card card h-100 shadow-sm">
+                            <div class="card-body">
+                                <div class="mb-2">
+                                    @for($i = 0; $i < 5; $i++)
+                                        <i class="fas fa-star text-warning"></i>
+                                    @endfor
+                                    <span class="fecha d-block text-muted mt-1">
+                                        {{ \Carbon\Carbon::parse($calificacion->fecha_creacion)->format('d/m/Y') }}
+                                    </span>
+                                </div>
+                                <p class="comentario card-text">
+                                    <em>"{{ $calificacion->comentarios }}"</em>
+                                </p>
+                                <footer class="blockquote-footer">
+                                    <h3 class="usuario mb-1">{{ $calificacion->nombres }}</h3>
+                                    <small class="text-muted">
+                                        Mascota: {{ $calificacion->mascota_nombre }}
+                                    </small>
+                                </footer>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="col-12">
+                        <p class="text-center text-muted">
+                            Aún no hay calificaciones destacadas
+                        </p>
+                    </div>
+                @endforelse
+            </div>
         </div>
     </div>
 </section>
