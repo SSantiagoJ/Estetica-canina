@@ -10,10 +10,51 @@ use App\Models\Mascota;
 use App\Models\Cliente;
 use App\Models\Servicio;
 use App\Models\Novedad;
+use App\Models\Atencion;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class EmpleadoController extends Controller
 {
+ /**
+     * Guarda la atención de una reserva con descripción y comentarios
+     */
+    public function guardarAtencion(Request $request)
+    {
+        // Validar los datos
+        $request->validate([
+            'id_reserva' => 'required|exists:reservas,id_reserva',
+            'descripcion' => 'required|max:500',
+            'comentarios' => 'nullable|max:500',
+        ]);
+
+        try {
+            // Crear registro en tabla atenciones
+            Atencion::create([
+                'id_reserva' => $request->id_reserva,
+                'descripcion' => $request->descripcion,
+                'comentarios' => $request->comentarios,
+                'usuario_creacion' => Auth::user()->usuario ?? 'sistema',
+                'fecha_creacion' => now(),
+            ]);
+
+            // Actualizar estado de la reserva a "Atendido" (A)
+            $reserva = Reserva::findOrFail($request->id_reserva);
+            $reserva->update([
+                'estado' => 'A',
+                'usuario_actualizacion' => Auth::user()->usuario ?? 'sistema',
+            ]);
+
+            return redirect()->route('empleado.bandeja.reservas')
+                ->with('success', 'Atención registrada correctamente y reserva marcada como atendida');
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Error al guardar la atención: ' . $e->getMessage());
+        }
+    }
+
+
      /**
      * Muestra la bandeja de reservas
      */
@@ -24,7 +65,7 @@ class EmpleadoController extends Controller
             'mascota',
             'cliente.persona',
             'empleado.persona',
-            'detalles.servicio'
+            'detalles.servicio',
         ])
         ->orderBy('fecha', 'desc')
         ->orderBy('hora', 'desc')
