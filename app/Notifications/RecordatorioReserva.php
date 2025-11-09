@@ -6,7 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class RecordatorioVacuna extends Notification
+class RecordatorioReserva extends Notification
 {
     use Queueable;
 
@@ -27,13 +27,14 @@ class RecordatorioVacuna extends Notification
     public function toMail($notifiable)
     {
         $nombre = $this->usuario->nombres ?? 'Cliente';
-        $fecha = date('d/m/Y', strtotime($this->reserva->fecha ?? now()));
+        $hora = date('H:i', strtotime($this->reserva->hora));
 
         return (new MailMessage)
-            ->subject('🐾 Recordatorio de Vacuna Antirrábica')
-            ->view('emails.recordatorio_vacuna', [
+            ->subject('🐾 Recordatorio de tu cita en PetSpa')
+            ->view('emails.recordatorio_reserva', [
                 'nombre' => $nombre,
-                'fecha'  => $fecha,
+                'hora' => $hora,
+                'fecha' => $this->reserva->fecha,
             ]);
     }
 }

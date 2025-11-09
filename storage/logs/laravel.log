@@ -18182,3 +18182,105 @@ into your web browser: <span class="break-all" style="box-sizing: border-box; fo
 </html>
 --5Oz6gvsV--
   
+[2025-11-08 21:48:37] local.ERROR: Command "notificaciones:previas" is not defined.
+
+Did you mean one of these?
+    app:generar-notificaciones-previas
+    notificaciones:vacunas
+    notifications:table {"exception":"[object] (Symfony\\Component\\Console\\Exception\\CommandNotFoundException(code: 0): Command \"notificaciones:previas\" is not defined.
+
+Did you mean one of these?
+    app:generar-notificaciones-previas
+    notificaciones:vacunas
+    notifications:table at C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\symfony\\console\\Application.php:743)
+[stacktrace]
+#0 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\symfony\\console\\Application.php(301): Symfony\\Component\\Console\\Application->find('notificaciones:...')
+#1 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\symfony\\console\\Application.php(194): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#2 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(197): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#3 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1235): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#4 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\artisan(16): Illuminate\\Foundation\\Application->handleCommand(Object(Symfony\\Component\\Console\\Input\\ArgvInput))
+#5 {main}
+"} 
+[2025-11-08 21:49:28] local.ERROR: Command "notificaciones:previas" is not defined.
+
+Did you mean one of these?
+    app:generar-notificaciones-previas
+    notificaciones:vacunas
+    notifications:table {"exception":"[object] (Symfony\\Component\\Console\\Exception\\CommandNotFoundException(code: 0): Command \"notificaciones:previas\" is not defined.
+
+Did you mean one of these?
+    app:generar-notificaciones-previas
+    notificaciones:vacunas
+    notifications:table at C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\symfony\\console\\Application.php:743)
+[stacktrace]
+#0 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\symfony\\console\\Application.php(301): Symfony\\Component\\Console\\Application->find('notificaciones:...')
+#1 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\symfony\\console\\Application.php(194): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#2 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(197): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#3 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1235): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#4 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\artisan(16): Illuminate\\Foundation\\Application->handleCommand(Object(Symfony\\Component\\Console\\Input\\ArgvInput))
+#5 {main}
+"} 
+[2025-11-08 19:31:26] local.ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'spa_mascotas.cache' doesn't exist (Connection: mysql, SQL: select * from `cache` where `key` in (laravel-cache-notificacion_reserva_5)) {"exception":"[object] (Illuminate\\Database\\QueryException(code: 42S02): SQLSTATE[42S02]: Base table or view not found: 1146 Table 'spa_mascotas.cache' doesn't exist (Connection: mysql, SQL: select * from `cache` where `key` in (laravel-cache-notificacion_reserva_5)) at C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php:824)
+[stacktrace]
+#0 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(778): Illuminate\\Database\\Connection->runQueryCallback('select * from `...', Array, Object(Closure))
+#1 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(397): Illuminate\\Database\\Connection->run('select * from `...', Array, Object(Closure))
+#2 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(3188): Illuminate\\Database\\Connection->select('select * from `...', Array, true)
+#3 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(3173): Illuminate\\Database\\Query\\Builder->runSelect()
+#4 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(3763): Illuminate\\Database\\Query\\Builder->Illuminate\\Database\\Query\\{closure}()
+#5 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(3172): Illuminate\\Database\\Query\\Builder->onceWithColumns(Array, Object(Closure))
+#6 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Cache\\DatabaseStore.php(130): Illuminate\\Database\\Query\\Builder->get()
+#7 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Cache\\DatabaseStore.php(105): Illuminate\\Cache\\DatabaseStore->many(Array)
+#8 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Cache\\Repository.php(119): Illuminate\\Cache\\DatabaseStore->get('notificacion_re...')
+#9 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Cache\\Repository.php(90): Illuminate\\Cache\\Repository->get('notificacion_re...')
+#10 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Cache\\CacheManager.php(509): Illuminate\\Cache\\Repository->has('notificacion_re...')
+#11 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Support\\Facades\\Facade.php(363): Illuminate\\Cache\\CacheManager->__call('has', Array)
+#12 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\app\\Console\\Commands\\GenerarNotificacionesPrevias.php(43): Illuminate\\Support\\Facades\\Facade::__callStatic('has', Array)
+#13 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(36): App\\Console\\Commands\\GenerarNotificacionesPrevias->handle()
+#14 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php(43): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#15 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(96): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#16 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Array, Object(Closure))
+#17 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(836): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Array, Array, NULL)
+#18 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(211): Illuminate\\Container\\Container->call(Array)
+#19 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\symfony\\console\\Command\\Command.php(318): Illuminate\\Console\\Command->execute(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#20 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(180): Symfony\\Component\\Console\\Command\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#21 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\symfony\\console\\Application.php(1110): Illuminate\\Console\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#22 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\symfony\\console\\Application.php(359): Symfony\\Component\\Console\\Application->doRunCommand(Object(App\\Console\\Commands\\GenerarNotificacionesPrevias), Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#23 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\symfony\\console\\Application.php(194): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#24 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(197): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#25 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1235): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#26 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\artisan(16): Illuminate\\Foundation\\Application->handleCommand(Object(Symfony\\Component\\Console\\Input\\ArgvInput))
+#27 {main}
+
+[previous exception] [object] (PDOException(code: 42S02): SQLSTATE[42S02]: Base table or view not found: 1146 Table 'spa_mascotas.cache' doesn't exist at C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php:406)
+[stacktrace]
+#0 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(406): PDO->prepare('select * from `...')
+#1 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(811): Illuminate\\Database\\Connection->Illuminate\\Database\\{closure}('select * from `...', Array)
+#2 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(778): Illuminate\\Database\\Connection->runQueryCallback('select * from `...', Array, Object(Closure))
+#3 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(397): Illuminate\\Database\\Connection->run('select * from `...', Array, Object(Closure))
+#4 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(3188): Illuminate\\Database\\Connection->select('select * from `...', Array, true)
+#5 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(3173): Illuminate\\Database\\Query\\Builder->runSelect()
+#6 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(3763): Illuminate\\Database\\Query\\Builder->Illuminate\\Database\\Query\\{closure}()
+#7 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(3172): Illuminate\\Database\\Query\\Builder->onceWithColumns(Array, Object(Closure))
+#8 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Cache\\DatabaseStore.php(130): Illuminate\\Database\\Query\\Builder->get()
+#9 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Cache\\DatabaseStore.php(105): Illuminate\\Cache\\DatabaseStore->many(Array)
+#10 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Cache\\Repository.php(119): Illuminate\\Cache\\DatabaseStore->get('notificacion_re...')
+#11 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Cache\\Repository.php(90): Illuminate\\Cache\\Repository->get('notificacion_re...')
+#12 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Cache\\CacheManager.php(509): Illuminate\\Cache\\Repository->has('notificacion_re...')
+#13 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Support\\Facades\\Facade.php(363): Illuminate\\Cache\\CacheManager->__call('has', Array)
+#14 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\app\\Console\\Commands\\GenerarNotificacionesPrevias.php(43): Illuminate\\Support\\Facades\\Facade::__callStatic('has', Array)
+#15 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(36): App\\Console\\Commands\\GenerarNotificacionesPrevias->handle()
+#16 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php(43): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#17 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(96): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#18 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Array, Object(Closure))
+#19 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(836): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Array, Array, NULL)
+#20 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(211): Illuminate\\Container\\Container->call(Array)
+#21 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\symfony\\console\\Command\\Command.php(318): Illuminate\\Console\\Command->execute(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#22 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(180): Symfony\\Component\\Console\\Command\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#23 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\symfony\\console\\Application.php(1110): Illuminate\\Console\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#24 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\symfony\\console\\Application.php(359): Symfony\\Component\\Console\\Application->doRunCommand(Object(App\\Console\\Commands\\GenerarNotificacionesPrevias), Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#25 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\symfony\\console\\Application.php(194): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#26 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(197): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#27 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1235): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#28 C:\\xampp\\htdocs\\ProyectoSpa\\Estetica-canina\\artisan(16): Illuminate\\Foundation\\Application->handleCommand(Object(Symfony\\Component\\Console\\Input\\ArgvInput))
+#29 {main}
+"} 
