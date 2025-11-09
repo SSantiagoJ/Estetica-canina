@@ -1,54 +1,23 @@
 /* ==== CONTENIDO PRINCIPAL ==== */
 .admin-content {
-  /* Agregando padding en lugar de margin para evitar conflictos con position fixed */
-  padding-left: 250px !important; /* deja espacio para la toolbar fija */
-  padding-top: 70px !important; /* deja espacio para el header fijo */
-  padding-right: 30px !important;
-  padding-bottom: 30px !important;
+  /* Reducir padding para aprovechar más espacio horizontal */
+  padding-left: 220px !important;
+  padding-top: 80px !important;
+  padding-right: 1rem !important;
+  padding-bottom: 2rem !important;
   background: #f8fafc;
   min-height: 100vh;
   box-sizing: border-box;
+ /* Usar todo el ancho disponible */
+  max-width: 100%;
+  width: 100%;
+  margin: 0
 }
 
 /* Sobreescribir para servicios */
 .admin-content.servicios-container {
   padding-left: 270px !important;
   padding-right: 30px !important;
-}
-
-/* ==== TABLA ==== */
-.table {
-  background: #fff;
-  border-radius: 12px;
-  font-size: 0.95rem;
-  overflow: hidden;
-}
-
-.table thead {
-  background: #2563eb;
-  color: #fff;
-}
-
-.table td,
-.table th {
-  text-align: center;
-  vertical-align: middle;
-  padding: 12px;
-}
-
-.table .badge {
-  border-radius: 999px;
-  padding: 6px 12px;
-  font-size: 0.85rem;
-}
-
-.card {
-  border: none;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.table-responsive {
-  overflow-x: auto;
 }
 
 /* Responsive para pantallas pequeñas */
@@ -67,56 +36,711 @@
     transform: translateX(0);
   }
 }
+
 /* Footer */
 .footer {
-    background-color: #2E324D;
-    color: white;
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    padding: 40px 20px;
-    text-align: center;
+  background-color: #2e324d;
+  color: white;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  padding: 40px 20px;
+  text-align: center;
 }
 
 .footer-column {
-    flex: 1;
-    min-width: 250px;
-    margin: 20px;
+  flex: 1;
+  min-width: 60%;
+  margin: 20px;
 }
 
 .footer h3 {
-    margin-bottom: 15px;
-    font-size: 20px;
-    color: #fff;
+  margin-bottom: 15px;
+  font-size: 20px;
+  color: #fff;
 }
 
 .footer p {
-    font-size: 14px;
-    line-height: 1.5;
-    color: #ddd;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #ddd;
 }
 
 /* Redes sociales */
 .social-icons {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
 }
+
 .social-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    color: white;
-    text-decoration: none;
-    font-size: 1.25rem;
-    transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  color: white;
+  text-decoration: none;
+  font-size: 1.25rem;
+  transition: all 0.3s ease;
 }
 
 .social-link:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    transform: scale(1.1);
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+/* ===== MEJORAS DE DISEÑO PARA CARDS Y FORMULARIOS ===== */
+
+/* Mejorar las cards principales para usar más espacio  */
+.card {
+  border: none !important;
+  border-radius: 16px !important;
+ box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
+  transition: box-shadow 0.3s ease;
+  margin-bottom: 2rem !important;
+  /* Asegurar que la card use todo el ancho disponible */
+  width: 100%;
+  max-width: 100%;
+}
+
+.card:hover {
+   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.card-body {
+  /* Optimizar padding interno del card */
+  padding: 1rem 3.5rem !important;
+}
+
+/* Mejorar títulos y encabezados */
+.card-header {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #e9ecef;
+  border-radius: 16px 16px 0 0 !important;
+  padding: 1.25rem 2rem;
+  font-weight: 600;
+}
+
+h2.fw-bold,
+h2 {
+  color: #2c3e50;
+  font-weight: 700;
+  /* Agregar margen inferior a los títulos */
+  margin-bottom: 1.5rem;
+}
+
+/* ===== MEJORAS PARA FORMULARIOS ===== */
+
+/* Mejorar labels */
+.form-label {
+ font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+/* Inputs y selects con mejor espaciado */
+.form-control,
+.form-select {
+  border-radius: 8px;
+  border: 1.5px solid #e5e7eb;
+  padding: 0.75rem 1rem !important;
+  transition: all 0.2s ease;
+  font-size: 0.938rem;
+   min-height: 42px;
+  width: 100%;
+  background-color: #ffffff;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  outline: none;
+  background-color: #ffffff;
+}
+
+.form-control:hover,
+.form-select:hover {
+  border-color: #adb5bd;
+}
+
+/* Agregar espaciado entre columnas de formulario */
+.col,
+.col-md-2,
+.col-md-3,
+.col-md-4,
+.col-md-6 {
+   /* Aumentar padding horizontal entre columnas */
+  padding-left: 0.5rem !important;
+  padding-right: 0rem !important;
+}
+
+/* Espaciado entre filas de formulario */
+.row {
+   margin-bottom: 1rem !important;
+}
+
+/* Espaciado específico para grupos de formulario */
+.mb-3 {
+  margin-bottom: 1.5rem !important;
+}
+
+/* ===== MEJORAS PARA BOTONES ===== */
+
+.btn {
+  border-radius: 8px;
+  padding: 0.625rem 1.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: none;
+  min-height: 42px;
+  font-size: 0.938rem;
+}
+
+.btn-primary {
+  background-color: #0d6efd;
+  box-shadow: 0 2px 8px rgba(13, 110, 253, 0.2);
+}
+
+.btn-primary:hover {
+  background-color: #0b5ed7;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.35);
+}
+
+.btn-success {
+  background-color: #198754;
+  box-shadow: 0 2px 8px rgba(25, 135, 84, 0.2);
+}
+
+.btn-success:hover {
+  background-color: #157347;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(25, 135, 84, 0.35);
+}
+
+.btn-secondary,
+.btn-outline-secondary {
+  background-color: #6c757d;
+  color: white;
+  width:20%
+}
+
+.btn-secondary:hover,
+.btn-outline-secondary:hover {
+  background-color: #5a6268;
+  transform: translateY(-2px);
+}
+
+.btn-outline-primary {
+  border: 1.5px solid #0d6efd;
+  color: #0d6efd;
+  background-color: transparent;
+}
+
+.btn-outline-primary:hover {
+  background-color: #0d6efd;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+}
+
+.btn-sm {
+  /* Ajustar padding de botones pequeños */
+  padding: 0.625rem 1.125rem;
+  font-size: 0.875rem;
+  border-radius: 8px;
+  min-height: auto;
+}
+
+/* Espaciado entre botones */
+.btn + .btn {
+  margin-left: 0.75rem;
+}
+
+/* Espaciado para contenedores de botones con flexbox */
+.d-flex.gap-2 {
+  gap: 0.75rem !important;
+}
+
+.d-flex.gap-3 {
+  gap: 1.25rem !important;
+}
+
+/* ===== MEJORAS PARA TABLAS ===== */
+/* Tabla con scroll vertical y mejor uso del espacio */
+.table-responsive {
+  border-radius: 12px;
+  overflow: auto;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-top: 1.5rem;
+  /* Altura máxima para scroll vertical */
+  max-height: 650px;
+  overflow-y: auto;
+  position: relative;
+   background-color: #ffffff;
+}
+
+/* Header fijo al hacer scroll */
+.table-responsive .table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+ /* Gradiente más sutil */
+  background: linear-gradient(135deg, #c6c7c8 0%, #c6c7c8 100%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.table {
+  margin-bottom: 0;
+  width: 100%;
+   /* Ancho mínimo para evitar compresión excesiva */
+  min-width: 1400px;
+}
+
+.table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-align: center;
+}
+
+.table thead th {
+  font-weight: 600;
+  padding: 1rem 1rem;
+  border: none;
+  font-size: 0.813rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  color: #000;
+}
+
+.table thead th:last-child {
+  border-right: none;
+}
+
+/* Celdas con mejor padding y sin truncar */
+.table tbody td {
+   padding: 1rem 1rem;
+  vertical-align: middle;
+   border-bottom: 1px solid #f3f4f6;
+  font-size: 0.875rem;
+  /* Permitir que el contenido fluya naturalmente */
+  white-space: nowrap;
+  text-align: center;
+}
+
+.table tbody tr {
+  transition: all 0.2s ease;
+   background-color: #ffffff;
+}
+
+.table tbody tr:hover {
+ background-color: #f9fafb;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Alternancia de filas más sutil */
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* ===== MEJORAS PARA BADGES ===== */
+
+.badge {
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  font-size: 0.75rem;
+  border-radius: 6px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.badge.bg-warning {
+  background-color: #078fff !important;
+  color: #fff;
+  border-radius: 1%;
+}
+
+.badge.bg-success {
+  background-color: #198754 !important;
+}
+
+.badge.bg-info {
+  background-color: #287e06 !important;
+  color: #000;
+  border-radius: 1%;
+}
+
+.badge.bg-danger {
+  background-color: #dc3545 !important;
+}
+
+.badge.bg-primary {
+  background-color: #ffffff !important;
+  color: var(--bs-secondary-color) !important;
+}
+
+/* ===== MEJORAS PARA ALERTAS ===== */
+
+.alert {
+  border-radius: 12px;
+  border: none;
+  /* Aumentar padding de las alertas 
+  padding: 1.25rem 1.75rem;
+  /* Aumentar margen inferior de las alertas 
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);*/
+  padding: 1rem 1.5rem;
+  /* Margen inferior para separación */
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  /* Asegurar que esté dentro del contenedor principal */
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+}
+
+.alert i {
+  font-size: 1.125rem;
+  margin-right: 0.75rem;
+
+}
+
+.alert-success {
+  background-color: #d1e7dd;
+  color: #0f5132;
+  border-left: 4px solid #198754;
+   padding-right: 1rem !important;
+  padding-bottom: 2rem !important;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  color: #842029;
+}
+
+.alert-info {
+  background-color: #cff4fc;
+  color: #055160;
+  border-left: 4px solid #0dcaf0;
+}
+
+.alert-warning {
+  background-color: #fff3cd;
+  color: #664d03;
+  border-left: 4px solid #ffc107;
+}
+
+/* Botón de cerrar de la alerta */
+.alert .btn-close {
+  padding: 0.5rem;
+  margin-left: 1rem;
+  margin-right: 2rem !important;
+  margin-top: 1rem !important;
+}
+
+/* Asegurar que las alertas no se superpongan con el sidebar */
+.admin-content .alert {
+  margin-left: 0.5rem !important;
+  margin-right: 0;
+
+}
+
+
+/* ===== MEJORAS PARA MODALES ===== */
+
+/* Asegurar que los modales se muestren centrados vertical y horizontalmente */
+.modal-dialog {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100% - 1rem);
+  margin: 0 auto;
+}
+
+.modal-dialog-centered {
+  display: flex;
+  align-items: center;
+  min-height: calc(100vh - 1rem);
+}
+
+/* Mejorar diseño del modal */
+.modal-content {
+  border: none;
+  border-radius: 20px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.modal-body {
+  padding: 2rem 2.5rem !important;
+}
+
+/* Mejorar título del modal */
+.modal-body h4 {
+  color: #2c3e50;
+  font-weight: 700 !important;
+  margin-bottom: 1.5rem !important;
+  text-align: center !important;
+}
+
+/* Mejorar backdrop del modal */
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.modal-backdrop.show {
+  opacity: 0.6;
+}
+
+/* Animación suave para modales */
+.modal.fade .modal-dialog {
+  transition: transform 0.3s ease-out;
+  transform: translate(0, -50px);
+}
+
+.modal.show .modal-dialog {
+  transform: none;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  margin-top: var(--bs-modal-margin, 1.75rem);
+  margin-bottom: var(--bs-modal-margin, 1.75rem);
+}
+
+/* Mejorar tamaño del modal en diferentes pantallas */
+.modal-lg {
+  max-width: 800px;
+}
+
+@media (min-width: 576px) {
+  .modal-dialog {
+    max-width: 500px;
+    margin: 1.75rem auto;
+  }
+
+  .modal-dialog-centered {
+    min-height: calc(100vh - 3.5rem);
+  }
+
+  .modal-lg {
+    max-width: 800px;
+  }
+}
+
+/* Mejorar formularios dentro de modales */
+.modal-body .form-control,
+.modal-body .form-select {
+  border-radius: 10px;
+  border: 1.5px solid #e5e7eb;
+  padding: 0.75rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.modal-body .form-control:focus,
+.modal-body .form-select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.modal-body .form-label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Mejorar botones dentro de modales */
+.modal-body .btn {
+  border-radius: 10px;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  font-size: 0.938rem;
+  transition: all 0.2s ease;
+}
+
+.modal-body .btn-primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border: none;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.modal-body .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+.modal-body .btn-secondary {
+  background-color: #6b7280;
+  border: none;
+  display: inline-flex;               /* coloca ícono + texto en la misma línea */
+  align-items: center;                /* centra verticalmente */
+  justify-content: center;            /* centra horizontalmente si hace falta */
+  gap: 0.5rem;                        /* espacio entre ícono y texto */
+  white-space: nowrap;                /* evita que salten a otra línea */
+  padding: 0.625rem 1.5rem; 
+}
+
+.modal-body .btn-secondary:hover {
+  background-color: #4b5563;
+  transform: translateY(-2px);
+}
+
+/* Mejorar input-group dentro de modales */
+.modal-body .input-group .btn {
+  padding: 0.75rem 1.25rem;
+}
+
+/* Espaciado para iconos en botones de modal */
+.modal-body .btn i {
+  margin-right: 0.5rem;
+}
+
+/* ===== ANIMACIONES SUAVES ===== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card,
+.alert,
+.table-responsive {
+  animation: fadeIn 0.4s ease;
+}
+
+/* ===== SCROLLBAR PERSONALIZADO ===== */
+
+/* Scrollbar más visible y elegante */
+.table-responsive::-webkit-scrollbar {
+  width: 12px;
+  height: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #9ca3af;
+  border-radius: 10px;
+  border: 2px solid #f3f4f6;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+/* Agregar scroll suave */
+.table-responsive {
+  scroll-behavior: smooth;
+}
+/* Mejorar el espaciado del contador de registros */
+.text-muted {
+  margin-top: 1.25rem;
+  font-size: 0.938rem;
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1.5rem !important;
+  }
+
+  .admin-content {
+  padding: 1rem !important;
+  }
+
+  .table thead th,
+  .table tbody td {
+    padding: 0.875rem 0.625rem;
+    font-size: 0.813rem;
+
+  }
+
+  /* Reducir espaciado en móvil */
+  .row {
+    margin-bottom: 1rem;
+    row-gap: 0.75rem;
+  }
+
+  .btn {
+    padding: 0.625rem 1.25rem;
+  }
+   /* Reducir altura máxima de tabla en móvil */
+  .table-responsive {
+    max-height: 400px;
+  }
+   /* .filters-section {
+    padding: 1.25rem;
+  }*/
+}
+
+/* Agregar espaciado específico para contenedores flex */
+.d-flex {
+  gap: 0.75rem;
+}
+
+.justify-content-between {
+  gap: 1rem;
+}
+
+/* Mejorar espaciado de grupos de inputs con botones */
+.input-group .btn {
+  margin-left: 0 !important;
+}
+
+
+/* Mejorar espaciado entre columnas */
+.row.g-3 {
+  /* Aumentar gap entre columnas */
+  --bs-gutter-x: 1.5rem;
+  --bs-gutter-y: 1rem;
+}
+
+/* Sección de filtros con borde sutil */
+.filters-section {
+  background-color: #f9fafb;
+  padding: 1.75rem;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  width: 120%; 
+  max-width: 1200px;
+  height: 120%;
+  margin: 0 auto;
+}
+
+/* Separador visual */
+hr {
+  border-color: #e5e7eb33;
+  opacity: 0.5;
+  margin: 2rem 0;
+}
+
+/* Sección de tabla con mejor organización */
+.table-section {
+  margin-top: 1.5rem;
+  width: 120%; 
+  max-width: 1200px; 
+  height: 120%; 
+  margin: 0 auto;
 }
