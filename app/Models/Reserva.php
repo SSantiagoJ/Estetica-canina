@@ -49,6 +49,11 @@ class Reserva extends Model
     {
         return $this->belongsToMany(Servicio::class, 'detalles_reservas', 'id_reserva', 'id_servicio');
     }
+    public function atencion()
+{
+    // ajusta claves si en tu BD son otras
+    return $this->hasOne(\App\Models\Atencion::class, 'id_reserva', 'id_reserva');
+}
 
 }
 
