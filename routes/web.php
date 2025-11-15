@@ -202,7 +202,4 @@ Route::prefix('empleado')->name('empleado.')->group(function () {
     // Atender una reserva (cambiar estado)
     Route::put('/reservas/{id}/atender', [EmpleadoController::class, 'atenderReserva'])
         ->name('reservas.atender');
-
-   Route::post('/reservas/guardar-atencion', [EmpleadoController::class, 'guardarAtencion'])
-        ->name('reservas.guardarAtencion');
 });

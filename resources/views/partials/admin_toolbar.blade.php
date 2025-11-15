@@ -1,7 +1,7 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<link rel="stylesheet" href="{{ asset('css/admin_toolbar.css') }}">
+<link rel="stylesheet" href="{{ asset('css/admin/admin_toolbar.css') }}">
 <aside class="bg-primary text-white position-fixed top-0 start-0 h-100 shadow-sm d-flex flex-column pt-4"
        style="width: 250px; margin-top:70px; border-top-right-radius: 12px;">
     <ul class="nav flex-column px-2">

@@ -2,7 +2,7 @@
     <div class="header-container">
         <div class="header-content">
             {{-- Logo clickeable que regresa al dashboard --}}
-            <link rel="stylesheet" href="{{ asset('css/header.css') }}">
+            <link rel="stylesheet" href="{{ asset('css/core/header.css') }}">
             <a href="{{ url('/dashboard') }}" class="logo-link">
                 <div class="logo">
                     <div class="logo-icon">

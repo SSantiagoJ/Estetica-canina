@@ -15,8 +15,8 @@
 @endpush
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('css/admin_toolbar.css') }}">
-<link rel="stylesheet" href="{{ asset('css/admin_dashboard.css') }}">
+<link rel="stylesheet" href="{{ asset('css/admin/admin_toolbar.css') }}">
+<link rel="stylesheet" href="{{ asset('css/admin/admin_dashboard.css') }}">
 
 <aside class="admin-toolbar bg-primary text-white shadow-sm d-flex flex-column pt-4">
     <ul class="nav flex-column px-2">

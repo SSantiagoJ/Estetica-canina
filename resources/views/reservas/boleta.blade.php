@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Boleta de Pago</title>
-    <link rel="stylesheet" href="{{ public_path('css/boleta.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ public_path('css/cliente/boleta.css') }}" type="text/css">
 </head>
 <body>
   <div class="boleta-header">

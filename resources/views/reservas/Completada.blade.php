@@ -4,7 +4,7 @@
 @endsection
 @section('content')
 
-<link rel="stylesheet" href="{{ asset('css/finalizar.css') }}">
+<link rel="stylesheet" href="{{ asset('css/cliente/finalizar.css') }}">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <div class="completada-box text-center">

@@ -9,7 +9,7 @@
 @endsection
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('css/catalogo.css') }}">
+<link rel="stylesheet" href="{{ asset('css/cliente/catalogo.css') }}">
     <main class="main-catalogo-page">
         <section class="catalogo-servicios">
 
