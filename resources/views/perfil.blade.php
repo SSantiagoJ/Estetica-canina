@@ -3,7 +3,7 @@
 @endsection
 
 @extends('layouts.app')
-<link rel="stylesheet" href="{{ asset('css/cliente/perfil.css') }}">
+<link rel="stylesheet" href="{{ asset('css/perfil.css') }}">
 @section('content')
     <div class="perfil-container">
         <!-- Sección de Perfil -->

@@ -91,10 +91,6 @@ header.site-header {
   border-radius: 0.5rem !important;
   transition: all 0.2s !important;
   font-weight: 500 !important;
-  background: transparent !important;
-  border: none !important;
-  cursor: pointer !important;
-  font-size: 1rem !important;
 }
 
 .site-header .nav-link:hover {
@@ -114,29 +110,14 @@ header.site-header {
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Dropdown de Usuario */
-.site-header .user-dropdown {
-  position: relative !important;
-  margin-left: 1rem !important;
-  padding-left: 1rem !important;
-  border-left: 1px solid rgba(255, 255, 255, 0.3) !important;
-}
-
+/* Información del Usuario */
 .site-header .user-info {
   display: flex !important;
   align-items: center !important;
   gap: 0.5rem !important;
-  background: rgba(255, 255, 255, 0.1) !important;
-  padding: 0.5rem 1rem !important;
-  border-radius: 0.5rem !important;
-  border: none !important;
-  cursor: pointer !important;
-  transition: all 0.2s !important;
-  color: white !important;
-}
-
-.site-header .user-info:hover {
-  background: rgba(255, 255, 255, 0.2) !important;
+  margin-left: 1rem !important;
+  padding-left: 1rem !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.3) !important;
 }
 
 .site-header .user-avatar {
@@ -157,165 +138,31 @@ header.site-header {
 .site-header .user-details {
   display: flex !important;
   flex-direction: column !important;
-  align-items: flex-start !important;
 }
 
 .site-header .user-name {
   color: white !important;
   font-weight: 500 !important;
   font-size: 0.875rem !important;
-  text-align: left !important;
 }
 
 .site-header .user-role {
   color: #aabcfe !important;
   font-size: 0.75rem !important;
-  text-align: left !important;
 }
 
-.site-header .dropdown-arrow {
+/* Estilos para botón secundario de Register */
+.site-header .nav-link-secondary {
+  background: rgba(255, 255, 255, 0.2) !important;
   color: white !important;
-  font-size: 0.75rem !important;
-  margin-left: 0.5rem !important;
-  transition: transform 0.2s !important;
-}
-
-.site-header .user-info:hover .dropdown-arrow {
-  transform: translateY(2px) !important;
-}
-
-/* Menú desplegable */
-.site-header .user-dropdown-menu {
-  position: absolute !important;
-  top: calc(100% + 0.5rem) !important;
-  right: 0 !important;
-  background: white !important;
-  border-radius: 0.5rem !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
-  min-width: 220px !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  transform: translateY(-10px) !important;
-  transition: all 0.3s ease !important;
-  z-index: 1000 !important;
-  overflow: hidden !important;
-}
-
-.site-header .user-dropdown-menu.active {
-  opacity: 1 !important;
-  visibility: visible !important;
-  transform: translateY(0) !important;
-}
-
-.site-header .dropdown-item {
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.75rem !important;
-  padding: 0.875rem 1.25rem !important;
-  color: #2c3e50 !important;
-  text-decoration: none !important;
-  transition: all 0.2s !important;
-  border: none !important;
-  background: transparent !important;
-  width: 100% !important;
-  text-align: left !important;
-  cursor: pointer !important;
-  font-size: 0.95rem !important;
-}
-
-.site-header .dropdown-item:hover {
-  background: #f0f4ff !important;
-  color: #4144ff !important;
-}
-
-.site-header .dropdown-item i {
-  width: 1.25rem !important;
-  color: #6b7280 !important;
-  font-size: 1rem !important;
-}
-
-.site-header .dropdown-item:hover i {
-  color: #4144ff !important;
-}
-
-.site-header .dropdown-divider {
-  height: 1px !important;
-  background: #e5e7eb !important;
-  margin: 0.5rem 0 !important;
-}
-
-.site-header .dropdown-item-logout {
-  color: #ef4444 !important;
-}
-
-.site-header .dropdown-item-logout:hover {
-  background: #fee2e2 !important;
-  color: #dc2626 !important;
-}
-
-.site-header .dropdown-item-logout i {
-  color: #ef4444 !important;
-}
-
-.site-header .dropdown-item-logout:hover i {
-  color: #dc2626 !important;
-}
-
-/* Grupo de botones de autenticación */
-.site-header .auth-buttons-group {
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.75rem !important;
-  margin-left: 1rem !important;
-  padding-left: 1rem !important;
-  border-left: 1px solid rgba(255, 255, 255, 0.3) !important;
-}
-
-/* Botones de autenticación destacados */
-.site-header .btn-auth {
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.5rem !important;
   padding: 0.625rem 1.25rem !important;
-  border: none !important;
-  border-radius: 0.5rem !important;
   font-weight: 600 !important;
-  font-size: 0.95rem !important;
-  cursor: pointer !important;
-  transition: all 0.3s ease !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-}
-
-/* Botón de Iniciar Sesión */
-.site-header .btn-login {
-  background: rgba(255, 255, 255, 0.15) !important;
-  color: white !important;
-  border: 2px solid rgba(255, 255, 255, 0.8) !important;
-}
-
-.site-header .btn-login:hover {
-  background: white !important;
-  color: #4144ff !important;
-  border-color: white !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
-}
-
-/* Botón de Registrarse */
-.site-header .btn-register {
-  background: white !important;
-  color: #4144ff !important;
   border: 2px solid white !important;
 }
 
-.site-header .btn-register:hover {
-  background: #f0f4ff !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 4px 12px rgba(65, 68, 255, 0.3) !important;
-}
-
-.site-header .btn-auth i {
-  font-size: 1rem !important;
+.site-header .nav-link-secondary:hover {
+  background: white !important;
+  color: #4144ff !important;
 }
 
 /* Botón Menú Móvil */
@@ -431,12 +278,6 @@ header.site-header {
   text-decoration: none !important;
   border-radius: 0.5rem !important;
   transition: background 0.2s !important;
-  background: transparent !important;
-  border: none !important;
-  cursor: pointer !important;
-  font-size: 1rem !important;
-  width: 100% !important;
-  text-align: left !important;
 }
 
 .site-header .nav-link-mobile:hover {
@@ -457,87 +298,17 @@ header.site-header {
   background: #fff7ed !important;
 }
 
-/* Contenedor de botones de autenticación en móvil */
-.site-header .auth-buttons-mobile {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 0.75rem !important;
-  margin-top: 1rem !important;
-  padding-top: 1rem !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
-}
-
-/* Botones de autenticación en móvil */
-.site-header .btn-auth-mobile {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 0.5rem !important;
-  padding: 0.875rem 1.5rem !important;
-  border-radius: 0.5rem !important;
-  font-weight: 600 !important;
-  font-size: 1rem !important;
-  cursor: pointer !important;
-  transition: all 0.3s ease !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-  width: 100% !important;
-}
-
-/* Botón de Login en móvil */
-.site-header .btn-login-mobile {
-  background: rgba(255, 255, 255, 0.15) !important;
+/* Estilo para botón secundario en móvil */
+.site-header .nav-link-mobile-secondary {
+  background: rgba(255, 255, 255, 0.2) !important;
   color: white !important;
-  border: 2px solid rgba(255, 255, 255, 0.8) !important;
-}
-
-.site-header .btn-login-mobile:hover {
-  background: white !important;
-  color: #4144ff !important;
-  border-color: white !important;
-  transform: scale(1.02) !important;
-}
-
-/* Botón de Registrarse en móvil */
-.site-header .btn-register-mobile {
-  background: white !important;
-  color: #4144ff !important;
+  font-weight: 600 !important;
   border: 2px solid white !important;
 }
 
-.site-header .btn-register-mobile:hover {
-  background: #f0f4ff !important;
-  transform: scale(1.02) !important;
-}
-
-.site-header .btn-auth-mobile i {
-  font-size: 1.125rem !important;
-}
-
-/* Botón de cierre de sesión en móvil */
-.site-header .nav-link-mobile-logout {
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.75rem !important;
-  padding: 0.75rem 1rem !important;
-  color: white !important;
-  background: rgba(239, 68, 68, 0.8) !important;
-  text-decoration: none !important;
-  border-radius: 0.5rem !important;
-  transition: background 0.2s !important;
-  border: none !important;
-  cursor: pointer !important;
-  font-weight: 500 !important;
-  width: 100% !important;
-  text-align: left !important;
-  font-size: 1rem !important;
-}
-
-.site-header .nav-link-mobile-logout:hover {
-  background: rgba(239, 68, 68, 1) !important;
-}
-
-.site-header .nav-link-mobile-logout i {
-  width: 1.25rem !important;
+.site-header .nav-link-mobile-secondary:hover {
+  background: white !important;
+  color: #f97316 !important;
 }
 
 @media (min-width: 768px) {

@@ -9,8 +9,8 @@
 @section('content')
 
 <!-- <CHANGE> Agregar los CSS del admin -->
-<link rel="stylesheet" href="{{ asset('css/admin/admin_toolbar.css') }}">
-<link rel="stylesheet" href="{{ asset('css/admin/admin_dashboard.css') }}">
+<link rel="stylesheet" href="{{ asset('css/admin_toolbar.css') }}">
+<link rel="stylesheet" href="{{ asset('css/admin_dashboard.css') }}">
 
 <!-- Toolbar lateral para empleado -->
 <aside class="admin-toolbar bg-primary text-white shadow-sm d-flex flex-column pt-4">

@@ -3,7 +3,7 @@
     <?php echo $__env->make('partials.header', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('content'); ?>
-<link rel="stylesheet" href="<?php echo e(asset('css/core/estilo_menu.css')); ?>">
+<link rel="stylesheet" href="<?php echo e(asset('css/estilo_menu.css')); ?>">
 <section class="contenedor1">
     <div class="contenedor2">
         <h2>Belleza y bienestar para todos los amigos peludos</h2>

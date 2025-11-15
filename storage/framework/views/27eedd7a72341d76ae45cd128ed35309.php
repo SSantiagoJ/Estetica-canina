@@ -2,7 +2,7 @@
     <div class="header-container">
         <div class="header-content">
             
-            <link rel="stylesheet" href="<?php echo e(asset('css/core/header.css')); ?>">
+            <link rel="stylesheet" href="<?php echo e(asset('css/header.css')); ?>">
             <a href="<?php echo e(url('/dashboard')); ?>" class="logo-link">
                 <div class="logo">
                     <div class="logo-icon">

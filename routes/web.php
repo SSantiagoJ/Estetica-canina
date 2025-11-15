@@ -8,11 +8,12 @@ use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\GestorController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\CatalogoController;
+use App\Http\Controllers\CalificacionController;
 
 // Ruta raíz - Mostrar menú
 Route::get('/', function () {
     return view('menu', [
-        'calificaciones' => app(CalificacionController::class)->calificacionesDestacadas()
+        'calificaciones' => app(\App\Http\Controllers\CalificacionController::class)->calificacionesDestacadas()
     ]);
 })->name('home');
 

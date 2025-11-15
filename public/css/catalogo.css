@@ -6,7 +6,7 @@
 /* Contenedor principal */
 .catalogo-servicios {
   padding: 0;
-  background-color: var(--color-white);
+  background-color: #ffffff;
   max-width: 100%;
   margin: 0 auto;
   overflow-x: hidden;
@@ -17,28 +17,28 @@
 .categoria-item {
   margin-bottom: 0;
   width: 100%;
-  padding: var(--spacing-2xl) var(--spacing-xl);
-  transition: background-color var(--transition-base);
+  padding: 60px 40px;
+  transition: background-color 0.3s ease;
 }
 
-/* Baños - Soft Pink (basado en paleta principal) */
+/* Baños - Soft Pink */
 .categoria-item:nth-child(1) {
-  background-color: var(--color-background);
+  background-color: #f5d5d0;
 }
 
-/* Peluquería - Light */
+/* Peluquería - Light Blue */
 .categoria-item:nth-child(3) {
-  background-color: var(--color-background-light);
+  background-color: #c8e3f0;
 }
 
-/* Tratamientos - Light Gray */
+/* Tratamientos - Lavender */
 .categoria-item:nth-child(5) {
-  background-color: var(--color-light-gray);
+  background-color: #b5c7e8;
 }
 
-/* Servicios Adicionales - Background */
+/* Servicios Adicionales - Soft Cream */
 .categoria-item:nth-child(7) {
-  background-color: var(--color-background);
+  background-color: #fff5f0;
 }
 
 .categoria-row {
@@ -59,15 +59,15 @@
 /* Updated title styling for better visual hierarchy */
 .categoria-titulo {
   font-size: 2.8em;
-  color: var(--color-primary);
-  margin-bottom: var(--spacing-lg);
+  color: #2c3e50;
+  margin-bottom: 20px;
   font-weight: 700;
   letter-spacing: -0.5px;
 }
 
 .categoria-descripcion {
   font-size: 1.1em;
-  color: var(--color-primary-light);
+  color: #3d4a5c;
   line-height: 1.8;
 }
 
@@ -85,8 +85,8 @@
   display: flex;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  gap: var(--spacing-lg);
-  padding: var(--spacing-sm) 0;
+  gap: 20px;
+  padding: 10px 0;
   cursor: grab;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -108,15 +108,15 @@
   height: 240px;
   position: relative;
   overflow: hidden;
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-md);
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
   scroll-snap-align: start;
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .servicio-card:hover {
   transform: translateY(-8px);
-  box-shadow: var(--shadow-xl);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
 }
 
 .servicio-card img {
@@ -133,14 +133,14 @@
   left: 0;
   width: 100%;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.5) 60%, transparent 100%);
-  color: var(--color-white);
-  padding: var(--spacing-lg) var(--spacing-md) var(--spacing-md);
+  color: white;
+  padding: 25px 18px 18px;
 }
 
 .servicio-nombre {
   font-weight: 700;
   font-size: 1.2em;
-  margin-bottom: var(--spacing-xs);
+  margin-bottom: 6px;
   letter-spacing: 0.3px;
 }
 
@@ -164,25 +164,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-md);
-  transition: all var(--transition-base);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
   z-index: 10;
 }
 
 .carousel-btn:hover {
-  background-color: var(--color-primary-light);
-  border-color: var(--color-primary-light);
-  box-shadow: var(--shadow-lg);
+  background-color: #3d4a5c;
+  border-color: #3d4a5c;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
   transform: translateY(-50%) scale(1.1);
 }
 
 .carousel-btn svg {
-  color: var(--color-primary-light);
-  transition: color var(--transition-base);
+  color: #3d4a5c;
+  transition: color 0.3s ease;
 }
 
 .carousel-btn:hover svg {
-  color: var(--color-white);
+  color: #ffffff;
 }
 
 .carousel-prev {
@@ -201,7 +201,7 @@
 /* Improved responsive breakpoints with better overflow handling */
 @media (max-width: 1200px) {
   .categoria-item {
-    padding: var(--spacing-2xl) var(--spacing-xl);
+    padding: 50px 30px;
   }
 
   .categoria-info {
@@ -215,12 +215,12 @@
 
 @media (max-width: 1024px) {
   .categoria-item {
-    padding: var(--spacing-xl) var(--spacing-lg);
+    padding: 40px 25px;
   }
 
   .categoria-row {
     flex-direction: column;
-    gap: var(--spacing-xl);
+    gap: 30px;
   }
 
   .categoria-info {
@@ -229,7 +229,7 @@
   }
 
   .carousel-container {
-    padding: 0 var(--spacing-xl);
+    padding: 0 40px;
     width: 100%;
   }
 
@@ -242,7 +242,7 @@
 
 @media (max-width: 768px) {
   .categoria-item {
-    padding: var(--spacing-lg) var(--spacing-lg);
+    padding: 35px 20px;
   }
 
   .categoria-titulo {
@@ -271,7 +271,7 @@
 
 @media (max-width: 480px) {
   .categoria-item {
-    padding: var(--spacing-xl) var(--spacing-md);
+    padding: 30px 15px;
   }
 
   .categoria-titulo {
@@ -279,7 +279,7 @@
   }
 
   .carousel-container {
-    padding: 0 var(--spacing-xl);
+    padding: 0 30px;
   }
 
   .carousel-btn {
@@ -301,4 +301,47 @@
     font-size: 0.85em;
   }
 }
-/* Footer styles are defined globally in core/estilo_menu.css */
+/* Footer */
+.footer {
+    background-color: #2E324D;
+    color: white;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.footer-column {
+    flex: 1;
+    min-width: 250px;
+    margin: 20px;
+}
+
+.footer h3 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    color: #fff;
+}
+
+.footer p {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #ddd;
+}
+
+/* Redes sociales */
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+.social-icons img {
+    width: 30px;
+    height: 30px;
+    filter: brightness(0) invert(1); /* convierte íconos a blanco */
+    transition: transform 0.3s ease;
+}
+.social-icons img:hover {
+    transform: scale(1.1);
+}

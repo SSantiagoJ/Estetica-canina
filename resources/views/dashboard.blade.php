@@ -5,7 +5,7 @@
     @include('partials.header')
 @endsection
 @section('content')
-<link rel="stylesheet" href="{{ asset('css/core/estilo_menu.css') }}">
+<link rel="stylesheet" href="{{ asset('css/estilo_menu.css') }}">
 <section class="contenedor1">
     <div class="contenedor2">
         <h2>Belleza y bienestar para todos los amigos peludos</h2>

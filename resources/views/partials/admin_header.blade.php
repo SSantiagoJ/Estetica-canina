@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="{{ asset('css/admin/admin_header.css') }}">
+<link rel="stylesheet" href="{{ asset('css/admin_header.css') }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 {{-- Header --}}

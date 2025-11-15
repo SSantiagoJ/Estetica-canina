@@ -7,7 +7,7 @@
 @section('title', 'Mis Reservas')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/cliente/mis-reservas.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/mis-reservas.css') }}">
 @endpush
 
 @section('content')

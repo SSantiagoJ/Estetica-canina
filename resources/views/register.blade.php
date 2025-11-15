@@ -6,7 +6,7 @@
     <title>PetSpa - Registro</title>
 
     {{-- CSS principal --}}
-    <link rel="stylesheet" href="{{ asset('css/auth/login.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
 
     {{-- Google Fonts --}}
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
