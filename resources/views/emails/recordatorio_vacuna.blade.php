@@ -78,13 +78,21 @@
         <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="PetSpa Logo">
         <h1>PetSpa 🐾</h1>
     </div>
+
     <div class="content">
         <h2>¡Hola {{ $nombre }}!</h2>
-        <p>Hace casi un año que tu mascota recibió su <strong>Vacuna Antirrábica</strong> 💉</p>
+
+        <!-- mensaje dinámico desde la BD -->
+        <p>{{ $mensaje }}</p>
+
+        <!-- Si quieres también puedes meter esto en la BD -->
         <p>Te recomendamos agendar una nueva cita para mantenerla protegida y al día con sus vacunas.</p>
+
         <a href="http://localhost/reservas/seleccion-mascota" class="btn">Agendar nueva cita</a>
+
         <p>Fecha del último registro: <strong>{{ $fecha }}</strong></p>
     </div>
+
     <div class="footer">
         © {{ date('Y') }} PetSpa. Todos los derechos reservados.<br>
         Este es un mensaje automático, por favor no responder.

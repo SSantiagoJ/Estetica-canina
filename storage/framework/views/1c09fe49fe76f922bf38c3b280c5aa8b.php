@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Recordatorio de Cita - PetSpa</title>
+<title>Recordatorio de Vacuna - PetSpa</title>
 <style>
     body {
         font-family: 'Poppins', Arial, sans-serif;
@@ -20,7 +20,7 @@
         overflow: hidden;
     }
     .header {
-        background: linear-gradient(135deg, #3b82f6, #06b6d4);
+        background: linear-gradient(135deg, #14b8a6, #0ea5e9);
         color: white;
         text-align: center;
         padding: 25px 20px;
@@ -39,7 +39,7 @@
         text-align: center;
     }
     .content h2 {
-        color: #1e293b;
+        color: #0f172a;
         font-size: 22px;
         margin-bottom: 10px;
     }
@@ -51,7 +51,7 @@
     .btn {
         display: inline-block;
         padding: 12px 25px;
-        background-color: #3b82f6;
+        background-color: #0ea5e9;
         color: white;
         border-radius: 8px;
         text-decoration: none;
@@ -60,7 +60,7 @@
         transition: background 0.3s ease;
     }
     .btn:hover {
-        background-color: #2563eb;
+        background-color: #0284c7;
     }
     .footer {
         background-color: #f1f5f9;
@@ -80,21 +80,25 @@
     </div>
 
     <div class="content">
-        <h2>¡Hola {{ $nombre }}!</h2>
+        <h2>¡Hola <?php echo e($nombre); ?>!</h2>
 
-        <!-- MENSAJE dinámico desde la BD -->
-        <p>{{ $mensaje }}</p>
+        <!-- mensaje dinámico desde la BD -->
+        <p><?php echo e($mensaje); ?></p>
 
-        <p><strong>{{ $fecha }} a las {{ $hora }}</strong></p>
+        <!-- Si quieres también puedes meter esto en la BD -->
+        <p>Te recomendamos agendar una nueva cita para mantenerla protegida y al día con sus vacunas.</p>
 
-        <a href="http://localhost/bandeja-reservas" class="btn">Ver mi reserva</a>
+        <a href="http://localhost/reservas/seleccion-mascota" class="btn">Agendar nueva cita</a>
+
+        <p>Fecha del último registro: <strong><?php echo e($fecha); ?></strong></p>
     </div>
 
     <div class="footer">
-        © {{ date('Y') }} PetSpa. Todos los derechos reservados.<br>
+        © <?php echo e(date('Y')); ?> PetSpa. Todos los derechos reservados.<br>
         Este es un mensaje automático, por favor no responder.
     </div>
 </div>
 
 </body>
 </html>
+<?php /**PATH C:\xampp\htdocs\ProyectoSpa\Estetica-canina\resources\views/emails/recordatorio_vacuna.blade.php ENDPATH**/ ?>

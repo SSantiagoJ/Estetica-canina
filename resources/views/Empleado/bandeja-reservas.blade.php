@@ -39,6 +39,14 @@
             </a>
         </li>
 
+        <li class="nav-item mb-2">
+            <a href="{{ route('empleado.notificaciones') }}" class="nav-link text-white d-flex align-items-center gap-3 py-3 px-3 rounded hover-effect">
+                <i class="fas fa-bell fs-5"></i>
+                <span class="fw-semibold">Gestionar Notificaciones</span>
+            </a>
+        </li>
+
+
         <!-- <CHANGE> Opcional: agregar enlace al dashboard general -->
         <li class="nav-item mb-2">
             <a href="{{ route('dashboard') }}" class="nav-link text-white d-flex align-items-center gap-3 py-3 px-3 rounded hover-effect">

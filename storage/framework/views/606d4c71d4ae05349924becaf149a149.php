@@ -80,21 +80,22 @@
     </div>
 
     <div class="content">
-        <h2>¡Hola {{ $nombre }}!</h2>
+        <h2>¡Hola <?php echo e($nombre); ?>!</h2>
 
         <!-- MENSAJE dinámico desde la BD -->
-        <p>{{ $mensaje }}</p>
+        <p><?php echo e($mensaje); ?></p>
 
-        <p><strong>{{ $fecha }} a las {{ $hora }}</strong></p>
+        <p><strong><?php echo e($fecha); ?> a las <?php echo e($hora); ?></strong></p>
 
         <a href="http://localhost/bandeja-reservas" class="btn">Ver mi reserva</a>
     </div>
 
     <div class="footer">
-        © {{ date('Y') }} PetSpa. Todos los derechos reservados.<br>
+        © <?php echo e(date('Y')); ?> PetSpa. Todos los derechos reservados.<br>
         Este es un mensaje automático, por favor no responder.
     </div>
 </div>
 
 </body>
 </html>
+<?php /**PATH C:\xampp\htdocs\ProyectoSpa\Estetica-canina\resources\views/emails/recordatorio_reserva.blade.php ENDPATH**/ ?>

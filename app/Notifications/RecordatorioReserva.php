@@ -12,12 +12,15 @@ class RecordatorioReserva extends Notification
 
     protected $reserva;
     protected $usuario;
+    protected $notificacionBD;
 
-    public function __construct($reserva, $usuario = null)
-    {
-        $this->reserva = $reserva;
-        $this->usuario = $usuario;
-    }
+    public function __construct($reserva, $notificacionBD, $usuario = null)
+{
+    $this->reserva = $reserva;
+    $this->usuario = $usuario;
+    $this->notificacionBD = $notificacionBD;
+}
+
 
     public function via($notifiable)
     {
@@ -35,6 +38,7 @@ class RecordatorioReserva extends Notification
                 'nombre' => $nombre,
                 'hora' => $hora,
                 'fecha' => $this->reserva->fecha,
+                'mensaje'=> $this->notificacionBD->mensaje,   // ⬅ TEXTO DESDE BD
             ]);
     }
 }

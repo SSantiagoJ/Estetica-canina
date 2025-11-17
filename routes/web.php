@@ -8,6 +8,8 @@ use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\GestorController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\CatalogoController;
+use App\Http\Controllers\NotificacionController;
+
 
 
 // Ruta raíz - Mostrar menú
@@ -207,5 +209,28 @@ Route::prefix('empleado')->name('empleado.')->group(function () {
 Route::post('/reservas/guardar-atencion', 
             [EmpleadoController::class, 'guardarAtencion']
     )->name('reservas.guardarAtencion');
+
+});
+Route::prefix('empleado/notificaciones')->group(function () {
+
+    Route::get('/', [NotificacionController::class, 'index'])->name('empleado.notificaciones');
+
+    Route::post('/store', [NotificacionController::class, 'store'])
+        ->name('empleado.notificaciones.store');
+
+    Route::put('/update', [NotificacionController::class, 'update'])
+        ->name('empleado.notificaciones.update');
+
+    Route::post('/probar/{id}', [NotificacionController::class, 'probar'])
+        ->name('empleado.notificaciones.probar');
+
+    Route::post('/cambiar-estado', [NotificacionController::class, 'cambiarEstado'])
+        ->name('empleado.notificaciones.estado');
+    Route::post('/empleado/notificaciones/{id}/ejecutar', 
+    [NotificacionController::class, 'ejecutar']
+)->name('empleado.notificaciones.ejecutar');
+    Route::post('/empleado/notificaciones/custom', 
+        [NotificacionController::class, 'enviarCorreoPersonalizado'])
+        ->name('empleado.notificaciones.custom');
 
 });

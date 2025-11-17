@@ -25,7 +25,7 @@ class GenerarNotificacionesPrevias extends Command
 
         // Buscar reservas que inician entre 1h y 6h desde ahora
         $reservas = DB::table('reservas')
-            ->whereBetween(DB::raw("STR_TO_DATE(CONCAT(fecha,' ',hora), '%Y-%m-%d %H:%i:%s')"), [
+            ->whereBetween(DB::raw("STR_TO_DATE(CONCAT(fecha,' ',hora), '%Y-%m-%d %H:%i')"), [
                 $inicio->format('Y-m-d H:i:s'),
                 $fin->format('Y-m-d H:i:s')
             ])
@@ -46,8 +46,18 @@ class GenerarNotificacionesPrevias extends Command
 
             // Enviar el correo de recordatorio usando tu notificación existente
             try {
+                // Obtener la notificación correspondiente de la BD
+                $notificacionBD = DB::table('notificaciones')
+                    ->where('tipo', 'previas')
+                    ->first();
+
+                // Enviar correo
                 Notification::route('mail', $usuario->correo)
-                    ->notify(new RecordatorioReserva((object) $reserva, (object) $usuario));
+                    ->notify(new RecordatorioReserva(
+                        (object) $reserva,   // 1. reserva
+                        $notificacionBD,     // 2. mensaje desde BD
+                        (object) $usuario    // 3. usuario
+                    ));
 
 
                 $this->info("✅ Correo enviado a {$usuario->correo}");

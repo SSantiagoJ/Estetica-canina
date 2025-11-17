@@ -25,15 +25,21 @@ class RecordatorioVacuna extends Notification
     }
 
     public function toMail($notifiable)
-    {
-        $nombre = $this->usuario->nombres ?? 'Cliente';
-        $fecha = date('d/m/Y', strtotime($this->reserva->fecha ?? now()));
+{
+    $nombre = $this->usuario->nombres ?? 'Cliente';
+    $fecha = date('d/m/Y', strtotime($this->reserva->fecha ?? now()));
 
-        return (new MailMessage)
-            ->subject('🐾 Recordatorio de Vacuna Antirrábica')
-            ->view('emails.recordatorio_vacuna', [
-                'nombre' => $nombre,
-                'fecha'  => $fecha,
-            ]);
-    }
+    // 🔥 Traer mensaje desde la BD POR TIPO
+    $mensaje = \App\Models\Notificacion::where('tipo', 'vacunas')->value('mensaje') ?? '';
+
+    return (new MailMessage)
+        ->subject('🐾 Recordatorio de Vacuna Antirrábica')
+        ->view('emails.recordatorio_vacuna', [
+            'nombre'  => $nombre,
+            'fecha'   => $fecha,
+            'mensaje' => $mensaje,   // <- 🔥 LO ESTAMOS ENVIANDO A LA VISTA
+        ]);
+}
+
+
 }
