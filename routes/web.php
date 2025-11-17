@@ -8,12 +8,12 @@ use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\GestorController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\CatalogoController;
-use App\Http\Controllers\CalificacionController;
+
 
 // Ruta raíz - Mostrar menú
 Route::get('/', function () {
     return view('menu', [
-        'calificaciones' => app(\App\Http\Controllers\CalificacionController::class)->calificacionesDestacadas()
+        'calificaciones' => app(CalificacionController::class)->calificacionesDestacadas()
     ]);
 })->name('home');
 
@@ -203,4 +203,9 @@ Route::prefix('empleado')->name('empleado.')->group(function () {
     // Atender una reserva (cambiar estado)
     Route::put('/reservas/{id}/atender', [EmpleadoController::class, 'atenderReserva'])
         ->name('reservas.atender');
+    // Guardar la atención de una reserva
+Route::post('/reservas/guardar-atencion', 
+            [EmpleadoController::class, 'guardarAtencion']
+    )->name('reservas.guardarAtencion');
+
 });
