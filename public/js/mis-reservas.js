@@ -163,6 +163,43 @@ function abrirModalDetalles(button) {
         total += totalServicio;
     });
     
+    // Agregar delivery si existe
+    if (reserva.delivery) {
+        const costoBase = parseFloat(reserva.delivery.costo_delivery);
+        const igvDelivery = costoBase * 0.18;
+        const totalDelivery = parseFloat(reserva.delivery.total_delivery);
+        
+        const deliveryDiv = document.createElement('div');
+        deliveryDiv.className = 'servicio-item delivery-item';
+        deliveryDiv.innerHTML = `
+            <div class="servicio-info">
+                <span class="servicio-nombre">🚗 Servicio de Delivery</span>
+                <div class="servicio-detalles">
+                    <div class="servicio-detalle-linea">
+                        <small>📍 Recojo: ${reserva.delivery.direccion_recojo}</small>
+                    </div>
+                    <div class="servicio-detalle-linea">
+                        <small>📍 Entrega: ${reserva.delivery.direccion_entrega}</small>
+                    </div>
+                    <div class="servicio-detalle-linea">
+                        <span>Precio base:</span>
+                        <span>S/ ${costoBase.toFixed(2)}</span>
+                    </div>
+                    <div class="servicio-detalle-linea">
+                        <span>IGV (18%):</span>
+                        <span>S/ ${igvDelivery.toFixed(2)}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="servicio-precio-total">S/ ${totalDelivery.toFixed(2)}</div>
+        `;
+        serviciosContainer.appendChild(deliveryDiv);
+        
+        subtotal += costoBase;
+        totalIGV += igvDelivery;
+        total += totalDelivery;
+    }
+    
     // Actualizar resumen de totales
     document.getElementById('detallesSubtotal').textContent = `S/ ${subtotal.toFixed(2)}`;
     document.getElementById('detallesIGV').textContent = `S/ ${totalIGV.toFixed(2)}`;

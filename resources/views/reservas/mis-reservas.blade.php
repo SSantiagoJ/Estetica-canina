@@ -247,6 +247,7 @@
 <script>
 // Datos de reservas para el modal de detalles
 const reservasData = {!! json_encode($historialReservas->map(function($reserva) {
+    $delivery = DB::table('deliveries')->where('id_reserva', $reserva->id_reserva)->first();
     return [
         'id_reserva' => $reserva->id_reserva,
         'fecha' => $reserva->fecha, // Fecha original en formato YYYY-MM-DD
@@ -266,7 +267,13 @@ const reservasData = {!! json_encode($historialReservas->map(function($reserva) 
                 'igv' => $detalle->igv,
                 'total' => $detalle->total
             ];
-        })
+        }),
+        'delivery' => $delivery ? [
+            'direccion_recojo' => $delivery->direccion_recojo,
+            'direccion_entrega' => $delivery->direccion_entrega,
+            'costo_delivery' => $delivery->costo_delivery,
+            'total_delivery' => $delivery->costo_delivery * 1.18
+        ] : null
     ];
 })) !!};
 </script>

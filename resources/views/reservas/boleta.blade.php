@@ -39,6 +39,19 @@
           <td>{{ number_format($det->total, 2) }}</td>
         </tr>
       @endforeach
+      
+      @php
+        $delivery = DB::table('deliveries')->where('id_reserva', $reserva->id_reserva)->first();
+      @endphp
+      
+      @if($delivery)
+        <tr>
+          <td>🚗 Servicio de Delivery</td>
+          <td>{{ number_format($delivery->costo_delivery, 2) }}</td>
+          <td>{{ number_format($delivery->costo_delivery * 0.18, 2) }}</td>
+          <td>{{ number_format($delivery->costo_delivery * 1.18, 2) }}</td>
+        </tr>
+      @endif
     </tbody>
     <tfoot>
       <tr>

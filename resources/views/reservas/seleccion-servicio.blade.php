@@ -35,7 +35,11 @@
                         @foreach($servicios as $servicio)
                             <div class="col-md-6 col-lg-4 mb-4">
                                 <label class="servicio-card">
-                                    <input type="checkbox" name="servicios[]" value="{{ $servicio->id_servicio }}">
+                                    <input type="checkbox" 
+                                           name="servicios[]" 
+                                           value="{{ $servicio->id_servicio }}"
+                                           data-duracion="{{ $servicio->duracion }}"
+                                           class="servicio-checkbox">
                                     <div class="card-body text-center">
                                         @if($servicio->imagen_referencial)
                                             @php
@@ -69,7 +73,11 @@
                         @foreach($adicionales as $servicio)
                             <div class="col-md-6 col-lg-4 mb-4">
                                 <label class="servicio-card">
-                                    <input type="checkbox" name="adicionales[]" value="{{ $servicio->id_servicio }}">
+                                    <input type="checkbox" 
+                                           name="adicionales[]" 
+                                           value="{{ $servicio->id_servicio }}"
+                                           data-duracion="{{ $servicio->duracion }}"
+                                           class="servicio-checkbox">
                                     <div class="card-body text-center">
                                         @if($servicio->imagen_referencial)
                                             @php
@@ -130,10 +138,52 @@
                                   placeholder="Si tu mascota tiene alergia, descríbela aquí..."></textarea>
                     </div>
                 </div>
+
+                <!-- Delivery Section -->
+                <div class="detalles-box mt-3">
+                    <h5>🚗 Servicio de Delivery</h5>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="requiere_delivery" value="1" id="requiere_delivery">
+                            <label class="form-check-label" for="requiere_delivery">
+                                <strong>Solicitar servicio de recojo y entrega</strong>
+                            </label>
+                            <small class="d-block text-muted mt-1">
+                                Recogeremos a tu mascota en tu domicilio y la devolveremos cuando el servicio esté completo.
+                            </small>
+                        </div>
+                    </div>
+
+                    <div id="delivery-fields" style="display: none;">
+                        <div class="mb-3">
+                            <label for="direccion_recojo" class="form-label">Dirección de Recojo</label>
+                            <input type="text" name="direccion_recojo" id="direccion_recojo" 
+                                   class="form-control" placeholder="Ingrese su dirección completa">
+                            <small class="text-muted">Incluya referencias si es necesario</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="direccion_entrega" class="form-label">Dirección de Entrega</label>
+                            <input type="text" name="direccion_entrega" id="direccion_entrega" 
+                                   class="form-control" placeholder="Ingrese dirección de entrega (si es diferente)">
+                            <small class="text-muted">Deje en blanco si es la misma dirección de recojo</small>
+                        </div>
+
+                        <div class="alert alert-info" role="alert">
+                            <small>
+                                <i class="bi bi-info-circle"></i> El servicio de delivery tiene un costo fijo de <strong>S/ 20.00</strong> (IGV incluido).<br>
+                                • Recojo: Se coordinará según la hora de su reserva<br>
+                                • Entrega: Al finalizar el servicio
+                            </small>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Botones de acción -->
+                <!-- Botones de acción -->
         <div class="acciones mt-4 d-flex justify-content-between">
             <a href="{{ route('reservas.seleccionMascota') }}" class="btn-cancelar">Retroceder</a>
             <button type="submit" class="btn-siguiente">Ir a Pago</button>
@@ -141,3 +191,7 @@
     </form>
 </div>
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('js/seleccion-servicio.js') }}"></script>
+@endpush

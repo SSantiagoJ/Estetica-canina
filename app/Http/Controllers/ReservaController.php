@@ -81,7 +81,11 @@ class ReservaController extends Controller
                 'enfermedad'                => $request->has('enfermedad') ? 1 : 0,
                 'vacuna'                    => $request->has('vacuna') ? 1 : 0,
                 'alergia'                   => $request->has('alergia') ? 1 : 0,
-                'descripcion_alergia'       => $request->input('descripcion_alergia')
+                'descripcion_alergia'       => $request->input('descripcion_alergia'),
+                // Datos de delivery
+                'requiere_delivery'         => $request->has('requiere_delivery') ? 1 : 0,
+                'direccion_recojo'          => $request->input('direccion_recojo'),
+                'direccion_entrega'         => $request->input('direccion_entrega'),
             ]);
 
             // Mascotas seleccionadas
@@ -96,7 +100,10 @@ class ReservaController extends Controller
             $adicionalesIds = session('adicionales_seleccionados', []);
             $adicionales = Servicio::whereIn('id_servicio', $adicionalesIds)->get();
 
-            return view('reservas.pago', compact('mascotas', 'servicios', 'adicionales'));
+            // Costo de delivery
+            $costoDelivery = session('requiere_delivery', 0) ? 20.00 : 0;
+
+            return view('reservas.pago', compact('mascotas', 'servicios', 'adicionales', 'costoDelivery'));
         }
 
 
@@ -168,6 +175,28 @@ class ReservaController extends Controller
             }
         }
 
+        // 🚗 Guardar delivery si fue solicitado - SOLO en tabla deliveries
+        if (session('requiere_delivery', 0) == 1) {
+            // Guardar información de delivery en su propia tabla
+            // Costo: 16.95 (sin IGV) * 1.18 = 20.00 (con IGV)
+            try {
+                \DB::table('deliveries')->insert([
+                    'id_reserva' => $reserva->id_reserva,
+                    'direccion_recojo' => session('direccion_recojo'),
+                    'direccion_entrega' => session('direccion_entrega') ?: session('direccion_recojo'),
+                    'costo_delivery' => 16.95,
+                    'estado' => 'P', // P = Pendiente (el campo solo acepta 1 carácter)
+                    'usuario_creacion' => Auth::user()->correo,
+                    'usuario_actualizacion' => Auth::user()->correo,
+                    'fecha_creacion' => now(),
+                    'fecha_actualizacion' => now(),
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Error al guardar delivery: ' . $e->getMessage());
+                throw $e; // Re-lanzar para que sea capturado por el catch externo
+            }
+        }
+
         // ✅ Respuesta
         return $this->handleResponse($request, true, 'Reserva creada correctamente.', [
             'reserva_id' => $reserva->id_reserva
@@ -216,20 +245,30 @@ public function guardarPago()
         return redirect()->route('reservas.pago')->with('error', 'No se encontró la reserva.');
     }
 
-    // 2) Calcula el total REAL (usa el campo 'total' del detalle si lo tienes)
-    //    Si aún no guardas IGV/total en detalle, usa sum('precio_unitario')
-    $total = $reserva->detalles->sum('total'); 
-    if ($total == 0) {
-        $total = $reserva->detalles->sum('precio_unitario') * 1.18; // fallback
+    // 2) Calcula el total de servicios
+    $totalServicios = $reserva->detalles->sum('total'); 
+    if ($totalServicios == 0) {
+        $totalServicios = $reserva->detalles->sum('precio_unitario') * 1.18; // fallback
     }
 
-    // 3) Genera serie
+    // 3) Agregar costo de delivery si existe
+    $costoDelivery = \DB::table('deliveries')
+        ->where('id_reserva', $reserva->id_reserva)
+        ->value('costo_delivery') ?? 0;
+    
+    // Aplicar IGV al delivery
+    $totalDelivery = $costoDelivery * 1.18;
+    
+    // Total final
+    $total = $totalServicios + $totalDelivery;
+
+    // 4) Genera serie
     $serie = 'BOL-' . str_pad(Pago::count() + 1, 5, '0', STR_PAD_LEFT);
 
-    // 4) Crea el pago
+    // 5) Crea el pago
     $pago = Pago::create([
         'id_reserva'        => $reserva->id_reserva,
-        'monto'             => $total,           // 💡 Ya no 50%
+        'monto'             => $total,
         'metodo_pago'       => 'paypal',
         'fecha'             => Carbon::now()->toDateString(),
         'hora'              => Carbon::now()->toTimeString(),
@@ -317,6 +356,10 @@ public function misReservas()
         ->map(function($reserva) {
             $reserva->fecha_formateada = $this->formatearFecha($reserva->fecha);
             $reserva->servicios_texto = $this->formatearServicios($reserva->detalles);
+            // Verificar si tiene delivery
+            $reserva->tiene_delivery = \DB::table('deliveries')
+                ->where('id_reserva', $reserva->id_reserva)
+                ->exists();
             return $reserva;
         });
 
@@ -333,6 +376,10 @@ public function misReservas()
         ->map(function($reserva) {
             $reserva->fecha_formateada = $this->formatearFecha($reserva->fecha);
             $reserva->servicios_texto = $this->formatearServicios($reserva->detalles);
+            // Verificar si tiene delivery
+            $reserva->tiene_delivery = \DB::table('deliveries')
+                ->where('id_reserva', $reserva->id_reserva)
+                ->exists();
             return $reserva;
         });
 

@@ -66,6 +66,15 @@
                         </div>
                     @endforeach
                 </div>
+
+                @if(session('requiere_delivery', 0) == 1)
+                    <div class="alert alert-info mt-3">
+                        <h6>🚗 <strong>Servicio de Delivery Incluido</strong></h6>
+                        <p class="mb-1"><strong>Dirección de Recojo:</strong> {{ session('direccion_recojo') }}</p>
+                        <p class="mb-1"><strong>Dirección de Entrega:</strong> {{ session('direccion_entrega') ?: session('direccion_recojo') }}</p>
+                        <p class="mb-0"><strong>Costo Delivery:</strong> <span class="text-success">S/ 20.00</span></p>
+                    </div>
+                @endif
             </div>
         </div>
 
@@ -74,10 +83,19 @@
             <div class="card shadow-sm p-3 text-center">
                 <h5>💰 Total a Pagar</h5>
                 @php
-                    $total = $servicios->sum('costo') + $adicionales->sum('costo');
+                    $subtotalServicios = $servicios->sum('costo') + $adicionales->sum('costo');
+                    $costoDelivery = session('requiere_delivery', 0) == 1 ? 20.00 : 0;
+                    $total = $subtotalServicios + $costoDelivery;
                 @endphp
-                <h3 class="text-success mt-3">S/ {{ number_format($total, 2) }}</h3>
-                <p class="text-muted">Monto total</p>
+                
+                <div class="text-start mt-3 mb-3">
+                    <p class="mb-1"><strong>Servicios:</strong> <span class="float-end">S/ {{ number_format($subtotalServicios, 2) }}</span></p>
+                    @if($costoDelivery > 0)
+                        <p class="mb-1"><strong>Delivery:</strong> <span class="float-end">S/ {{ number_format($costoDelivery, 2) }}</span></p>
+                    @endif
+                    <hr>
+                    <h4 class="text-success"><strong>Total:</strong> <span class="float-end">S/ {{ number_format($total, 2) }}</span></h4>
+                </div>
 
                 <!-- 🟡 CONTENEDOR DONDE IRÁ EL BOTÓN -->
                 <div id="paypal-button-container" class="mt-4"></div>
