@@ -46,7 +46,7 @@
       
       @if($delivery)
         <tr>
-          <td>🚗 Servicio de Delivery</td>
+          <td>Servicio de Delivery</td>
           <td>{{ number_format($delivery->costo_delivery, 2) }}</td>
           <td>{{ number_format($delivery->costo_delivery * 0.18, 2) }}</td>
           <td>{{ number_format($delivery->costo_delivery * 1.18, 2) }}</td>

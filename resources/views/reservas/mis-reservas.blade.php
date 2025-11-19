@@ -40,6 +40,8 @@
                         data-mascota="{{ $reserva->mascota->nombre }}" 
                         data-fecha="{{ $reserva->fecha }}" 
                         data-hora="{{ $reserva->hora }}"
+                        data-id-empleado="{{ $reserva->id_empleado }}"
+                        data-fecha-creacion="{{ $reserva->fecha_creacion }}"
                         data-enfermedad="{{ $reserva->enfermedad }}"
                         data-vacuna="{{ $reserva->vacuna }}"
                         data-alergia="{{ $reserva->alergia }}"
@@ -153,6 +155,47 @@
                                class="form-control alergia-input" 
                                placeholder="Ejemplo: alergia al polen, problemas cardiacos..." 
                                style="display: none;">
+                    </div>
+                </div>
+
+                <!-- Reprogramación de Reserva -->
+                <div class="modal-section" id="reprogramacion-section">
+                    <h3 class="section-title">Reprogramar Fecha y Hora</h3>
+                    <div id="reprogramacion-bloqueada" style="display: none;">
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            No es posible reprogramar esta reserva porque han pasado más de 48 horas desde que fue creada.
+                        </div>
+                    </div>
+                    <div id="reprogramacion-disponible">
+                        <div class="mb-3">
+                            <label for="editFecha" class="form-label">Nueva Fecha</label>
+                            <input type="date" name="nueva_fecha" id="editFecha" class="form-control" min="{{ date('Y-m-d') }}">
+                        </div>
+
+                        <div class="mb-3" id="trabajador-section" style="display: none;">
+                            <label class="form-label">Trabajador Disponible</label>
+                            <div class="trabajadores-tabs-modal" id="editTrabajadoresTabs">
+                                @foreach($empleados ?? [] as $empleado)
+                                    <button type="button" 
+                                            class="btn-trabajador-modal" 
+                                            data-id="{{ $empleado->id_empleado }}"
+                                            data-nombre="{{ $empleado->persona->nombres }}">
+                                        {{ $empleado->persona->nombres }}
+                                    </button>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <div class="mb-3" id="horarios-section" style="display: none;">
+                            <label class="form-label">Horario Disponible para <span id="nombre-trabajador-modal"></span></label>
+                            <div class="horarios-grid-modal" id="editHorariosGrid">
+                                <!-- Horarios se cargarán dinámicamente -->
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="nueva_hora" id="editNuevaHora">
+                        <input type="hidden" name="nuevo_id_empleado" id="editNuevoIdEmpleado">
                     </div>
                 </div>
 

@@ -81,6 +81,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/reservas/seleccion-servicio', [ReservaController::class, 'seleccionServicio'])
         ->name('reservas.seleccionServicio');
 
+    Route::post('/reservas/obtener-horarios', [ReservaController::class, 'obtenerHorariosDisponibles'])
+        ->name('reservas.obtenerHorarios');
+
     Route::post('/reservas/pago', [ReservaController::class, 'pago'])
         ->name('reservas.pago');
 
@@ -142,6 +145,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/mis-reservas', [ReservaController::class, 'misReservas'])->name('reservas.mis-reservas');
     Route::get('/reservas/{id}', [ReservaController::class, 'show'])->name('reservas.show');
     Route::get('/reservas/{id}/editar', [ReservaController::class, 'edit'])->name('reservas.edit');
+    Route::put('/reservas/{id}', [ReservaController::class, 'update'])->name('reservas.update');
 });
 
 

@@ -11,6 +11,8 @@ use App\Models\Reserva;
 use App\Models\DetalleReserva;
 use App\Models\Servicio;
 use App\Models\Pago; // modelo del pago
+use App\Models\Empleado;
+use App\Models\Turno;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -64,10 +66,96 @@ class ReservaController extends Controller
                 ->where('tipo_servicio', 'Adicional')
                 ->get();
 
-            return view('reservas.seleccion-servicio', compact('servicios', 'adicionales'));
-}
+            // Obtener empleados activos con sus datos personales
+            $empleados = Empleado::with('persona')
+                ->whereHas('persona', function($query) {
+                    $query->where('estado', 'A');
+                })
+                ->get();
 
+            return view('reservas.seleccion-servicio', compact('servicios', 'adicionales', 'empleados'));
+    }
 
+    // 2.5 Obtener horarios disponibles por empleado (AJAX)
+    public function obtenerHorariosDisponibles(Request $request)
+    {
+        $fecha = $request->input('fecha');
+        $idEmpleado = $request->input('id_empleado');
+        $duracionServicios = $request->input('duracion', 0); // en minutos
+
+        if (!$fecha || !$idEmpleado) {
+            return response()->json(['error' => 'Faltan parámetros'], 400);
+        }
+
+        $horariosDisponibles = [];
+        $horaInicio = 8; // 8:00 AM
+        $horaFin = 20; // 8:00 PM
+
+        // Generar todos los horarios posibles en intervalos de 30 minutos
+        for ($hora = $horaInicio; $hora < $horaFin; $hora++) {
+            foreach ([0, 30] as $minuto) {
+                $horaActual = sprintf('%02d:%02d', $hora, $minuto);
+                $horaFinTurno = $this->calcularHoraFin($horaActual, $duracionServicios);
+
+                // Verificar si pasa las 20:00
+                $horaFinCarbon = Carbon::createFromFormat('H:i', $horaFinTurno);
+                if ($horaFinCarbon->hour >= 20 && $horaFinCarbon->minute > 0) {
+                    continue; // Saltar este horario
+                }
+
+                // Verificar si el horario está disponible
+                $disponible = $this->verificarDisponibilidad($fecha, $idEmpleado, $horaActual, $duracionServicios);
+
+                $horariosDisponibles[] = [
+                    'hora' => $horaActual,
+                    'disponible' => $disponible
+                ];
+            }
+        }
+
+        return response()->json($horariosDisponibles);
+    }
+
+    // Helper: Calcular hora fin del turno
+    private function calcularHoraFin($horaInicio, $duracionMinutos)
+    {
+        $fecha = Carbon::createFromFormat('H:i', $horaInicio);
+        $fecha->addMinutes($duracionMinutos);
+        return $fecha->format('H:i');
+    }
+
+    // Helper: Verificar disponibilidad del empleado
+    private function verificarDisponibilidad($fecha, $idEmpleado, $horaInicio, $duracionMinutos)
+    {
+        // Convertir hora inicio a Carbon
+        $inicio = Carbon::parse($fecha . ' ' . $horaInicio);
+        $fin = Carbon::parse($fecha . ' ' . $horaInicio)->addMinutes($duracionMinutos);
+
+        // Buscar reservas del empleado en esa fecha
+        $reservasExistentes = Reserva::where('fecha', $fecha)
+            ->where('id_empleado', $idEmpleado)
+            ->whereIn('estado', ['P', 'N', 'C']) // Pendiente, Nuevo, Completado
+            ->get();
+
+        foreach ($reservasExistentes as $reserva) {
+            // Calcular duración total de la reserva existente
+            $duracionReserva = $reserva->detalles->sum(function($detalle) {
+                return $detalle->servicio->duracion ?? 60; // 60 minutos por defecto
+            });
+
+            $reservaInicio = Carbon::parse($reserva->fecha . ' ' . $reserva->hora);
+            $reservaFin = Carbon::parse($reserva->fecha . ' ' . $reserva->hora)->addMinutes($duracionReserva);
+
+            // Verificar solapamiento
+            if (($inicio >= $reservaInicio && $inicio < $reservaFin) ||
+                ($fin > $reservaInicio && $fin <= $reservaFin) ||
+                ($inicio <= $reservaInicio && $fin >= $reservaFin)) {
+                return false; // Hay solapamiento
+            }
+        }
+
+        return true; // Horario disponible
+    }
 
     // 3. Pago
     public function pago(Request $request)
@@ -78,6 +166,7 @@ class ReservaController extends Controller
                 'adicionales_seleccionados' => $request->input('adicionales', []),
                 'fecha'                     => $request->input('fecha'),
                 'hora'                      => $request->input('hora'),
+                'id_empleado'               => $request->input('id_empleado'), // Trabajador asignado
                 'enfermedad'                => $request->has('enfermedad') ? 1 : 0,
                 'vacuna'                    => $request->has('vacuna') ? 1 : 0,
                 'alergia'                   => $request->has('alergia') ? 1 : 0,
@@ -135,6 +224,7 @@ class ReservaController extends Controller
         $reserva->id_usuario = Auth::id();
         $reserva->fecha = session('fecha');
         $reserva->hora = session('hora');
+        $reserva->id_empleado = session('id_empleado'); // Trabajador asignado
         $reserva->enfermedad = session('enfermedad', 0);
         $reserva->vacuna = session('vacuna', 0);
         $reserva->alergia = session('alergia', 0);
@@ -345,7 +435,14 @@ public function misReservas()
 
     $hoy = Carbon::now()->toDateString();
 
-    // Próximas reservas (fecha >= hoy)
+    // Obtener empleados activos
+    $empleados = Empleado::with('persona')
+        ->whereHas('persona', function($query) {
+            $query->where('estado', 'A');
+        })
+        ->get();
+
+    // Próximas (fecha >= hoy y estado pendiente o pagado)
     $proximasReservas = Reserva::with(['mascota', 'detalles.servicio'])
         ->where('id_cliente', $cliente->id_cliente)
         ->where('fecha', '>=', $hoy)
@@ -383,7 +480,7 @@ public function misReservas()
             return $reserva;
         });
 
-    return view('reservas.mis-reservas', compact('proximasReservas', 'historialReservas'));
+    return view('reservas.mis-reservas', compact('proximasReservas', 'historialReservas', 'empleados'));
 }
 
 /**
@@ -491,7 +588,37 @@ public function update(Request $request, $id)
             ->with('error', 'No puedes editar reservas pasadas.');
     }
 
-    // Actualizar los datos de la reserva
+    // Verificar si intenta cambiar fecha/hora
+    if ($request->filled('nueva_fecha') && $request->filled('nueva_hora')) {
+        // Verificar que no hayan pasado 48 horas desde la creación
+        $fechaCreacion = Carbon::parse($reserva->fecha_creacion);
+        $horasTranscurridas = $fechaCreacion->diffInHours(Carbon::now());
+        
+        if ($horasTranscurridas > 48) {
+            return redirect()->route('reservas.mis-reservas')
+                ->with('error', 'No es posible reprogramar la reserva después de 48 horas de su creación.');
+        }
+
+        // Validar que la nueva fecha sea futura
+        $nuevaFecha = $request->input('nueva_fecha');
+        if ($nuevaFecha < Carbon::now()->toDateString()) {
+            return redirect()->route('reservas.mis-reservas')
+                ->with('error', 'La nueva fecha debe ser futura.');
+        }
+
+        // Validar que se haya seleccionado un trabajador
+        if (!$request->filled('nuevo_id_empleado')) {
+            return redirect()->route('reservas.mis-reservas')
+                ->with('error', 'Debes seleccionar un trabajador para la nueva fecha.');
+        }
+
+        // Actualizar fecha, hora y trabajador
+        $reserva->fecha = $nuevaFecha;
+        $reserva->hora = $request->input('nueva_hora');
+        $reserva->id_empleado = $request->input('nuevo_id_empleado');
+    }
+
+    // Actualizar los datos de salud de la reserva
     $reserva->enfermedad = $request->has('enfermedad') ? $request->input('enfermedad') : 0;
     $reserva->vacuna = $request->has('vacuna') ? $request->input('vacuna') : 0;
     $reserva->alergia = $request->has('alergia') ? $request->input('alergia') : 0;

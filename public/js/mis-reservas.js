@@ -1,3 +1,8 @@
+// Variables globales para reprogramación
+let reservaActualId = null;
+let trabajadorSeleccionado = null;
+let fechaSeleccionada = null;
+
 document.addEventListener('DOMContentLoaded', function() {
     const tabButtons = document.querySelectorAll('.tab-button');
     const tabContents = document.querySelectorAll('.tab-content');
@@ -27,10 +32,16 @@ document.addEventListener('DOMContentLoaded', function() {
             const mascotaNombre = this.getAttribute('data-mascota');
             const fecha = this.getAttribute('data-fecha');
             const hora = this.getAttribute('data-hora');
+            const idEmpleado = this.getAttribute('data-id-empleado');
+            const fechaCreacion = this.getAttribute('data-fecha-creacion');
             const enfermedad = this.getAttribute('data-enfermedad');
             const vacuna = this.getAttribute('data-vacuna');
             const alergia = this.getAttribute('data-alergia');
             const descripcionAlergia = this.getAttribute('data-descripcion-alergia');
+            
+            reservaActualId = reservaId;
+            trabajadorSeleccionado = idEmpleado;
+            fechaSeleccionada = fecha;
             
             // Formatear fecha
             const fechaFormateada = formatearFechaModal(fecha);
@@ -57,6 +68,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 descripcionInput.style.display = 'none';
             }
             
+            // Verificar 48 horas para reprogramación
+            verificarReprogramacion(fechaCreacion, fecha, hora);
+            
             // Mostrar modal
             modal.classList.add('active');
         });
@@ -82,6 +96,43 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.target === modal) {
             cerrarModal();
         }
+    });
+
+    // Event listener para cambio de fecha en reprogramación
+    const editFecha = document.getElementById('editFecha');
+    if (editFecha) {
+        editFecha.addEventListener('change', function() {
+            fechaSeleccionada = this.value;
+            document.getElementById('trabajador-section').style.display = 'block';
+            document.getElementById('horarios-section').style.display = 'none';
+        });
+    }
+
+    // Event listeners para botones de trabajadores en modal de edición
+    const botonesTrabajaroresEdit = document.querySelectorAll('.btn-trabajador-modal');
+    botonesTrabajaroresEdit.forEach(boton => {
+        boton.addEventListener('click', function() {
+            // Remover active de todos
+            botonesTrabajaroresEdit.forEach(btn => btn.classList.remove('active'));
+            // Agregar active al seleccionado
+            this.classList.add('active');
+            
+            trabajadorSeleccionado = this.dataset.id;
+            document.getElementById('editNuevoIdEmpleado').value = trabajadorSeleccionado;
+            
+            // Mostrar nombre del trabajador
+            const nombreSpan = document.getElementById('nombre-trabajador-modal');
+            if (nombreSpan) {
+                nombreSpan.textContent = this.dataset.nombre;
+            }
+            
+            // Cargar horarios
+            if (fechaSeleccionada) {
+                cargarHorariosEditar();
+            } else {
+                alert('Por favor selecciona primero una fecha');
+            }
+        });
     });
 });
 
@@ -310,4 +361,103 @@ function formatearFechaRecomendacion(fecha) {
     const mes = meses[fecha.getMonth()];
     const año = fecha.getFullYear();
     return `${dia} ${mes} ${año}`;
+}
+
+// Verificar si puede reprogramar (48 horas)
+function verificarReprogramacion(fechaCreacion, fechaReserva, horaReserva) {
+    const ahora = new Date();
+    const creacion = new Date(fechaCreacion);
+    const horasTranscurridas = (ahora - creacion) / (1000 * 60 * 60);
+    
+    const bloqueadoDiv = document.getElementById('reprogramacion-bloqueada');
+    const disponibleDiv = document.getElementById('reprogramacion-disponible');
+    const editFecha = document.getElementById('editFecha');
+    
+    if (horasTranscurridas > 48) {
+        // Bloqueado
+        bloqueadoDiv.style.display = 'block';
+        disponibleDiv.style.display = 'none';
+        editFecha.value = '';
+        editFecha.disabled = true;
+    } else {
+        // Disponible
+        bloqueadoDiv.style.display = 'none';
+        disponibleDiv.style.display = 'block';
+        editFecha.value = fechaReserva;
+        editFecha.disabled = false;
+    }
+}
+
+// Cargar horarios para edición
+function cargarHorariosEditar() {
+    if (!trabajadorSeleccionado || !fechaSeleccionada) {
+        return;
+    }
+    
+    const horariosGrid = document.getElementById('editHorariosGrid');
+    horariosGrid.innerHTML = '<div class="text-center"><small>Cargando horarios...</small></div>';
+    
+    // Obtener duración total de servicios de la reserva actual
+    // Por simplicidad, usamos 60 minutos por defecto
+    const duracion = 60;
+    
+    fetch('/reservas/obtener-horarios', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            fecha: fechaSeleccionada,
+            id_empleado: trabajadorSeleccionado,
+            duracion: duracion,
+            id_reserva_actual: reservaActualId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        mostrarHorariosEditar(data);
+        document.getElementById('horarios-section').style.display = 'block';
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        horariosGrid.innerHTML = '<div class="text-danger"><small>Error al cargar horarios</small></div>';
+    });
+}
+
+// Mostrar horarios en el modal de edición
+function mostrarHorariosEditar(horarios) {
+    const horariosGrid = document.getElementById('editHorariosGrid');
+    horariosGrid.innerHTML = '';
+    
+    horarios.forEach(horario => {
+        const slot = document.createElement('div');
+        slot.className = 'horario-slot-modal';
+        slot.textContent = horario.hora;
+        
+        if (horario.disponible) {
+            slot.classList.add('disponible');
+            slot.addEventListener('click', function() {
+                seleccionarHorarioEditar(horario.hora, this);
+            });
+        } else {
+            slot.classList.add('bloqueado');
+        }
+        
+        horariosGrid.appendChild(slot);
+    });
+}
+
+// Seleccionar horario en modal de edición
+function seleccionarHorarioEditar(hora, elemento) {
+    // Remover selección previa
+    document.querySelectorAll('.horario-slot-modal.selected').forEach(slot => {
+        slot.classList.remove('selected');
+    });
+    
+    // Marcar como seleccionado
+    elemento.classList.add('selected');
+    
+    // Guardar en input hidden
+    document.getElementById('editNuevaHora').value = hora;
 }

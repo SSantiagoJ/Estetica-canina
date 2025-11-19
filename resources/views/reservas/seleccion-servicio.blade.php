@@ -110,13 +110,36 @@
                 <div class="detalles-box">
                     <h5>Detalles</h5>
 
-                    <!-- Fecha y hora -->
+                    <!-- Fecha -->
                     <div class="mb-3">
                         <label for="fecha" class="form-label">Fecha</label>
                         <input type="date" name="fecha" id="fecha" class="form-control" required>
+                    </div>
 
-                        <label for="hora" class="form-label mt-2">Hora</label>
-                        <input type="time" name="hora" id="hora" class="form-control" required>
+                    <!-- Selector de Trabajador y Horarios -->
+                    <div class="mb-3" id="trabajador-horarios-section" style="display: none;">
+                        <label class="form-label">Trabajadores Disponibles</label>
+                        <div class="trabajadores-tabs">
+                            @foreach($empleados as $empleado)
+                                <button type="button" 
+                                        class="btn-trabajador" 
+                                        data-id="{{ $empleado->id_empleado }}"
+                                        data-nombre="{{ $empleado->persona->nombres }}">
+                                    {{ $empleado->persona->nombres }}
+                                </button>
+                            @endforeach
+                        </div>
+
+                        <div class="horarios-container mt-3" id="horarios-container" style="display: none;">
+                            <label class="form-label">Horarios Disponibles para <span id="nombre-trabajador"></span></label>
+                            <div class="horarios-grid" id="horarios-grid">
+                                <!-- Los horarios se cargarán dinámicamente -->
+                            </div>
+                        </div>
+
+                        <!-- Campo oculto para guardar el horario seleccionado -->
+                        <input type="hidden" name="hora" id="hora" required>
+                        <input type="hidden" name="id_empleado" id="id_empleado" required>
                     </div>
 
                     <!-- Información de salud -->
@@ -139,9 +162,9 @@
                     </div>
                 </div>
 
-                <!-- Delivery Section -->
+                <!-- Delivery -->
                 <div class="detalles-box mt-3">
-                    <h5>🚗 Servicio de Delivery</h5>
+                    <h5> Servicio de Delivery</h5>
                     
                     <div class="mb-3">
                         <div class="form-check">
@@ -182,7 +205,6 @@
             </div>
         </div>
 
-        <!-- Botones de acción -->
                 <!-- Botones de acción -->
         <div class="acciones mt-4 d-flex justify-content-between">
             <a href="{{ route('reservas.seleccionMascota') }}" class="btn-cancelar">Retroceder</a>

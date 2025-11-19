@@ -271,3 +271,73 @@
     background-color: rgba(255, 255, 255, 0.2);
     transform: scale(1.1);
 }
+
+/* ===== Trabajadores y Horarios ===== */
+.trabajadores-tabs {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-trabajador {
+    padding: 10px 20px;
+    border: 2px solid #6366f1;
+    background: white;
+    color: #6366f1;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.btn-trabajador:hover {
+    background: #eef2ff;
+}
+
+.btn-trabajador.active {
+    background: #6366f1;
+    color: white;
+}
+
+.horarios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 15px;
+    background: #f9fafb;
+    border-radius: 8px;
+}
+
+.horario-slot {
+    padding: 12px 8px;
+    border: 2px solid #e5e7eb;
+    background: white;
+    border-radius: 6px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.horario-slot:hover:not(.bloqueado) {
+    border-color: #6366f1;
+    background: #eef2ff;
+    transform: translateY(-2px);
+}
+
+.horario-slot.bloqueado {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+    color: #9ca3af;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.horario-slot.selected {
+    background: #6366f1;
+    border-color: #6366f1;
+    color: white;
+}
