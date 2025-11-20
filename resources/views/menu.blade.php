@@ -2,7 +2,7 @@
 
 @section('title', 'Inicio - Pet Grooming')
 @section('header')
-    @include('partials.admin_header')
+    @include('partials.header')
 @endsection
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/estilo_menu.css') }}">
@@ -66,8 +66,8 @@
 </section>
 
 <!-- Opiniones -->
-<section class="opiniones py-5">
-    <div class="opiniones-top mb-4">
+<section class="opiniones">
+    <div class="opiniones-top">
         <img src="{{ asset('perrito2.png') }}" alt="Opinión">
         <p>
             Tu opinión nos ayuda a seguir consintiendo a los peluditos como se merecen.
@@ -75,39 +75,41 @@
         </p>
     </div>
 
-    <div class="container">
-        <div class="row">
-            @forelse($calificaciones as $calificacion)
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="opinion-card card h-100 shadow-sm">
-                        <div class="card-body">
-                            <div class="mb-2">
-                                @for($i = 0; $i < 5; $i++)
-                                    <i class="fas fa-star text-warning"></i>
-                                @endfor
-                                <span class="fecha d-block text-muted mt-1">
-                                    {{ \Carbon\Carbon::parse($calificacion->fecha_creacion)->format('d/m/Y') }}
-                                </span>
+    <div class="opiniones-carrusel">
+        <div class="container">
+            <div class="row">
+                @forelse($calificaciones as $calificacion)
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="opinion-card card h-100 shadow-sm">
+                            <div class="card-body">
+                                <div class="mb-2">
+                                    @for($i = 0; $i < 5; $i++)
+                                        <i class="fas fa-star text-warning"></i>
+                                    @endfor
+                                    <span class="fecha d-block text-muted mt-1">
+                                        {{ \Carbon\Carbon::parse($calificacion->fecha_creacion)->format('d/m/Y') }}
+                                    </span>
+                                </div>
+                                <p class="comentario card-text">
+                                    <em>"{{ $calificacion->comentarios }}"</em>
+                                </p>
+                                <footer class="blockquote-footer">
+                                    <h3 class="usuario mb-1">{{ $calificacion->nombres }}</h3>
+                                    <small class="text-muted">
+                                        Mascota: {{ $calificacion->mascota_nombre }}
+                                    </small>
+                                </footer>
                             </div>
-                            <p class="comentario card-text">
-                                <em>"{{ $calificacion->comentarios }}"</em>
-                            </p>
-                            <footer class="blockquote-footer">
-                                <h3 class="usuario mb-1">{{ $calificacion->nombres }}</h3>
-                                <small class="text-muted">
-                                    Mascota: {{ $calificacion->mascota_nombre }}
-                                </small>
-                            </footer>
                         </div>
                     </div>
-                </div>
-            @empty
-                <div class="col-12">
-                    <p class="text-center text-muted">
-                        Aún no hay calificaciones destacadas
-                    </p>
-                </div>
-            @endforelse
+                @empty
+                    <div class="col-12">
+                        <p class="text-center text-muted">
+                            Aún no hay calificaciones destacadas
+                        </p>
+                    </div>
+                @endforelse
+            </div>
         </div>
     </div>
 </section>

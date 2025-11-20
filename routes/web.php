@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmpleadoController;
 use App\Http\Controllers\ReservaController;
@@ -9,13 +10,21 @@ use App\Http\Controllers\GestorController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\NotificacionController;
+use App\Http\Controllers\CalificacionController;
 
 
 
 // Ruta raíz - Mostrar menú
 Route::get('/', function () {
+    try {
+        $calificacionController = new \App\Http\Controllers\CalificacionController();
+        $calificaciones = $calificacionController->calificacionesDestacadas();
+    } catch (\Exception $e) {
+        $calificaciones = collect(); // Colección vacía si hay error
+    }
+    
     return view('menu', [
-        'calificaciones' => app(CalificacionController::class)->calificacionesDestacadas()
+        'calificaciones' => $calificaciones
     ]);
 })->name('home');
 
@@ -47,30 +56,27 @@ Route::get('/header', function () {
 })->name('header');
 
 //Proteccion mediante rol
+// El dashboard se elimina ya que ahora los clientes van directamente al menú
+
+
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard', [
-            'calificaciones' => app(\App\Http\Controllers\CalificacionController::class)->calificacionesDestacadas()
-        ]);
-    })->name('dashboard'); 
-});
-
-
     Route::get('/admin_dashboard', function () {
-        if (auth()->user()->rol !== 'Admin' && auth()->user()->rol !== 'Empleado') {
+        if (Auth::user()->rol !== 'Admin' && Auth::user()->rol !== 'Empleado') {
             abort(403, 'Acceso no autorizado');
         }
         return view('admin_dashboard');
-    });
+    })->name('admin.dashboard');
+    
+    // Rutas adicionales del admin
+    Route::get('/admin/usuarios', [GestorController::class, 'usuarios'])->name('admin.usuarios');
+    Route::get('/admin/mascotas', [GestorController::class, 'mascotas'])->name('admin.mascotas');
+    Route::get('/admin/reservas', [GestorController::class, 'reservas'])->name('admin.reservas');
+    Route::get('/admin/servicios', [GestorController::class, 'servicios'])->name('admin.servicios');
+});
     
     Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo');
 
-// menu
-Route::get('/menu', function () {
-    // Si el archivo es 'resources/views/catalogo.blade.php'
-    return view('menu');
-
-});
+// La ruta del menú ya está definida arriba como ruta raíz
 
 
 // Reserva
@@ -104,13 +110,7 @@ Route::middleware(['auth'])->group(function () {
     ->middleware('auth');
 });
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/admin_dashboard', [GestorController::class, 'index'])->name('admin.dashboard');
-    Route::get('/admin/usuarios', [GestorController::class, 'usuarios'])->name('admin.usuarios');
-    Route::get('/admin/mascotas', [GestorController::class, 'mascotas'])->name('admin.mascotas');
-    Route::get('/admin/reservas', [GestorController::class, 'reservas'])->name('admin.reservas');
-    Route::get('/admin/servicios', [GestorController::class, 'servicios'])->name('admin.servicios');
-});
+
 
 // Rutas CRUD de Servicios
 Route::middleware(['auth'])->group(function () {
@@ -148,6 +148,21 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/reservas/{id}', [ReservaController::class, 'update'])->name('reservas.update');
 });
 
+// RUTAS PARA CALIFICACIONES
+Route::middleware(['auth'])->group(function () {
+    Route::post('/calificacion/guardar', [CalificacionController::class, 'guardarCalificacion'])->name('calificacion.guardar');
+});
+
+
+// ============================================
+// RUTAS PARA EMPLEADO - PANEL DEL DÍA
+// ============================================
+Route::prefix('empleado')->name('empleado.')->group(function () {
+    
+    // Vista del panel del día con reservas asignadas y dashboards
+    Route::get('/panel-del-dia', [EmpleadoController::class, 'panelDelDia'])
+        ->name('panel.del.dia');
+});
 
 // ============================================
 // RUTAS PARA EMPLEADO - GESTIÓN DE TURNOS

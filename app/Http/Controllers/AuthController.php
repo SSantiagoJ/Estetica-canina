@@ -38,11 +38,11 @@ class AuthController extends Controller
                 // ✅ Guardar sesión en Laravel
                 Auth::loginUsingId($user->id_usuario);
 
-                // ✅ Solo dos dashboards
+                // ✅ Solo dos dashboards para empleados y admin, clientes van al menú
                 $redirect = match ($user->rol) {
                      'Admin'    => '/admin_dashboard',
-                    'Empleado' => '/Empleado/bandeja-reservas',
-                    default             => '/dashboard',
+                    'Empleado' => '/empleado/bandeja-reservas',
+                    default             => '/',
                 };
 
                 return response()->json([
@@ -116,6 +116,7 @@ class AuthController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Registro exitoso',
+                'redirect' => '/',
                 'usuario' => [
                     'id'       => $idUsuario,
                     'nombre'   => $data['nombres'],
@@ -138,7 +139,7 @@ class AuthController extends Controller
     $request->session()->invalidate();
     $request->session()->regenerateToken();
 
-    return redirect('/login'); // Redirige al login
+    return redirect('/'); // Redirige al menú principal
 }
 
 }

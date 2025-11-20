@@ -78,16 +78,58 @@
                         <h3 class="pet-name">{{ strtoupper($reserva->mascota->nombre) }}</h3>
                         <p class="reserva-fecha">{{ $reserva->fecha_formateada }}</p>
                         <p class="reserva-servicios">{{ $reserva->hora }} - {{ $reserva->servicios_texto }}</p>
+                        
+                        <!-- Estado de calificación -->
+                        @php
+                            $feedback = DB::table('feedbacks')->where('id_reserva', $reserva->id_reserva)->first();
+                        @endphp
+                        
+                        @if($feedback)
+                            <p class="calificacion-existente">
+                                <i class="fas fa-star text-warning"></i>
+                                <span>Ya calificaste este servicio ({{ $feedback->calificacion }}/5 estrellas)</span>
+                            </p>
+                        @else
+                            <p class="sin-calificacion">
+                                <i class="far fa-star text-muted"></i>
+                                <span class="text-muted">Servicio sin calificar</span>
+                            </p>
+                        @endif
                     </div>
                 </div>
-                <a href="#" class="btn-action btn-detalles" 
-                   data-reserva-id="{{ $reserva->id_reserva }}"
-                   data-mascota="{{ $reserva->mascota->nombre }}"
-                   data-fecha="{{ $reserva->fecha_formateada }}"
-                   data-hora="{{ $reserva->hora }}"
-                   onclick="event.preventDefault(); abrirModalDetalles(this);">
-                    Ver Detalles
-                </a>
+                
+                <div class="reserva-actions">
+                    @if($feedback)
+                        <!-- Si ya fue calificado, solo mostrar el botón de ver detalles -->
+                        <a href="#" class="btn-action btn-detalles" 
+                           data-reserva-id="{{ $reserva->id_reserva }}"
+                           data-mascota="{{ $reserva->mascota->nombre }}"
+                           data-fecha="{{ $reserva->fecha_formateada }}"
+                           data-hora="{{ $reserva->hora }}"
+                           onclick="event.preventDefault(); abrirModalDetalles(this);">
+                            Ver Detalles
+                        </a>
+                        <span class="calificado-badge">✓ Calificado</span>
+                    @else
+                        <!-- Si no fue calificado, mostrar ambos botones -->
+                        <a href="#" class="btn-action btn-detalles" 
+                           data-reserva-id="{{ $reserva->id_reserva }}"
+                           data-mascota="{{ $reserva->mascota->nombre }}"
+                           data-fecha="{{ $reserva->fecha_formateada }}"
+                           data-hora="{{ $reserva->hora }}"
+                           onclick="event.preventDefault(); abrirModalDetalles(this);">
+                            Ver Detalles
+                        </a>
+                        <button class="btn-action btn-calificar" 
+                                data-reserva-id="{{ $reserva->id_reserva }}"
+                                data-mascota="{{ $reserva->mascota->nombre }}"
+                                data-fecha="{{ $reserva->fecha_formateada }}"
+                                data-servicios="{{ $reserva->servicios_texto }}"
+                                onclick="abrirModalCalificacion(this)">
+                            <i class="fas fa-star"></i> Calificar
+                        </button>
+                    @endif
+                </div>
             </div>
             @empty
             <div class="empty-state">
@@ -279,6 +321,61 @@
             <a href="{{ route('reservas.seleccionMascota') }}" class="btn-nueva-reserva">
                 <i class="fas fa-calendar-plus"></i> Agendar Nueva Cita
             </a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Calificación -->
+<div class="modal fade" id="modalCalificacion" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-star text-warning"></i> Calificar Servicio
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <h6 id="calificacionMascotaNombre" class="fw-bold"></h6>
+                    <p class="text-muted mb-1" id="calificacionFecha"></p>
+                    <p class="text-muted" id="calificacionServicios"></p>
+                </div>
+                
+                <form id="formCalificacion">
+                    @csrf
+                    <input type="hidden" id="calificacion_id_reserva" name="id_reserva">
+                    
+                    <div class="mb-3 text-center">
+                        <label class="form-label fw-semibold">¿Cómo fue tu experiencia?</label>
+                        <div class="rating-stars">
+                            <i class="fas fa-star star" data-value="1"></i>
+                            <i class="fas fa-star star" data-value="2"></i>
+                            <i class="fas fa-star star" data-value="3"></i>
+                            <i class="fas fa-star star" data-value="4"></i>
+                            <i class="fas fa-star star" data-value="5"></i>
+                        </div>
+                        <input type="hidden" id="calificacion_rating" name="calificacion" value="0">
+                        <div class="rating-text mt-2">
+                            <small class="text-muted" id="ratingDescription">Selecciona una calificación</small>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Comentarios (Opcional)</label>
+                        <textarea class="form-control" name="comentarios" rows="3" 
+                                  placeholder="Cuéntanos tu experiencia con el servicio..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" id="btnGuardarCalificacion">
+                    <i class="fas fa-save"></i> Guardar Calificación
+                </button>
+            </div>
         </div>
     </div>
 </div>

@@ -26,6 +26,6 @@
     @endisset
 
     <br><br>
-    <a href="{{ url('/dashboard') }}" class="btn btn-primary">Volver al inicio</a>
+    <a href="{{ url('/') }}" class="btn btn-primary">Volver al inicio</a>
 </div>
 @endsection

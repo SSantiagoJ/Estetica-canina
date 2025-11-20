@@ -324,4 +324,285 @@ header.site-header {
   }
 }
 
+/* ============================= */
+/* ESTILOS PARA MENÚ DESPLEGABLE DE USUARIO */
+/* ============================= */
+
+/* Container del dropdown */
+.site-header .dropdown-container {
+  position: relative !important;
+}
+
+/* Hacer clickeable el área del usuario */
+.site-header .dropdown-trigger {
+  cursor: pointer !important;
+}
+
+.site-header .dropdown-trigger:hover {
+  opacity: 0.8 !important;
+}
+
+/* Menú desplegable */
+.site-header .user-dropdown {
+  position: absolute !important;
+  top: calc(100% + 10px) !important;
+  right: 0 !important;
+  background: white !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+  min-width: 280px !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transform: translateY(-10px) !important;
+  transition: all 0.3s ease !important;
+  z-index: 1001 !important;
+  overflow: hidden !important;
+}
+
+.site-header .user-dropdown.active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) !important;
+}
+
+/* Header del dropdown */
+.site-header .dropdown-header {
+  padding: 20px !important;
+  background: linear-gradient(135deg, #4144ff 0%, #6366f1 100%) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.site-header .dropdown-avatar {
+  width: 50px !important;
+  height: 50px !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.site-header .dropdown-avatar i {
+  font-size: 24px !important;
+  color: white !important;
+}
+
+.site-header .dropdown-user-info {
+  flex: 1 !important;
+}
+
+.site-header .dropdown-user-name {
+  display: block !important;
+  color: white !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  margin-bottom: 4px !important;
+}
+
+.site-header .dropdown-user-email {
+  display: block !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 14px !important;
+}
+
+/* Divisor */
+.site-header .dropdown-divider {
+  height: 1px !important;
+  background: #e5e7eb !important;
+  margin: 8px 0 !important;
+}
+
+/* Items del dropdown */
+.site-header .dropdown-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 12px 20px !important;
+  color: #374151 !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+  border: none !important;
+  background: none !important;
+  width: 100% !important;
+  text-align: left !important;
+  font-size: 14px !important;
+  cursor: pointer !important;
+}
+
+.site-header .dropdown-item:hover {
+  background: #f3f4f6 !important;
+  color: #4144ff !important;
+}
+
+.site-header .dropdown-item i {
+  width: 18px !important;
+  font-size: 16px !important;
+  color: #6b7280 !important;
+}
+
+.site-header .dropdown-item:hover i {
+  color: #4144ff !important;
+}
+
+/* Botón de logout específico */
+.site-header .logout-btn {
+  color: #dc2626 !important;
+}
+
+.site-header .logout-btn:hover {
+  background: #fef2f2 !important;
+  color: #b91c1c !important;
+}
+
+.site-header .logout-btn:hover i {
+  color: #b91c1c !important;
+}
+
+/* Form de logout */
+.site-header .dropdown-logout-form {
+  margin: 0 !important;
+}
+
+/* ============================= */
+/* ESTILOS PARA LOGOUT EN MÓVIL */
+/* ============================= */
+
+.site-header .logout-form-mobile {
+  margin: 8px 0 !important;
+  padding: 0 !important;
+}
+
+.site-header .logout-mobile-btn {
+  width: 100% !important;
+  background: rgba(220, 38, 38, 0.1) !important;
+  color: #dc2626 !important;
+  border: 1px solid rgba(220, 38, 38, 0.3) !important;
+}
+
+.site-header .logout-mobile-btn:hover {
+  background: #dc2626 !important;
+  color: white !important;
+  border-color: #dc2626 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .site-header .user-dropdown {
+    min-width: 260px !important;
+    right: -10px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .site-header .user-dropdown {
+    min-width: 240px !important;
+    right: -20px !important;
+  }
+  
+  .site-header .dropdown-header {
+    padding: 16px !important;
+  }
+  
+  .site-header .dropdown-avatar {
+    width: 40px !important;
+    height: 40px !important;
+  }
+  
+  .site-header .dropdown-avatar i {
+    font-size: 20px !important;
+  }
+}
+
+/* Estilos para el dropdown del perfil cuando no hay sesión */
+.site-header .profile-dropdown-container {
+  position: relative !important;
+}
+
+.site-header .profile-dropdown-trigger {
+  cursor: pointer !important;
+  position: relative !important;
+}
+
+.site-header .profile-dropdown-trigger .dropdown-arrow {
+  font-size: 0.75rem !important;
+  margin-left: 0.25rem !important;
+  transition: transform 0.3s ease !important;
+}
+
+.site-header .profile-dropdown-trigger.active .dropdown-arrow {
+  transform: rotate(180deg) !important;
+}
+
+.site-header .profile-dropdown {
+  position: absolute !important;
+  top: 100% !important;
+  right: 0 !important;
+  min-width: 200px !important;
+  background: white !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transform: translateY(-10px) !important;
+  transition: all 0.3s ease !important;
+  z-index: 1000 !important;
+  margin-top: 0.5rem !important;
+  padding: 0.5rem 0 !important;
+}
+
+.site-header .profile-dropdown.active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) !important;
+}
+
+.site-header .profile-dropdown .dropdown-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  padding: 0.75rem 1rem !important;
+  color: #374151 !important;
+  text-decoration: none !important;
+  transition: background-color 0.2s ease !important;
+  font-weight: 500 !important;
+  border: none !important;
+  background: none !important;
+  width: 100% !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  font-size: 14px !important;
+}
+
+.site-header .profile-dropdown .dropdown-item:hover {
+  background: #f3f4f6 !important;
+  color: #1f2937 !important;
+}
+
+.site-header .profile-dropdown .dropdown-item i {
+  font-size: 1rem !important;
+  width: 1rem !important;
+  text-align: center !important;
+}
+
+/* Estilos responsive para el dropdown del perfil */
+@media (max-width: 767px) {
+  .site-header .profile-dropdown {
+    min-width: 180px !important;
+    right: -10px !important;
+  }
+}
+
+/* Estilos adicionales para botones en móvil */
+.site-header .nav-link-mobile {
+  border: none !important;
+  background: none !important;
+  font-family: inherit !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  width: 100% !important;
+}
+
 

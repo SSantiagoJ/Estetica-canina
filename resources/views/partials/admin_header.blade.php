@@ -5,7 +5,7 @@
 <header class="admin-site-header">
     <nav class="admin-navbar">
         <div class="admin-nav-container">
-            <a href="{{ route('dashboard') }}" class="admin-logo-link">
+            <a href="{{ route('home') }}" class="admin-logo-link">
                 <div class="admin-logo">
                     <i class="fas fa-paw"></i>
                 </div>

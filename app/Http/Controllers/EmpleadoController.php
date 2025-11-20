@@ -12,6 +12,7 @@ use App\Models\Servicio;
 use App\Models\Novedad;
 use App\Models\Atencion;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class EmpleadoController extends Controller
@@ -54,6 +55,84 @@ class EmpleadoController extends Controller
         }
     }
 
+
+    /**
+     * Muestra el panel del día con reservas asignadas y dashboards
+     */
+    public function panelDelDia()
+    {
+        $empleadoActual = Auth::user()->empleado ?? null;
+        $fechaHoy = now()->format('Y-m-d');
+        
+        // Obtener reservas del día asignadas al empleado actual
+        $reservasDelDia = collect();
+        if ($empleadoActual) {
+            $reservasDelDia = Reserva::with([
+                'mascota',
+                'cliente.persona',
+                'detalles.servicio'
+            ])
+            ->where('fecha', $fechaHoy)
+            ->where('id_empleado', $empleadoActual->id_empleado)
+            ->orderBy('hora', 'asc')
+            ->get();
+        }
+        
+        // Estadísticas para dashboards
+        $stats = [
+            'reservas_pendientes' => $reservasDelDia->where('estado', 'P')->count(),
+            'reservas_atendidas' => $reservasDelDia->where('estado', 'A')->count(),
+            'total_reservas' => $reservasDelDia->count(),
+            'proxima_reserva' => $reservasDelDia->where('estado', 'P')->first(),
+        ];
+        
+        // Estadísticas generales para dashboards adicionales
+        $statsGenerales = [
+            'reservas_mes' => Reserva::whereMonth('fecha', now()->month)
+                               ->whereYear('fecha', now()->year)
+                               ->where('id_empleado', $empleadoActual?->id_empleado ?? 0)
+                               ->count(),
+            'servicios_populares' => DetalleReserva::join('servicios', 'detalles_reservas.id_servicio', '=', 'servicios.id_servicio')
+                                      ->join('reservas', 'detalles_reservas.id_reserva', '=', 'reservas.id_reserva')
+                                      ->where('reservas.id_empleado', $empleadoActual?->id_empleado ?? 0)
+                                      ->selectRaw('servicios.nombre_servicio, COUNT(*) as total')
+                                      ->groupBy('servicios.id_servicio', 'servicios.nombre_servicio')
+                                      ->orderByDesc('total')
+                                      ->limit(3)
+                                      ->get(),
+            'clientes_atendidos' => Reserva::where('id_empleado', $empleadoActual?->id_empleado ?? 0)
+                                     ->where('estado', 'A')
+                                     ->distinct('id_cliente')
+                                     ->count('id_cliente')
+        ];
+        
+        // Obtener comentarios de 5 estrellas que el empleado recibió
+        $comentarios5Estrellas = collect();
+        if ($empleadoActual) {
+            $comentarios5Estrellas = DB::table('feedbacks')
+                ->join('reservas', 'feedbacks.id_reserva', '=', 'reservas.id_reserva')
+                ->join('mascotas', 'reservas.id_mascota', '=', 'mascotas.id_mascota')
+                ->join('clientes', 'reservas.id_cliente', '=', 'clientes.id_cliente')
+                ->join('personas', 'clientes.id_persona', '=', 'personas.id_persona')
+                ->where('reservas.id_empleado', $empleadoActual->id_empleado)
+                ->where('feedbacks.calificacion', 5)
+                ->whereNotNull('feedbacks.comentarios')
+                ->where('feedbacks.comentarios', '!=', '')
+                ->select(
+                    'feedbacks.comentarios',
+                    'feedbacks.calificacion',
+                    'personas.nombres',
+                    'mascotas.nombre as mascota_nombre',
+                    'feedbacks.fecha_creacion',
+                    'reservas.fecha as fecha_servicio'
+                )
+                ->orderBy('feedbacks.fecha_creacion', 'desc')
+                ->limit(5)
+                ->get();
+        }
+        
+        return view('empleado.panel-del-dia', compact('reservasDelDia', 'stats', 'statsGenerales', 'fechaHoy', 'empleadoActual', 'comentarios5Estrellas'));
+    }
 
      /**
      * Muestra la bandeja de reservas

@@ -40,7 +40,7 @@
         </div>
 
         <div class="acciones mt-4">
-            <a href="{{ url('/dashboard') }}" class="btn-cancelar">Cancelar</a>
+            <a href="{{ url('/') }}" class="btn-cancelar">Cancelar</a>
             <button type="submit" class="btn-siguiente">Siguiente</button>
         </div>
     </form>

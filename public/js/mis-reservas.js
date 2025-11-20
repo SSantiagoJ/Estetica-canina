@@ -461,3 +461,127 @@ function seleccionarHorarioEditar(hora, elemento) {
     // Guardar en input hidden
     document.getElementById('editNuevaHora').value = hora;
 }
+
+// ========================================
+// FUNCIONES PARA CALIFICACIÓN DE SERVICIOS
+// ========================================
+
+function abrirModalCalificacion(button) {
+    console.log('Abriendo modal de calificación');
+    const reservaId = button.getAttribute('data-reserva-id');
+    const mascotaNombre = button.getAttribute('data-mascota');
+    const fecha = button.getAttribute('data-fecha');
+    const servicios = button.getAttribute('data-servicios');
+    
+    console.log('Datos:', { reservaId, mascotaNombre, fecha, servicios });
+    
+    // Actualizar contenido del modal
+    document.getElementById('calificacionMascotaNombre').textContent = mascotaNombre;
+    document.getElementById('calificacionFecha').textContent = fecha;
+    document.getElementById('calificacionServicios').textContent = servicios;
+    document.getElementById('calificacion_id_reserva').value = reservaId;
+    
+    // Resetear formulario
+    document.getElementById('formCalificacion').reset();
+    document.getElementById('calificacion_rating').value = '0';
+    document.querySelectorAll('.rating-stars .star').forEach(star => {
+        star.classList.remove('active');
+    });
+    document.getElementById('ratingDescription').textContent = 'Selecciona una calificación';
+    
+    // Abrir modal con Bootstrap 5
+    const modal = new bootstrap.Modal(document.getElementById('modalCalificacion'));
+    modal.show();
+}
+
+// Event listeners para las estrellas de calificación
+document.addEventListener('DOMContentLoaded', function() {
+    const stars = document.querySelectorAll('.rating-stars .star');
+    const ratingInput = document.getElementById('calificacion_rating');
+    const ratingDescription = document.getElementById('ratingDescription');
+    
+    // Descripciones para cada calificación
+    const descriptions = {
+        1: '⭐ Muy malo',
+        2: '⭐⭐ Malo', 
+        3: '⭐⭐⭐ Regular',
+        4: '⭐⭐⭐⭐ Bueno',
+        5: '⭐⭐⭐⭐⭐ Excelente'
+    };
+    
+    stars.forEach(star => {
+        star.addEventListener('click', function() {
+            const value = this.getAttribute('data-value');
+            ratingInput.value = value;
+            
+            // Actualizar estrellas visualmente
+            stars.forEach(s => {
+                s.classList.remove('active');
+                if (s.getAttribute('data-value') <= value) {
+                    s.classList.add('active');
+                }
+            });
+            
+            // Actualizar descripción
+            ratingDescription.textContent = descriptions[value];
+        });
+        
+        // Efecto hover
+        star.addEventListener('mouseenter', function() {
+            const value = this.getAttribute('data-value');
+            stars.forEach(s => {
+                s.classList.remove('hover');
+                if (s.getAttribute('data-value') <= value) {
+                    s.classList.add('hover');
+                }
+            });
+        });
+    });
+    
+    // Remover hover al salir del área de estrellas
+    document.querySelector('.rating-stars').addEventListener('mouseleave', function() {
+        stars.forEach(s => s.classList.remove('hover'));
+    });
+    
+    // Guardar calificación
+    document.getElementById('btnGuardarCalificacion').addEventListener('click', function() {
+        const formData = new FormData(document.getElementById('formCalificacion'));
+        const calificacion = formData.get('calificacion');
+        
+        if (calificacion == '0') {
+            alert('Por favor selecciona una calificación');
+            return;
+        }
+        
+        // Deshabilitar botón mientras se procesa
+        this.disabled = true;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+        
+        fetch('/calificacion/guardar', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('¡Gracias por tu calificación! Tu opinión nos ayuda a mejorar nuestros servicios.');
+                bootstrap.Modal.getInstance(document.getElementById('modalCalificacion')).hide();
+                location.reload(); // Recargar para mostrar el estado actualizado
+            } else {
+                alert(data.message || 'Error al guardar la calificación');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al conectar con el servidor');
+        })
+        .finally(() => {
+            // Rehabilitar botón
+            this.disabled = false;
+            this.innerHTML = '<i class="fas fa-save"></i> Guardar Calificación';
+        });
+    });
+});

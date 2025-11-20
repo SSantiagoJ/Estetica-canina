@@ -15,7 +15,15 @@
 <!-- Toolbar lateral para empleado -->
 <aside class="admin-toolbar bg-primary text-white shadow-sm d-flex flex-column pt-4">
     <ul class="nav flex-column px-2">
-        <!-- <CHANGE> Usar la ruta correcta: empleado.bandeja.reservas -->
+        <!-- Panel del Día -->
+        <li class="nav-item mb-2">
+            <a href="{{ route('empleado.panel.del.dia') }}" class="nav-link text-white d-flex align-items-center gap-3 py-3 px-3 rounded hover-effect">
+                <i class="fas fa-tachometer-alt fs-5"></i>
+                <span class="fw-semibold">Panel del Día</span>
+            </a>
+        </li>
+
+        <!-- Bandeja de Reservas -->
         <li class="nav-item mb-2">
             <a href="{{ route('empleado.bandeja.reservas') }}" class="nav-link text-white d-flex align-items-center gap-3 py-3 px-3 rounded hover-effect active">
                 <i class="fas fa-calendar-check fs-5"></i>
@@ -49,7 +57,7 @@
 
         <!-- <CHANGE> Opcional: agregar enlace al dashboard general -->
         <li class="nav-item mb-2">
-            <a href="{{ route('dashboard') }}" class="nav-link text-white d-flex align-items-center gap-3 py-3 px-3 rounded hover-effect">
+            <a href="{{ route('home') }}" class="nav-link text-white d-flex align-items-center gap-3 py-3 px-3 rounded hover-effect">
                 <i class="fas fa-home fs-5"></i>
                 <span class="fw-semibold">Web Cliente</span>
             </a>

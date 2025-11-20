@@ -49,6 +49,11 @@ class Usuario extends Authenticatable
         return $this->belongsTo(Rol::class, 'id_rol', 'id_rol');
     }
 
+    public function empleado()
+    {
+        return $this->hasOne(Empleado::class, 'id_persona', 'id_persona');
+    }
+
     // ⚡️ Campo usado para enviar correos de notificación
     public function routeNotificationForMail($notification)
     {

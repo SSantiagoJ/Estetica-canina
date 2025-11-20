@@ -45,7 +45,7 @@
 
 
         <li class="nav-item mb-2">
-            <a href="{{ route('dashboard') }}" class="nav-link text-white d-flex align-items-center gap-3 py-3 px-3 rounded hover-effect">
+            <a href="{{ route('home') }}" class="nav-link text-white d-flex align-items-center gap-3 py-3 px-3 rounded hover-effect">
                 <i class="fas fa-home fs-5"></i>
                 <span class="fw-semibold">Web Cliente</span>
             </a>
