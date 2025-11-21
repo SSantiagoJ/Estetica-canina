@@ -37,7 +37,9 @@
                 @forelse($mascotas as $mascota)
                     <div class="mascota-card">
                         <div class="mascota-image">
-                            <img src="{{ asset('images/default-pet.png') }}">
+                            <img src="{{ $mascota->foto ?? asset('images/razas/' . strtolower(str_replace(' ', '-', $mascota->raza ?? 'default')) . '.png') }}"
+                                 alt="{{ $mascota->nombre }}"
+                                 onerror="this.src='{{ asset('images/default-pet.png') }}'">
                         </div>
                         <div class="mascota-info">
                             <h3><strong>{{ $mascota->nombre }}</strong></h3>

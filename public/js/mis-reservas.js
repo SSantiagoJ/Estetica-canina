@@ -173,7 +173,20 @@ function abrirModalDetalles(button) {
     
     // Actualizar información de la mascota
     document.getElementById('detallesMascotaNombre').textContent = reserva.mascota.nombre.toUpperCase();
-    document.getElementById('detallesMascotaFoto').src = reserva.mascota.foto || '/images/default-pet.png';
+    
+    // Determinar la imagen de la mascota según su raza
+    let mascotaFoto = reserva.mascota.foto;
+    if (!mascotaFoto && reserva.mascota.raza) {
+        const razaNormalizada = reserva.mascota.raza.toLowerCase().replace(/ /g, '-');
+        mascotaFoto = `/images/razas/${razaNormalizada}.png`;
+    }
+    
+    const imgElement = document.getElementById('detallesMascotaFoto');
+    imgElement.src = mascotaFoto || '/images/default-pet.png';
+    imgElement.onerror = function() {
+        this.src = '/images/default-pet.png';
+    };
+    
     document.getElementById('detallesFecha').textContent = reserva.fecha_formateada;
     document.getElementById('detallesHora').textContent = reserva.hora;
     
@@ -193,7 +206,10 @@ function abrirModalDetalles(button) {
         servicioDiv.className = 'servicio-item';
         servicioDiv.innerHTML = `
             <div class="servicio-info">
-                <span class="servicio-nombre">${detalle.servicio.nombre_servicio}</span>
+                <div class="servicio-nombre">
+                    <span>${detalle.servicio.nombre_servicio}</span>
+                    <span class="servicio-precio-total-top">S/ ${totalServicio.toFixed(2)}</span>
+                </div>
                 <div class="servicio-detalles">
                     <div class="servicio-detalle-linea">
                         <span>Precio base:</span>
@@ -205,7 +221,6 @@ function abrirModalDetalles(button) {
                     </div>
                 </div>
             </div>
-            <div class="servicio-precio-total">S/ ${totalServicio.toFixed(2)}</div>
         `;
         serviciosContainer.appendChild(servicioDiv);
         
@@ -224,7 +239,10 @@ function abrirModalDetalles(button) {
         deliveryDiv.className = 'servicio-item delivery-item';
         deliveryDiv.innerHTML = `
             <div class="servicio-info">
-                <span class="servicio-nombre">🚗 Servicio de Delivery</span>
+                <div class="servicio-nombre">
+                    <span> Servicio de Delivery</span>
+                    <span class="servicio-precio-total-top">S/ ${totalDelivery.toFixed(2)}</span>
+                </div>
                 <div class="servicio-detalles">
                     <div class="servicio-detalle-linea">
                         <small>📍 Recojo: ${reserva.delivery.direccion_recojo}</small>
@@ -242,7 +260,6 @@ function abrirModalDetalles(button) {
                     </div>
                 </div>
             </div>
-            <div class="servicio-precio-total">S/ ${totalDelivery.toFixed(2)}</div>
         `;
         serviciosContainer.appendChild(deliveryDiv);
         
