@@ -554,14 +554,26 @@
 
 .servicio-info {
     flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 .servicio-nombre {
     font-weight: 600;
     color: #2c2c2c;
     font-size: 1rem;
-    display: block;
-    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.servicio-precio-total-top {
+    font-weight: 700;
+    color: #4F5C92;
+    font-size: 1.3rem;
+    text-align: right;
 }
 
 .servicio-detalles {
@@ -570,12 +582,24 @@
     gap: 0.25rem;
     font-size: 0.9rem;
     color: #666;
+    padding-left: 0.5rem;
 }
 
 .servicio-detalle-linea {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
     align-items: center;
+}
+
+.servicio-detalle-linea span:first-child {
+    text-align: left;
+}
+
+.servicio-detalle-linea span:last-child {
+    text-align: right;
+    font-weight: 500;
+    min-width: 80px;
 }
 
 .servicio-precio-total {
@@ -583,7 +607,9 @@
     color: #4F5C92;
     font-size: 1.1rem;
     text-align: right;
-    margin-left: 1rem;
+    margin-left: 1.5rem;
+    min-width: 100px;
+    white-space: nowrap;
 }
 
 .total-resumen {
@@ -594,8 +620,9 @@
 }
 
 .total-row {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2rem;
     align-items: center;
     padding: 0.5rem 0;
     border-bottom: 1px solid #e0e0e0;
@@ -608,12 +635,15 @@
 .total-label {
     font-size: 1rem;
     color: #666;
+    text-align: left;
 }
 
 .total-valor {
     font-size: 1rem;
     font-weight: 600;
     color: #2c2c2c;
+    text-align: right;
+    min-width: 100px;
 }
 
 .total-final {
@@ -623,18 +653,24 @@
     background: linear-gradient(135deg, #4F5C92 0%, #3d4a7a 100%);
     padding: 1rem;
     border-radius: 8px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2rem;
 }
 
 .total-label-final {
     font-size: 1.1rem;
     font-weight: 600;
     color: white;
+    text-align: left;
 }
 
 .total-monto-final {
     font-size: 1.5rem;
     font-weight: 700;
     color: white;
+    text-align: right;
+    min-width: 120px;
 }
 
 .recomendaciones-section {

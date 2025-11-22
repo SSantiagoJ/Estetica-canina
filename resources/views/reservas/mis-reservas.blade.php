@@ -27,9 +27,10 @@
             @forelse($proximasReservas as $reserva)
             <div class="reserva-card">
                 <div class="reserva-info">
-                    <img src="{{ $reserva->mascota->foto ?? '/images/default-pet.png' }}" 
+                    <img src="{{ $reserva->mascota->foto ?? asset('images/razas/' . strtolower(str_replace(' ', '-', $reserva->mascota->raza ?? 'default')) . '.png') }}" 
                          alt="{{ $reserva->mascota->nombre }}" 
-                         class="pet-avatar">
+                         class="pet-avatar"
+                         onerror="this.src='{{ asset('images/default-pet.png') }}'">
                     <div class="reserva-details">
                         <h3 class="pet-name">{{ strtoupper($reserva->mascota->nombre) }}</h3>
                         <p class="reserva-fecha">{{ $reserva->fecha_formateada }}</p>
@@ -71,9 +72,10 @@
             @forelse($historialReservas as $reserva)
             <div class="reserva-card">
                 <div class="reserva-info">
-                    <img src="{{ $reserva->mascota->foto ?? '/images/default-pet.png' }}" 
+                    <img src="{{ $reserva->mascota->foto ?? asset('images/razas/' . strtolower(str_replace(' ', '-', $reserva->mascota->raza ?? 'default')) . '.png') }}" 
                          alt="{{ $reserva->mascota->nombre }}" 
-                         class="pet-avatar">
+                         class="pet-avatar"
+                         onerror="this.src='{{ asset('images/default-pet.png') }}'">
                     <div class="reserva-details">
                         <h3 class="pet-name">{{ strtoupper($reserva->mascota->nombre) }}</h3>
                         <p class="reserva-fecha">{{ $reserva->fecha_formateada }}</p>
@@ -395,7 +397,8 @@ const reservasData = {!! json_encode($historialReservas->map(function($reserva) 
         'hora' => $reserva->hora,
         'mascota' => [
             'nombre' => $reserva->mascota->nombre,
-            'foto' => $reserva->mascota->foto
+            'foto' => $reserva->mascota->foto,
+            'raza' => $reserva->mascota->raza
         ],
         'detalles' => $reserva->detalles->map(function($detalle) {
             return [
