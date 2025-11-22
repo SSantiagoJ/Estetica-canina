@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.header')
 
 @section('title', 'Gestionar Reserva - Estética Canina')
 
