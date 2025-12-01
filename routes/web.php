@@ -162,6 +162,14 @@ Route::prefix('empleado')->name('empleado.')->group(function () {
     // Vista del panel del día con reservas asignadas y dashboards
     Route::get('/panel-del-dia', [EmpleadoController::class, 'panelDelDia'])
         ->name('panel.del.dia');
+    
+    // Rutas AJAX para el panel del día
+    Route::post('/filtrar-reservas', [EmpleadoController::class, 'filtrarReservas'])
+        ->name('filtrar.reservas');
+    Route::get('/cargar-reserva/{id}', [EmpleadoController::class, 'cargarReserva'])
+        ->name('cargar.reserva');
+    Route::post('/marcar-atendido/{id}', [EmpleadoController::class, 'marcarComoAtendido'])
+        ->name('marcar.atendido');
 });
 
 // ============================================

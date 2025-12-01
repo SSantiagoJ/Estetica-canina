@@ -1,0 +1,76 @@
+<!-- =======================================================
+     INICIO: PASARELA HORIZONTAL (SLIDER)
+======================================================== -->
+
+<!-- 1. CSS de Swiper (Librería para el slider) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+
+    /* Contenedor de la pasarela */
+    .pasarela-container {
+        width: 100%;
+        padding: 20px 0;
+        background: #f8f9fa; /* Fondo gris claro suave */
+        border-radius: 12px;
+        margin-bottom: 30px;
+    }
+
+    /* Estilo del Swiper */
+    .swiper {
+        width: 100%;
+        height: 100%;
+        padding-bottom: 30px !important; /* Espacio para los puntitos de abajo */
+    }
+
+    .swiper-slide {
+        /* Ancho fijo para que parezcan tickets */
+        width: 280px !important; 
+        height: auto;
+    }
+
+    /* Diseño del Ticket/Tarjeta Horizontal */
+    .ticket-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        overflow: hidden;
+        position: relative;
+        border: 1px solid #eee;
+        transition: transform 0.3s ease;
+    }
+
+    .ticket-card:hover {
+        transform: translateY(-5px); /* Efecto flotante al pasar mouse */
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+
+    /* Decoración lateral del ticket (Color según estado) */
+    .ticket-status-bar {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 6px;
+    }
+    .status-pendiente { background: #ffc107; }
+    .status-confirmado { background: #0d6efd; }
+    .status-finalizado { background: #198754; }
+
+    /* Estilos internos */
+    .ticket-time {
+        font-size: 1.8rem;
+        font-weight: 800;
+        line-height: 1;
+        color: #333;
+    }
+    
+    .ticket-pet-img {
+        width: 40px;
+        height: 40px;
+        background: #eef2f7;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6c757d;
+    }

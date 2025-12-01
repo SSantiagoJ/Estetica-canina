@@ -11,6 +11,9 @@
 <!-- Agregar los CSS del admin -->
 <link rel="stylesheet" href="{{ asset('css/admin_toolbar.css') }}">
 <link rel="stylesheet" href="{{ asset('css/admin_dashboard.css') }}">
+<link rel="stylesheet" href="{{ asset('css/pasarela.css') }}">
+<!-- CSS de Swiper (Librería para el slider) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
 <!-- Toolbar lateral para empleado -->
 <aside class="admin-toolbar bg-primary text-white shadow-sm d-flex flex-column pt-4">
@@ -173,171 +176,266 @@
                 </div>
             </div>
 
-            <!-- Tabla de reservas del día -->
-            <div class="table-section">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="text-secondary mb-0">
-                        <i class="fas fa-list me-2"></i>Mis Reservas de Hoy
-                    </h5>
-                </div>
+            <!-- Pasarela horizontal de reservas -->
+            <div class="pasarela-container px-3">
+                <h5 class="text-secondary ms-2 mb-3">
+                    <i class="fas fa-stream me-2"></i>Línea de Tiempo (Hoy)
+                </h5>
 
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Hora</th>
-                                <th>Código</th>
-                                <th>Cliente</th>
-                                <th>Mascota</th>
-                                <th>Servicio</th>
-                                <th>Duración</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tablaReservas">
-                            @forelse($reservasDelDia as $reserva)
-                            <tr>
-                                <td>
-                                    <span class="badge bg-primary">
-                                        {{ \Carbon\Carbon::parse($reserva->hora)->format('H:i') }}
-                                    </span>
-                                </td>
-                                <td>{{ $reserva->id_reserva }}</td>
-                                <td>
-                                    {{ $reserva->cliente->persona->nombres ?? 'N/A' }} 
-                                    {{ $reserva->cliente->persona->apellidos ?? '' }}
-                                </td>
-                                <td>
-                                    <strong>{{ $reserva->mascota->nombre ?? 'N/A' }}</strong>
-                                    <br>
-                                    <small class="text-muted">{{ $reserva->mascota->especie ?? '' }}</small>
-                                </td>
-                                <td>
-                                    @if($reserva->detalles->isNotEmpty())
-                                        {{ $reserva->detalles->first()->servicio->nombre ?? 'N/A' }}
-                                    @else
-                                        N/A
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($reserva->detalles->isNotEmpty() && $reserva->detalles->first()->servicio)
-                                        {{ $reserva->detalles->first()->servicio->duracion ?? 'N/A' }}
-                                    @else
-                                        N/A
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($reserva->estado == 'P')
-                                        <span class="badge bg-warning text-dark">PENDIENTE</span>
-                                    @elseif($reserva->estado == 'A')
-                                        <span class="badge bg-success">ATENDIDO</span>
-                                    @elseif($reserva->estado == 'C')
-                                        <span class="badge bg-secondary">CANCELADO</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    <div class="d-flex gap-2">
+                <div class="swiper mySwiper">
+                    <div class="swiper-wrapper">
+
+                        @forelse($reservasDelDia as $reserva)
+                            @php
+                                // Lógica rápida de colores
+                                $colorBarra = 'status-pendiente';
+                                $textoEstado = 'Pendiente';
+                                $colorBadge = 'bg-warning text-dark';
+
+                                if($reserva->estado == 'A') {
+                                    $colorBarra = 'status-confirmado';
+                                    $textoEstado = 'Atendido';
+                                    $colorBadge = 'bg-success';
+                                } elseif($reserva->estado == 'C') {
+                                    $colorBarra = 'status-finalizado';
+                                    $textoEstado = 'Cancelado';
+                                    $colorBadge = 'bg-secondary';
+                                }
+                            @endphp
+
+                            <div class="swiper-slide">
+                                <div class="ticket-card p-3">
+                                    <!-- Barra de color lateral -->
+                                    <div class="ticket-status-bar {{ $colorBarra }}"></div>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center mb-2 ps-2">
+                                        <div class="ticket-time">
+                                            {{ \Carbon\Carbon::parse($reserva->hora)->format('H:i') }}
+                                        </div>
+                                        <span class="badge {{ $colorBadge }} rounded-pill" style="font-size: 0.7rem;">
+                                            {{ $textoEstado }}
+                                        </span>
+                                    </div>
+
+                                    <div class="d-flex align-items-center ps-2 mb-2">
+                                        <div class="ticket-pet-img me-2">
+                                            <i class="fas fa-paw"></i>
+                                        </div>
+                                        <div class="overflow-hidden">
+                                            <h6 class="fw-bold mb-0 text-truncate">{{ $reserva->mascota->nombre ?? 'Mascota' }}</h6>
+                                            <small class="text-muted d-block text-truncate">
+                                                @if($reserva->detalles->isNotEmpty())
+                                                    {{ $reserva->detalles->first()->servicio->nombre ?? 'Servicio General' }}
+                                                @else
+                                                    Servicio General
+                                                @endif
+                                            </small>
+                                        </div>
+                                    </div>
+
+                                    <div class="ps-2 mb-2">
+                                        <small class="text-muted d-block">
+                                            <i class="fas fa-user me-1"></i>
+                                            {{ $reserva->cliente->persona->nombres ?? 'Cliente' }} {{ $reserva->cliente->persona->apellidos ?? '' }}
+                                        </small>
+                                        <small class="text-muted d-block">
+                                            <i class="fas fa-hashtag me-1"></i>
+                                            ID: {{ $reserva->id_reserva }}
+                                        </small>
+                                    </div>
+                                    
+                                    <!-- Botones de acción -->
+                                    <div class="d-flex gap-1 mt-3 ps-2">
                                         <button type="button" 
-                                                class="btn btn-sm btn-outline-primary"
+                                                class="btn btn-sm btn-outline-primary flex-grow-1"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#modalVerReserva"
-                                                onclick="cargarReserva({{ $reserva->id_reserva }})">
+                                                data-reserva-id="{{ $reserva->id_reserva }}"
+                                                onclick="cargarReserva(this.getAttribute('data-reserva-id'))"
+                                                style="font-size: 0.75rem;">
                                             <i class="fas fa-eye me-1"></i>Ver
                                         </button>
                                         
                                         @if($reserva->estado == 'P')
                                             <button type="button" 
-                                                    class="btn btn-sm btn-outline-success"
-                                                    onclick="marcarComoAtendido({{ $reserva->id_reserva }})">
+                                                    class="btn btn-sm btn-outline-success flex-grow-1"
+                                                    data-reserva-id="{{ $reserva->id_reserva }}"
+                                                    onclick="marcarComoAtendido(this.getAttribute('data-reserva-id'))"
+                                                    style="font-size: 0.75rem;">
                                                 <i class="fas fa-check me-1"></i>Atender
                                             </button>
                                         @endif
                                     </div>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="8" class="text-center py-4">
-                                    <div class="text-muted">
-                                        <i class="fas fa-calendar-times fs-2 mb-2"></i>
-                                        <p>No tienes reservas asignadas para hoy</p>
-                                        <small>¡Aprovecha para organizar tu día!</small>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="swiper-slide" style="width: 100% !important;">
+                                <div class="alert alert-light border text-center">
+                                    <i class="fas fa-calendar-times fs-2 mb-2 text-muted"></i>
+                                    <p class="mb-1">No hay reservas para mostrar en la línea de tiempo.</p>
+                                    <small class="text-muted">¡Aprovecha para organizar tu día!</small>
+                                </div>
+                            </div>
+                        @endforelse
+
+                    </div>
+                    
+                    <!-- Paginación (Puntitos abajo) -->
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+
+            <!-- Sección de Feedbacks de 5 Estrellas -->
+            <div class="feedback-container">
+                <div class="d-flex align-items-center justify-content-between px-4 mb-3">
+                    <h5 class="text-dark mb-0 fw-bold">
+                        <i class="fas fa-star text-warning me-2"></i>Lo que dicen de ti
+                    </h5>
+                    <span class="badge bg-warning text-dark rounded-pill">
+                        <i class="fas fa-trophy me-1"></i> Top Rated
+                    </span>
+                </div>
+
+                <!-- Slider específico para feedbacks -->
+                <div class="swiper swiper-feedback">
+                    <div class="swiper-wrapper">
+
+                        @forelse($comentarios5Estrellas as $comentario)
+                            <div class="swiper-slide swiper-slide-feedback">
+                                <div class="review-card">
+                                    <div class="quote-icon">"</div>
+                                    
+                                    <!-- Estrellas Estáticas -->
+                                    <div class="stars">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
                                     </div>
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+
+                                    <!-- Comentario -->
+                                    <p class="text-secondary fst-italic mb-4" style="font-size: 0.95rem; min-height: 45px;">
+                                        "{{ Str::limit($comentario->comentarios, 110) }}"
+                                    </p>
+
+                                    <!-- Pie: Cliente y Mascota -->
+                                    <div class="d-flex align-items-center border-top pt-3">
+                                        <div class="client-avatar shadow-sm me-3">
+                                            {{ substr($comentario->nombres ?? 'A', 0, 1) }}
+                                        </div>
+                                        <div>
+                                            <h6 class="fw-bold text-dark mb-0">
+                                                {{ $comentario->nombres ?? 'Anónimo' }}
+                                            </h6>
+                                            <small class="text-muted" style="font-size: 0.8rem;">
+                                                Dueño de <span class="text-primary">{{ $comentario->mascota_nombre ?? 'Mascota' }}</span>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="swiper-slide swiper-slide-feedback w-100">
+                                <div class="alert alert-light text-center border">
+                                    <small>Aún no tienes reseñas de 5 estrellas. ¡Sigue así, pronto llegarán! 🌟</small>
+                                </div>
+                            </div>
+                        @endforelse
+
+                    </div>
+                    
+                    <!-- Paginación -->
+                    <div class="swiper-pagination pagination-feedback"></div>
                 </div>
             </div>
         </div>
     </div>
 </main>
 
+<!-- Script de JS para activar el slider -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
 <script>
-// Función para filtrar reservas
-function filtrarReservas() {
-    const estado = document.getElementById('filtroEstado').value;
-    const cliente = document.getElementById('filtroCliente').value.toLowerCase();
-    const mascota = document.getElementById('filtroMascota').value.toLowerCase();
-    
-    const filas = document.querySelectorAll('#tablaReservas tr');
-    
-    filas.forEach(fila => {
-        if (fila.querySelector('td') === null) return; // Skip header row
-        
-        const estadoFila = fila.querySelector('.badge').textContent.trim();
-        const clienteFila = fila.cells[2].textContent.toLowerCase();
-        const mascotaFila = fila.cells[3].textContent.toLowerCase();
-        
-        let mostrar = true;
-        
-        // Filtro por estado
-        if (estado && !estadoFila.includes(estado === 'P' ? 'PENDIENTE' : estado === 'A' ? 'ATENDIDO' : 'CANCELADO')) {
-            mostrar = false;
-        }
-        
-        // Filtro por cliente
-        if (cliente && !clienteFila.includes(cliente)) {
-            mostrar = false;
-        }
-        
-        // Filtro por mascota
-        if (mascota && !mascotaFila.includes(mascota)) {
-            mostrar = false;
-        }
-        
-        fila.style.display = mostrar ? '' : 'none';
+    // Inicializar Swiper para reservas
+    var swiper = new Swiper(".mySwiper", {
+        slidesPerView: "auto",
+        spaceBetween: 20,
+        freeMode: true,
+        grabCursor: true,
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+        },
     });
-}
 
-// Función para limpiar filtros
-function limpiarFiltros() {
-    document.getElementById('filtroEstado').value = '';
-    document.getElementById('filtroCliente').value = '';
-    document.getElementById('filtroMascota').value = '';
-    
-    // Mostrar todas las filas
-    const filas = document.querySelectorAll('#tablaReservas tr');
-    filas.forEach(fila => {
-        fila.style.display = '';
+    // Inicializar Swiper para feedbacks
+    var swiperFeedback = new Swiper(".swiper-feedback", {
+        slidesPerView: "auto",
+        spaceBetween: 25,
+        grabCursor: true,
+        freeMode: true,
+        pagination: {
+            el: ".pagination-feedback",
+            clickable: true,
+            dynamicBullets: true,
+        },
     });
-}
 
-// Función para cargar información de una reserva (placeholder)
-function cargarReserva(idReserva) {
-    console.log('Cargar reserva:', idReserva);
-    // Aquí iría la lógica para cargar los detalles en el modal
-}
+    // ========================================
+    // FUNCIONES SIMPLIFICADAS - BACKEND LOGIC
+    // ========================================
 
-// Función para marcar como atendido
-function marcarComoAtendido(idReserva) {
-    if (confirm('¿Está seguro que desea marcar esta reserva como atendida?')) {
-        // Aquí iría la lógica para actualizar el estado
-        console.log('Marcar como atendido:', idReserva);
+    // Filtrar reservas (usa EmpleadoController::filtrarReservas)
+    function filtrarReservas() {
+        const formData = new FormData();
+        formData.append('estado', document.getElementById('filtroEstado').value);
+        formData.append('cliente', document.getElementById('filtroCliente').value);  
+        formData.append('mascota', document.getElementById('filtroMascota').value);
+        
+        fetch('{{ route("empleado.filtrar.reservas") }}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => data.success ? location.reload() : alert('Error al filtrar'))
+        .catch(() => alert('Error de conexión'));
     }
-}
+
+    // Limpiar filtros
+    function limpiarFiltros() {
+        document.querySelectorAll('#filtroEstado, #filtroCliente, #filtroMascota').forEach(el => el.value = '');
+        location.reload();
+    }
+
+    // Cargar reserva (usa EmpleadoController::cargarReserva)
+    function cargarReserva(id) {
+        fetch(`{{ url('empleado/cargar-reserva') }}/${id}`)
+        .then(response => response.json())
+        .then(data => data.success ? alert(`Reserva #${data.reserva.id_reserva} - ${data.reserva.mascota.nombre}`) : alert('Error'))
+        .catch(() => alert('Error de conexión'));
+    }
+
+    // Marcar como atendido (usa EmpleadoController::marcarComoAtendido)
+    function marcarComoAtendido(id) {
+        if(confirm('¿Marcar reserva como atendida?')) {
+            fetch(`{{ url('empleado/marcar-atendido') }}/${id}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message || (data.success ? 'Reserva atendida' : 'Error'));
+                if(data.success) location.reload();
+            })
+            .catch(() => alert('Error de conexión'));
+        }
+    }
 </script>
 
 @endsection

@@ -11,9 +11,11 @@ use App\Models\Cliente;
 use App\Models\Servicio;
 use App\Models\Novedad;
 use App\Models\Atencion;
+use App\Models\Feedback;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class EmpleadoController extends Controller
 {
@@ -61,24 +63,34 @@ class EmpleadoController extends Controller
      */
     public function panelDelDia()
     {
-        $empleadoActual = Auth::user()->empleado ?? null;
-        $fechaHoy = now()->format('Y-m-d');
+        // 1. Obtener el usuario autenticado
+        $user = Auth::user();
         
-        // Obtener reservas del día asignadas al empleado actual
-        $reservasDelDia = collect();
-        if ($empleadoActual) {
-            $reservasDelDia = Reserva::with([
-                'mascota',
-                'cliente.persona',
-                'detalles.servicio'
-            ])
-            ->where('fecha', $fechaHoy)
-            ->where('id_empleado', $empleadoActual->id_empleado)
-            ->orderBy('hora', 'asc')
-            ->get();
+        // 2. Buscar el empleado usando la relación usuario->empleado 
+        $empleadoActual = null;
+        if ($user && $user->rol == 'Empleado') {
+            $empleadoActual = Empleado::where('id_persona', $user->id_persona)->first();
         }
         
-        // Estadísticas para dashboards
+        // 3. Validación de seguridad
+        if (!$empleadoActual) {
+            return redirect()->route('home')->with('error', 'No tienes una ficha de empleado asignada o no tienes permisos.');
+        }
+        
+        $fechaHoy = now()->format('Y-m-d');
+        
+        // 4. Obtener reservas del día asignadas al empleado actual
+        $reservasDelDia = Reserva::with([
+            'mascota',
+            'cliente.persona',
+            'detalles.servicio'
+        ])
+        ->where('fecha', $fechaHoy)
+        ->where('id_empleado', $empleadoActual->id_empleado)
+        ->orderBy('hora', 'asc')
+        ->get();
+        
+        // 5. Estadísticas para dashboards
         $stats = [
             'reservas_pendientes' => $reservasDelDia->where('estado', 'P')->count(),
             'reservas_atendidas' => $reservasDelDia->where('estado', 'A')->count(),
@@ -86,49 +98,82 @@ class EmpleadoController extends Controller
             'proxima_reserva' => $reservasDelDia->where('estado', 'P')->first(),
         ];
         
-        // Estadísticas generales para dashboards adicionales
+        // 6. Estadísticas generales para dashboards adicionales
         $statsGenerales = [
             'reservas_mes' => Reserva::whereMonth('fecha', now()->month)
                                ->whereYear('fecha', now()->year)
-                               ->where('id_empleado', $empleadoActual?->id_empleado ?? 0)
+                               ->where('id_empleado', $empleadoActual->id_empleado)
                                ->count(),
             'servicios_populares' => DetalleReserva::join('servicios', 'detalles_reservas.id_servicio', '=', 'servicios.id_servicio')
                                       ->join('reservas', 'detalles_reservas.id_reserva', '=', 'reservas.id_reserva')
-                                      ->where('reservas.id_empleado', $empleadoActual?->id_empleado ?? 0)
+                                      ->where('reservas.id_empleado', $empleadoActual->id_empleado)
                                       ->selectRaw('servicios.nombre_servicio, COUNT(*) as total')
                                       ->groupBy('servicios.id_servicio', 'servicios.nombre_servicio')
                                       ->orderByDesc('total')
                                       ->limit(3)
                                       ->get(),
-            'clientes_atendidos' => Reserva::where('id_empleado', $empleadoActual?->id_empleado ?? 0)
+            'clientes_atendidos' => Reserva::where('id_empleado', $empleadoActual->id_empleado)
                                      ->where('estado', 'A')
                                      ->distinct('id_cliente')
                                      ->count('id_cliente')
         ];
         
-        // Obtener comentarios de 5 estrellas que el empleado recibió
+        // 7. Obtener comentarios de 5 estrellas usando modelo Eloquent (MEJORADO)
         $comentarios5Estrellas = collect();
-        if ($empleadoActual) {
-            $comentarios5Estrellas = DB::table('feedbacks')
-                ->join('reservas', 'feedbacks.id_reserva', '=', 'reservas.id_reserva')
-                ->join('mascotas', 'reservas.id_mascota', '=', 'mascotas.id_mascota')
-                ->join('clientes', 'reservas.id_cliente', '=', 'clientes.id_cliente')
-                ->join('personas', 'clientes.id_persona', '=', 'personas.id_persona')
-                ->where('reservas.id_empleado', $empleadoActual->id_empleado)
-                ->where('feedbacks.calificacion', 5)
-                ->whereNotNull('feedbacks.comentarios')
-                ->where('feedbacks.comentarios', '!=', '')
-                ->select(
-                    'feedbacks.comentarios',
-                    'feedbacks.calificacion',
-                    'personas.nombres',
-                    'mascotas.nombre as mascota_nombre',
-                    'feedbacks.fecha_creacion',
-                    'reservas.fecha as fecha_servicio'
-                )
-                ->orderBy('feedbacks.fecha_creacion', 'desc')
-                ->limit(5)
-                ->get();
+        
+        try {
+            // Verificar si el modelo Feedback existe y tiene datos
+            if (class_exists('App\Models\Feedback')) {
+                $comentarios5Estrellas = Feedback::whereHas('reserva', function($query) use ($empleadoActual) {
+                        $query->where('id_empleado', $empleadoActual->id_empleado);
+                    })
+                    ->where('calificacion', 5)
+                    ->whereNotNull('comentarios')
+                    ->where('comentarios', '!=', '')
+                    ->with([
+                        'reserva.cliente.persona',
+                        'reserva.mascota'
+                    ])
+                    ->orderBy('fecha_creacion', 'desc')
+                    ->limit(10)
+                    ->get()
+                    ->map(function($feedback) {
+                        // Mapear datos para mantener compatibilidad con la vista
+                        return (object) [
+                            'comentarios' => $feedback->comentarios,
+                            'calificacion' => $feedback->calificacion,
+                            'nombres' => $feedback->reserva->cliente->persona->nombres ?? 'Anónimo',
+                            'mascota_nombre' => $feedback->reserva->mascota->nombre ?? 'Mascota',
+                            'fecha_creacion' => $feedback->fecha_creacion,
+                            'fecha_servicio' => $feedback->reserva->fecha
+                        ];
+                    });
+            } else {
+                // Fallback al query directo si no existe el modelo
+                $comentarios5Estrellas = DB::table('feedbacks')
+                    ->join('reservas', 'feedbacks.id_reserva', '=', 'reservas.id_reserva')
+                    ->join('mascotas', 'reservas.id_mascota', '=', 'mascotas.id_mascota')
+                    ->join('clientes', 'reservas.id_cliente', '=', 'clientes.id_cliente')
+                    ->join('personas', 'clientes.id_persona', '=', 'personas.id_persona')
+                    ->where('reservas.id_empleado', $empleadoActual->id_empleado)
+                    ->where('feedbacks.calificacion', 5)
+                    ->whereNotNull('feedbacks.comentarios')
+                    ->where('feedbacks.comentarios', '!=', '')
+                    ->select(
+                        'feedbacks.comentarios',
+                        'feedbacks.calificacion',
+                        'personas.nombres',
+                        'mascotas.nombre as mascota_nombre',
+                        'feedbacks.fecha_creacion',
+                        'reservas.fecha as fecha_servicio'
+                    )
+                    ->orderBy('feedbacks.fecha_creacion', 'desc')
+                    ->limit(10)
+                    ->get();
+            }
+        } catch (\Exception $e) {
+            // Si hay error, usar colección vacía
+            $comentarios5Estrellas = collect();
         }
         
         return view('empleado.panel-del-dia', compact('reservasDelDia', 'stats', 'statsGenerales', 'fechaHoy', 'empleadoActual', 'comentarios5Estrellas'));
@@ -396,4 +441,108 @@ public function destroyNovedad($id)
     return redirect()->route('empleado.gestionar.novedades')
         ->with('success', 'Novedad eliminada correctamente');
 }
+
+    /**
+     * Filtrar reservas del panel del día (AJAX)
+     */
+    public function filtrarReservas(Request $request)
+    {
+        $empleadoActual = Auth::user()->empleado ?? null;
+        $fechaHoy = now()->format('Y-m-d');
+        
+        if (!$empleadoActual) {
+            return response()->json(['error' => 'Empleado no encontrado'], 404);
+        }
+
+        $query = Reserva::with([
+            'mascota',
+            'cliente.persona',
+            'detalles.servicio'
+        ])
+        ->where('fecha', $fechaHoy)
+        ->where('id_empleado', $empleadoActual->id_empleado);
+
+        // Aplicar filtros
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+
+        if ($request->filled('cliente')) {
+            $query->whereHas('cliente.persona', function($q) use ($request) {
+                $q->where('nombres', 'LIKE', '%' . $request->cliente . '%')
+                  ->orWhere('apellidos', 'LIKE', '%' . $request->cliente . '%');
+            });
+        }
+
+        if ($request->filled('mascota')) {
+            $query->whereHas('mascota', function($q) use ($request) {
+                $q->where('nombre', 'LIKE', '%' . $request->mascota . '%');
+            });
+        }
+
+        $reservas = $query->orderBy('hora', 'asc')->get();
+
+        return response()->json([
+            'success' => true,
+            'reservas' => $reservas,
+            'total' => $reservas->count()
+        ]);
+    }
+
+    /**
+     * Cargar detalles de una reserva (AJAX)
+     */
+    public function cargarReserva($id)
+    {
+        try {
+            $reserva = Reserva::with([
+                'mascota',
+                'cliente.persona',
+                'empleado.persona',
+                'detalles.servicio'
+            ])->findOrFail($id);
+
+            return response()->json([
+                'success' => true,
+                'reserva' => $reserva
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Reserva no encontrada'
+            ], 404);
+        }
+    }
+
+    /**
+     * Marcar reserva como atendida (AJAX)
+     */
+    public function marcarComoAtendido(Request $request, $id)
+    {
+        try {
+            $reserva = Reserva::findOrFail($id);
+            
+            if ($reserva->estado !== 'P') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'La reserva no está en estado pendiente'
+                ], 400);
+            }
+
+            $reserva->update([
+                'estado' => 'A',
+                'usuario_actualizacion' => Auth::user()->usuario ?? 'sistema',
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Reserva marcada como atendida correctamente'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar la reserva: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
