@@ -11,9 +11,11 @@
 <!-- Agregar los CSS del admin -->
 <link rel="stylesheet" href="{{ asset('css/admin_toolbar.css') }}">
 <link rel="stylesheet" href="{{ asset('css/admin_dashboard.css') }}">
+
+<!-- Toolbar lateral para empleado -->
 <aside class="admin-toolbar bg-primary text-white shadow-sm d-flex flex-column pt-4">
     <ul class="nav flex-column px-2">
-<!-- Panel del Día -->
+        <!-- Panel del Día -->
         <li class="nav-item mb-2">
             <a href="{{ route('empleado.panel.del.dia') }}" class="nav-link text-white d-flex align-items-center gap-3 py-3 px-3 rounded hover-effect">
                 <i class="fas fa-tachometer-alt fs-5"></i>
@@ -21,42 +23,55 @@
             </a>
         </li>
         <li class="nav-item mb-2">
-            <a href="{{ route('empleado.dashboard') }}" class="nav-link text-white d-flex align-items-center gap-3 py-3 px-3 rounded hover-effect">
+            <a href="{{ route('empleado.dashboard') }}" class="nav-link text-white d-flex align-items-center gap-3 py-3 px-3 rounded hover-effect active">
                 <i class="fas fa-calendar-check fs-5"></i>
                 <span class="fw-semibold">Dashboard</span>
             </a>
         </li>
         <li class="nav-item mb-2">
-            <a href="{{ route('empleado.bandeja.reservas') }}" 
-               class="nav-link text-white d-flex align-items-center gap-3 py-3 px-3 rounded hover-effect">
+            <a href="{{ route('empleado.bandeja.reservas') }}" class="nav-link text-white d-flex align-items-center gap-3 py-3 px-3 rounded hover-effect">
                 <i class="fas fa-calendar-check fs-5"></i>
                 <span class="fw-semibold">Bandeja de Reservas</span>
             </a>
         </li>
-
+        
+        <!-- Corregido: marcar como activo solo una vez y con el ícono correcto -->
         <li class="nav-item mb-2">
-            <a href="{{ route('empleado.gestionar.turnos') }}" 
-               class="nav-link text-white d-flex align-items-center gap-3 py-3 px-3 rounded hover-effect">
+            <a href="{{ route('empleado.gestionar.turnos') }}" class="nav-link text-white d-flex align-items-center gap-3 py-3 px-3 rounded hover-effect">
                 <i class="fas fa-clock fs-5"></i>
                 <span class="fw-semibold">Gestionar Turnos</span>
             </a>
         </li>
-
+             
         <li class="nav-item mb-2">
-            <a href="{{ route('empleado.gestionar.novedades') }}" 
-               class="nav-link text-white d-flex align-items-center gap-3 py-3 px-3 rounded hover-effect">
+            <a href="{{ route('empleado.gestionar.novedades') }}" class="nav-link text-white d-flex align-items-center gap-3 py-3 px-3 rounded hover-effect">
                 <i class="fas fa-bell fs-5"></i>
                 <span class="fw-semibold">Gestionar Novedades</span>
             </a>
         </li>
+          <li class="nav-item mb-2">
+            <a href="{{ route('empleado.notificaciones') }}" class="nav-link text-white d-flex align-items-center gap-3 py-3 px-3 rounded hover-effect">
+                <i class="fas fa-bell fs-5"></i>
+                <span class="fw-semibold">Gestionar Notificaciones</span>
+            </a>
+        </li>
 
-<!-- Contenido principal -->
+        <li class="nav-item mb-2">
+            <a href="{{ route('home') }}" class="nav-link text-white d-flex align-items-center gap-3 py-3 px-3 rounded hover-effect">
+                <i class="fas fa-home fs-5"></i>
+                <span class="fw-semibold">Web Cliente</span>
+            </a>
+        </li>
+    </ul>
+</aside>
+
 <main class="admin-content">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-primary">
-            <i class="fas fa-chart-bar me-2"></i> Dashboard Analytics - Power BI
+<!-- Contenido principal -->
+    <div class="card shadow-sm border-0">
+            <!-- Título principal fuera del card -->
+        <h2 class="fw-bold text-dark text-center">
+            <i class="fas fa-bell me-2"></i> Dashboard
         </h2>
-    </div>
 
     <!-- Dashboard 1: Análisis de Reservas -->
     <div class="card shadow-lg border-0 rounded-3 mb-4">
@@ -95,30 +110,14 @@
             </iframe>
         </div>
     </div>
-
-    <!-- Instrucciones para configurar Power BI -->
-    <div class="alert alert-info d-flex align-items-start" role="alert">
-        <i class="fas fa-info-circle fs-4 me-3 mt-1"></i>
-        <div>
-            <h6 class="alert-heading fw-bold">¿Cómo configurar los dashboards de Power BI?</h6>
-            <ol class="mb-0">
-                <li>Ve a Power BI Service (app.powerbi.com)</li>
-                <li>Abre tu dashboard y haz clic en "Archivo" → "Insertar informe"</li>
-                <li>Copia la URL de inserción que comienza con: <code>https://app.powerbi.com/reportEmbed?...</code></li>
-                <li>Agrega las URLs en el archivo <code>.env</code>:
-                    <pre class="mt-2 mb-0">POWERBI_DASHBOARD_1_URL=tu_url_aqui
-POWERBI_DASHBOARD_2_URL=tu_url_aqui</pre>
-                </li>
-            </ol>
-        </div>
-    </div>
+</main>
 </main>
 
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const dashboard1Url = '{{ env("POWERBI_DASHBOARD_1_URL", "") }}';
-        const dashboard2Url = '{{ env("POWERBI_DASHBOARD_2_URL", "") }}';
+        const dashboard1Url = '{{ env("POWERBI_DASHBOARD_1_URL", "https://app.powerbi.com/view?r=eyJrIjoiNjU0NTU3YmItYWEwOC00YjRjLTk5OWUtNjY1MWY3OTRlNDhhIiwidCI6ImM0YTY2YzM0LTJiYjctNDUxZi04YmUxLWIyYzI2YTQzMDE1OCIsImMiOjR9&pageName=4269463fa20474cc07b9") }}';
+        const dashboard2Url = '{{ env("POWERBI_DASHBOARD_2_URL", "https://app.powerbi.com/view?r=eyJrIjoiNjU0NTU3YmItYWEwOC00YjRjLTk5OWUtNjY1MWY3OTRlNDhhIiwidCI6ImM0YTY2YzM0LTJiYjctNDUxZi04YmUxLWIyYzI2YTQzMDE1OCIsImMiOjR9&pageName=ebf46bf7393a3dc48431") }}';
         
         if (dashboard1Url) {
             document.getElementById('powerbi-dashboard-1').src = dashboard1Url;

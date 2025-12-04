@@ -23,6 +23,13 @@
             </a>
         </li>
 
+          <li class="nav-item mb-2">
+            <a href="{{ route('empleado.dashboard') }}" class="nav-link text-white d-flex align-items-center gap-3 py-3 px-3 rounded hover-effect">
+                <i class="fas fa-calendar-check fs-5"></i>
+                <span class="fw-semibold">Dashboard</span>
+            </a>
+        </li>
+
         <!-- Bandeja de Reservas -->
         <li class="nav-item mb-2">
             <a href="{{ route('empleado.bandeja.reservas') }}" class="nav-link text-white d-flex align-items-center gap-3 py-3 px-3 rounded hover-effect active">

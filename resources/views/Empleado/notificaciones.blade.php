@@ -13,7 +13,19 @@
 <link rel="stylesheet" href="{{ asset('css/admin_dashboard.css') }}">
 <aside class="admin-toolbar bg-primary text-white shadow-sm d-flex flex-column pt-4">
     <ul class="nav flex-column px-2">
-
+<!-- Panel del Día -->
+        <li class="nav-item mb-2">
+            <a href="{{ route('empleado.panel.del.dia') }}" class="nav-link text-white d-flex align-items-center gap-3 py-3 px-3 rounded hover-effect">
+                <i class="fas fa-tachometer-alt fs-5"></i>
+                <span class="fw-semibold">Panel del Día</span>
+            </a>
+        </li>
+         <li class="nav-item mb-2">
+            <a href="{{ route('empleado.dashboard') }}" class="nav-link text-white d-flex align-items-center gap-3 py-3 px-3 rounded hover-effect">
+                <i class="fas fa-calendar-check fs-5"></i>
+                <span class="fw-semibold">Dashboard</span>
+            </a>
+        </li>
         <li class="nav-item mb-2">
             <a href="{{ route('empleado.bandeja.reservas') }}" 
                class="nav-link text-white d-flex align-items-center gap-3 py-3 px-3 rounded hover-effect">

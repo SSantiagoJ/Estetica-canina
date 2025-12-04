@@ -193,6 +193,15 @@ Route::prefix('empleado')->name('empleado.')->group(function () {
     Route::delete('/turnos/{id}', [EmpleadoController::class, 'destroyTurno'])
         ->name('turnos.destroy');
 });
+// ============================================
+// RUTAS PARA EMPLEADO - DASHBOARD
+// ============================================
+Route::prefix('empleado')->name('empleado.')->group(function () {
+
+    Route::get('dashboard', [EmpleadoController::class, 'dashboardEmpleado'])
+        ->name('dashboard');
+
+});
 
 // ============================================
 // RUTAS PARA EMPLEADO - GESTIÓN DE NOVEDADES

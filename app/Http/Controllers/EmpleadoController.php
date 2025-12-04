@@ -545,4 +545,9 @@ public function destroyNovedad($id)
             ], 500);
         }
     }
+public function dashboardEmpleado()
+{
+    return view('empleado.dashboard');
+}
+
 }
