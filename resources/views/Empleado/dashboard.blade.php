@@ -116,8 +116,8 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const dashboard1Url = '{{ env("POWERBI_DASHBOARD_1_URL", "https://app.powerbi.com/view?r=eyJrIjoiNjU0NTU3YmItYWEwOC00YjRjLTk5OWUtNjY1MWY3OTRlNDhhIiwidCI6ImM0YTY2YzM0LTJiYjctNDUxZi04YmUxLWIyYzI2YTQzMDE1OCIsImMiOjR9&pageName=4269463fa20474cc07b9") }}';
-        const dashboard2Url = '{{ env("POWERBI_DASHBOARD_2_URL", "https://app.powerbi.com/view?r=eyJrIjoiNjU0NTU3YmItYWEwOC00YjRjLTk5OWUtNjY1MWY3OTRlNDhhIiwidCI6ImM0YTY2YzM0LTJiYjctNDUxZi04YmUxLWIyYzI2YTQzMDE1OCIsImMiOjR9&pageName=ebf46bf7393a3dc48431") }}';
+        const dashboard1Url = '{{ env("POWERBI_DASHBOARD_1_URL","https://app.powerbi.com/view?r=eyJrIjoiYmJiMTZjYWUtYzFkZC00MTdmLWIyMDAtMWQ2NDc4YWE1M2I5IiwidCI6ImM0YTY2YzM0LTJiYjctNDUxZi04YmUxLWIyYzI2YTQzMDE1OCIsImMiOjR9") }}';
+        const dashboard2Url = '{{ env("POWERBI_DASHBOARD_2_URL", "https://app.powerbi.com/view?r=eyJrIjoiYmJiMTZjYWUtYzFkZC00MTdmLWIyMDAtMWQ2NDc4YWE1M2I5IiwidCI6ImM0YTY2YzM0LTJiYjctNDUxZi04YmUxLWIyYzI2YTQzMDE1OCIsImMiOjR9") }}';
         
         if (dashboard1Url) {
             document.getElementById('powerbi-dashboard-1').src = dashboard1Url;

@@ -551,7 +551,7 @@ function validarFormularioRegistro() {
         hoy.setHours(0, 0, 0, 0);
         
         if (fechaSeleccionada < hoy) {
-            mostrarError('registroFecha', 'La fecha no puede ser anterior a hoy');
+            mostrarError('registroFecha', 'La fecha no puede ser anterior o igual a hoy');
             hayErrores = true;
         } else {
             limpiarError('registroFecha');
