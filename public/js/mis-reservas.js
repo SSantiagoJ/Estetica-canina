@@ -182,9 +182,9 @@ function abrirModalDetalles(button) {
     }
     
     const imgElement = document.getElementById('detallesMascotaFoto');
-    imgElement.src = mascotaFoto || '/images/default-pet.png';
+    imgElement.src = mascotaFoto || '/images/default-avatar.png';
     imgElement.onerror = function() {
-        this.src = '/images/default-pet.png';
+        this.src = '/images/default-avatar.png';
     };
     
     document.getElementById('detallesFecha').textContent = reserva.fecha_formateada;

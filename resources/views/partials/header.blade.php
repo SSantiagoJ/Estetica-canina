@@ -31,6 +31,14 @@
                 </a>
 
                 @auth
+                    @php
+                        $usuarioActual = auth()->user();
+                        $personaActual = $usuarioActual->persona;
+                        $nombreUsuario = trim(($personaActual->nombres ?? $usuarioActual->nombres ?? '') . ' ' . ($personaActual->apellidos ?? $usuarioActual->apellidos ?? ''));
+                        $nombreUsuario = $nombreUsuario !== '' ? $nombreUsuario : 'Cliente Pet Grooming';
+                        $partesNombre = preg_split('/\s+/', $nombreUsuario);
+                        $inicialesUsuario = strtoupper(substr($partesNombre[0] ?? 'C', 0, 1) . substr($partesNombre[1] ?? '', 0, 1));
+                    @endphp
                     <a href="{{ url('/perfil') }}" class="nav-link">
                         <i class="fas fa-user"></i>
                         <span>Perfil</span>
@@ -42,17 +50,17 @@
                             <i class="fas fa-user-circle"></i>
                         </div>
                         <div class="user-details dropdown-trigger" onclick="toggleUserDropdown()">
-                            <span class="user-name">{{ auth()->user()->nombres }} {{ auth()->user()->apellidos }}</span>
-                            <span class="user-role">{{ auth()->user()->rol }}</span>
+                            <span class="user-name">{{ $nombreUsuario }}</span>
+                            <span class="user-role">{{ $usuarioActual->rol }}</span>
                         </div>
                         <div class="user-dropdown" id="user-dropdown">
                             <div class="dropdown-header">
                                 <div class="dropdown-avatar">
-                                    <i class="fas fa-user-circle"></i>
+                                    <span class="dropdown-avatar-initials">{{ $inicialesUsuario }}</span>
                                 </div>
                                 <div class="dropdown-user-info">
-                                    <span class="dropdown-user-name">{{ auth()->user()->nombres }} {{ auth()->user()->apellidos }}</span>
-                                    <span class="dropdown-user-email">{{ auth()->user()->correo }}</span>
+                                    <span class="dropdown-user-name">{{ $nombreUsuario }}</span>
+                                    <span class="dropdown-user-email">{{ $usuarioActual->correo }}</span>
                                 </div>
                             </div>
                             <div class="dropdown-divider"></div>
@@ -111,8 +119,8 @@
                         <i class="fas fa-user-circle"></i>
                     </div>
                     <div class="user-details-mobile">
-                        <span class="user-name-mobile">{{ auth()->user()->nombres }} {{ auth()->user()->apellidos }}</span>
-                        <span class="user-role-mobile">{{ auth()->user()->rol }}</span>
+                        <span class="user-name-mobile">{{ $nombreUsuario }}</span>
+                        <span class="user-role-mobile">{{ $usuarioActual->rol }}</span>
                     </div>
                 </div>
             @endauth
@@ -415,7 +423,9 @@ document.addEventListener('click', function(event) {
                         <label class="checkbox-wrapper">
                             <input type="checkbox" required>
                             <span class="checkmark"></span>
-                            Acepto los <a href="#" class="terms-link">términos y condiciones</a>
+                            <span class="checkbox-text">
+                                Acepto los <a href="#" class="terms-link">términos y condiciones</a>
+                            </span>
                         </label>
                     </div>
 
@@ -437,8 +447,11 @@ document.addEventListener('click', function(event) {
 
 <script>
 // Funciones para abrir/cerrar modales
-function openLoginModal() {
+function openLoginModal(redirectTo = null) {
     closeAllDropdowns();
+    if (redirectTo) {
+        localStorage.setItem('pet_after_login', redirectTo);
+    }
     document.getElementById('loginModal').style.display = 'flex';
     document.body.style.overflow = 'hidden';
 }
@@ -514,6 +527,14 @@ document.addEventListener('keydown', function(event) {
 document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.getElementById('loginModalForm');
     const registerForm = document.getElementById('registerModalForm');
+    const reservaUrl = "{{ route('reservas.seleccionMascota') }}";
+
+    document.querySelectorAll('[data-reserva-login]').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            openLoginModal(reservaUrl);
+        });
+    });
     
     if (loginForm) {
         loginForm.addEventListener('submit', function(e) {
@@ -537,7 +558,9 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 if (data.success) {
                     // Redirigir según la respuesta del servidor
-                    window.location.href = data.redirect;
+                    const redirectAfterLogin = localStorage.getItem('pet_after_login');
+                    localStorage.removeItem('pet_after_login');
+                    window.location.href = redirectAfterLogin || data.redirect;
                 } else {
                     alert(data.message || 'Error en el login');
                     submitBtn.innerHTML = originalText;
@@ -575,7 +598,9 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 if (data.success) {
                     // Redirigir según la respuesta del servidor
-                    window.location.href = data.redirect;
+                    const redirectAfterLogin = localStorage.getItem('pet_after_login');
+                    localStorage.removeItem('pet_after_login');
+                    window.location.href = redirectAfterLogin || data.redirect;
                 } else {
                     alert(data.message || 'Error en el registro');
                     submitBtn.innerHTML = originalText;

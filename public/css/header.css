@@ -605,4 +605,158 @@ header.site-header {
   width: 100% !important;
 }
 
+/* Tema adorable para veterinaria */
+header.site-header {
+  background: linear-gradient(135deg, #ffdbe2 0%, #fff8f3 58%, #dff7ec 100%) !important;
+  box-shadow: 0 10px 26px rgba(128, 89, 106, 0.12) !important;
+  border-bottom: 1px solid rgba(128, 89, 106, 0.14) !important;
+  font-family: "Nunito", "Quicksand", "Trebuchet MS", Arial, sans-serif !important;
+}
 
+.site-header .logo-icon {
+  background: #fffdf9 !important;
+  box-shadow: 0 8px 18px rgba(232, 131, 159, 0.18) !important;
+}
+
+.site-header .logo-icon i {
+  color: #e8839f !important;
+}
+
+.site-header .logo-text,
+.site-header .nav-link,
+.site-header .user-name,
+.site-header .mobile-menu-btn,
+.site-header .nav-link-mobile,
+.site-header .user-name-mobile {
+  color: #513b4a !important;
+}
+
+.site-header .user-role,
+.site-header .user-role-mobile {
+  color: #7a6672 !important;
+}
+
+.site-header .nav-link:hover,
+.site-header .mobile-menu-btn:hover,
+.site-header .nav-link-mobile:hover {
+  background: rgba(255, 253, 249, 0.68) !important;
+}
+
+.site-header .nav-link-primary,
+.site-header .nav-link-mobile-primary {
+  background: #e8839f !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 22px rgba(232, 131, 159, 0.24) !important;
+}
+
+.site-header .nav-link-primary:hover,
+.site-header .nav-link-mobile-primary:hover {
+  background: #d96f8d !important;
+  color: #ffffff !important;
+}
+
+.site-header .user-info {
+  border-left-color: rgba(128, 89, 106, 0.18) !important;
+}
+
+.site-header .user-avatar,
+.site-header .user-avatar-mobile {
+  background: rgba(255, 253, 249, 0.72) !important;
+}
+
+.site-header .user-avatar i,
+.site-header .user-avatar-mobile i {
+  color: #e8839f !important;
+}
+
+.site-header .navbar-mobile,
+.site-header .user-info-mobile {
+  background: rgba(255, 253, 249, 0.8) !important;
+}
+
+.site-header .auth-links-mobile {
+  border-top-color: rgba(128, 89, 106, 0.14) !important;
+}
+
+.site-header .user-dropdown {
+  min-width: 310px !important;
+  border: 1px solid rgba(128, 89, 106, 0.16) !important;
+  border-radius: 8px !important;
+  background: #fffdf9 !important;
+  box-shadow: 0 18px 42px rgba(128, 89, 106, 0.18) !important;
+}
+
+.site-header .dropdown-header {
+  padding: 18px !important;
+  background: linear-gradient(135deg, #ffdbe2 0%, #fff8f3 62%, #dff7ec 100%) !important;
+  border-bottom: 1px solid rgba(128, 89, 106, 0.14) !important;
+}
+
+.site-header .dropdown-avatar {
+  width: 54px !important;
+  height: 54px !important;
+  flex: 0 0 54px !important;
+  background: #fffdf9 !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 10px 20px rgba(232, 131, 159, 0.16) !important;
+}
+
+.site-header .dropdown-avatar i {
+  color: #e8839f !important;
+}
+
+.site-header .dropdown-avatar-initials {
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  color: #e8839f !important;
+  font-size: 1rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0 !important;
+}
+
+.site-header .dropdown-user-info {
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+.site-header .dropdown-user-name {
+  max-width: 210px !important;
+  overflow: hidden !important;
+  color: #513b4a !important;
+  font-size: 1rem !important;
+  font-weight: 900 !important;
+  line-height: 1.2 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.site-header .dropdown-user-email {
+  max-width: 210px !important;
+  width: fit-content !important;
+  min-height: 28px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  overflow: hidden !important;
+  padding: 5px 9px !important;
+  border: 1px solid rgba(128, 89, 106, 0.14) !important;
+  border-radius: 999px !important;
+  background: rgba(255, 253, 249, 0.86) !important;
+  color: #7a6672 !important;
+  font-size: 0.78rem !important;
+  font-weight: 800 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.site-header .user-name,
+.site-header .user-name-mobile {
+  max-width: 145px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  font-weight: 900 !important;
+}

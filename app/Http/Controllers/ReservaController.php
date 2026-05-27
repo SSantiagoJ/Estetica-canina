@@ -28,6 +28,16 @@ class ReservaController extends Controller
         $cliente = Cliente::where('id_persona', Auth::user()->id_persona)->first();
 
         if (!$cliente) {
+            \DB::table('clientes')->insert([
+                'id_persona' => Auth::user()->id_persona,
+                'fecha_creacion' => now(),
+                'fecha_actualizacion' => now(),
+            ]);
+
+            $cliente = Cliente::where('id_persona', Auth::user()->id_persona)->first();
+        }
+
+        if (!$cliente) {
             return redirect()->back()->with('error', 'No se encontró cliente asociado.');
         }
 

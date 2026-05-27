@@ -37,13 +37,15 @@ class AuthController extends Controller
             if ($user && Hash::check($data['password'], $user->contrasena)) {
                 // ✅ Guardar sesión en Laravel
                 Auth::loginUsingId($user->id_usuario);
+                $request->session()->regenerate();
 
                 // ✅ Solo dos dashboards para empleados y admin, clientes van al menú
-                $redirect = match ($user->rol) {
-                     'Admin'    => '/admin_dashboard',
+                $defaultRedirect = match ($user->rol) {
+                    'Admin'    => '/admin_dashboard',
                     'Empleado' => '/empleado/bandeja-reservas',
-                    default             => '/',
+                    default    => '/',
                 };
+                $redirect = redirect()->intended($defaultRedirect)->getTargetUrl();
 
                 return response()->json([
                     'success'  => true,
@@ -111,7 +113,16 @@ class AuthController extends Controller
                 'fecha_actualizacion'=> now(),
             ]);
 
+            DB::table('clientes')->insert([
+                'id_persona' => $idPersona,
+                'fecha_creacion' => now(),
+                'fecha_actualizacion' => now(),
+            ]);
+
             DB::commit();
+
+            Auth::loginUsingId($idUsuario);
+            $request->session()->regenerate();
 
             return response()->json([
                 'success' => true,

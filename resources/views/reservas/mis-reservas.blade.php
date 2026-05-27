@@ -13,12 +13,32 @@
 @section('content')
 <div class="mis-reservas-container">
     <header class="reservas-header">
-        <h1>Mis Reservas</h1>
+        <div>
+            <span class="reservas-eyebrow">Centro de citas</span>
+            <h1>Mis Reservas</h1>
+            <p>Revisa tus próximas visitas, edita datos importantes y califica la experiencia de tu mascota.</p>
+        </div>
+        <div class="reservas-summary">
+            <div class="summary-pill">
+                <strong>{{ $proximasReservas->count() }}</strong>
+                <span>Programadas</span>
+            </div>
+            <div class="summary-pill">
+                <strong>{{ $historialReservas->count() }}</strong>
+                <span>Historial</span>
+            </div>
+        </div>
     </header>
 
     <div class="tabs-container">
-        <button class="tab-button active" data-tab="proximas">Reservas Programadas</button>
-        <button class="tab-button" data-tab="historial">Historial de Servicios</button>
+        <button class="tab-button active" data-tab="proximas">
+            <i class="fas fa-calendar-check"></i>
+            <span>Reservas Programadas</span>
+        </button>
+        <button class="tab-button" data-tab="historial">
+            <i class="fas fa-notes-medical"></i>
+            <span>Historial de Servicios</span>
+        </button>
     </div>
 
     <!-- Reservas Programadas -->
@@ -30,7 +50,7 @@
                     <img src="{{ $reserva->mascota->foto ?? asset('images/razas/' . strtolower(str_replace(' ', '-', $reserva->mascota->raza ?? 'default')) . '.png') }}" 
                          alt="{{ $reserva->mascota->nombre }}" 
                          class="pet-avatar"
-                         onerror="this.src='{{ asset('images/default-pet.png') }}'">
+                         onerror="this.src='{{ asset('images/default-avatar.png') }}'">
                     <div class="reserva-details">
                         <h3 class="pet-name">{{ strtoupper($reserva->mascota->nombre) }}</h3>
                         <p class="reserva-fecha">{{ $reserva->fecha_formateada }}</p>
@@ -47,12 +67,16 @@
                         data-vacuna="{{ $reserva->vacuna }}"
                         data-alergia="{{ $reserva->alergia }}"
                         data-descripcion-alergia="{{ $reserva->descripcion_alergia }}">
-                    Editar
+                    <i class="fas fa-pen"></i> Editar
                 </button>
             </div>
             @empty
             <div class="empty-state">
+                <i class="fas fa-calendar-plus"></i>
                 <p>No tienes reservas próximas</p>
+                <a href="{{ route('reservas.seleccionMascota') }}" class="btn-nueva-reserva">
+                    <i class="fas fa-plus"></i> Crear reserva
+                </a>
             </div>
             @endforelse
         </div>
@@ -75,7 +99,7 @@
                     <img src="{{ $reserva->mascota->foto ?? asset('images/razas/' . strtolower(str_replace(' ', '-', $reserva->mascota->raza ?? 'default')) . '.png') }}" 
                          alt="{{ $reserva->mascota->nombre }}" 
                          class="pet-avatar"
-                         onerror="this.src='{{ asset('images/default-pet.png') }}'">
+                         onerror="this.src='{{ asset('images/default-avatar.png') }}'">
                     <div class="reserva-details">
                         <h3 class="pet-name">{{ strtoupper($reserva->mascota->nombre) }}</h3>
                         <p class="reserva-fecha">{{ $reserva->fecha_formateada }}</p>
@@ -109,9 +133,9 @@
                            data-fecha="{{ $reserva->fecha_formateada }}"
                            data-hora="{{ $reserva->hora }}"
                            onclick="event.preventDefault(); abrirModalDetalles(this);">
-                            Ver Detalles
+                            <i class="fas fa-clipboard-list"></i> Ver Detalles
                         </a>
-                        <span class="calificado-badge">✓ Calificado</span>
+                        <span class="calificado-badge"><i class="fas fa-check"></i> Calificado</span>
                     @else
                         <!-- Si no fue calificado, mostrar ambos botones -->
                         <a href="#" class="btn-action btn-detalles" 
@@ -120,7 +144,7 @@
                            data-fecha="{{ $reserva->fecha_formateada }}"
                            data-hora="{{ $reserva->hora }}"
                            onclick="event.preventDefault(); abrirModalDetalles(this);">
-                            Ver Detalles
+                            <i class="fas fa-clipboard-list"></i> Ver Detalles
                         </a>
                         <button class="btn-action btn-calificar" 
                                 data-reserva-id="{{ $reserva->id_reserva }}"
@@ -135,6 +159,7 @@
             </div>
             @empty
             <div class="empty-state">
+                <i class="fas fa-notes-medical"></i>
                 <p>No tienes historial de servicios</p>
             </div>
             @endforelse
@@ -272,7 +297,7 @@
             <!-- Información General -->
             <div class="detalle-section">
                 <div class="mascota-info-header">
-                    <img id="detallesMascotaFoto" src="/images/default-pet.png" alt="Mascota" class="mascota-avatar-grande">
+                    <img id="detallesMascotaFoto" src="/images/default-avatar.png" alt="Mascota" class="mascota-avatar-grande">
                     <div>
                         <h3 id="detallesMascotaNombre" class="mascota-nombre-grande"></h3>
                         <p class="detalle-fecha-hora">

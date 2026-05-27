@@ -10,32 +10,46 @@
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/catalogo.css') }}">
-    <main class="main-catalogo-page">
-        <section class="catalogo-servicios">
 
+<main class="main-catalogo-page">
+    <section class="catalogo-servicios">
+        @php
+            $descripcionesCategorias = [
+                'BAÑOS' => 'Baños básicos, premium y terapéuticos con productos pensados para cada tipo de piel y pelaje.',
+                'Baños' => 'Baños básicos, premium y terapéuticos con productos pensados para cada tipo de piel y pelaje.',
+                'PELUQUERÍA' => 'Cortes profesionales adaptados a cada raza, estilo y necesidad de mantenimiento.',
+                'Peluquería' => 'Cortes profesionales adaptados a cada raza, estilo y necesidad de mantenimiento.',
+                'TRATAMIENTOS' => 'Cuidado especializado para piel, pelaje y bienestar general de tu mascota.',
+                'Tratamientos' => 'Cuidado especializado para piel, pelaje y bienestar general de tu mascota.',
+                'ADICIONALES' => 'Servicios complementarios para completar la experiencia de cuidado.',
+                'Servicios Adicionales' => 'Servicios complementarios para completar la experiencia de cuidado.',
+            ];
+
+            $etiquetasCategorias = [
+                'BAÑOS' => 'Baños',
+                'PELUQUERÍA' => 'Peluquería',
+                'TRATAMIENTOS' => 'Tratamientos',
+                'ADICIONALES' => 'Servicios adicionales',
+            ];
+        @endphp
+
+        @forelse($servicios as $categoria => $listaServicios)
             @php
-                $descripcionesCategorias = [
-                    'Baños' => 'Desde baños básicos de limpieza hasta terapéuticos y relajantes con productos hipoalergénicos, diseñados para cada tipo de piel y pelaje, dejando a tu mascota fresca, suave y con un aroma encantador.',
-                    'Peluquería' => 'Cortes profesionales adaptados a cada raza y estilo, desde un look clásico hasta uno moderno y divertido. Resaltamos la belleza natural de tu mascota, cuidando siempre su comodidad.',
-                    'Tratamientos' => 'Tratamientos especializados para el cuidado integral de tu mascota, desde spa hasta tratamientos dermatológicos y de belleza avanzada.',
-                    'Servicios Adicionales' => 'Servicios complementarios para el bienestar y cuidado completo de tu mascota.'
-                ];
+                $categoriaNombre = $etiquetasCategorias[$categoria] ?? $categoria;
+                $categoriaDescripcion = $descripcionesCategorias[$categoria] ?? 'Servicios de calidad para que tu mascota se vea y se sienta mejor.';
             @endphp
 
-            @forelse($servicios as $categoria => $listaServicios)
-            {{-- CATEGORÍA DINÁMICA --}}
             <div class="categoria-item">
                 <div class="categoria-row">
                     <div class="categoria-info">
-                        <h2 class="categoria-titulo">{{ $categoria }}</h2>
-                        <p class="categoria-descripcion">
-                            {{ $descripcionesCategorias[$categoria] ?? 'Servicios de calidad para tu mascota.' }}
-                        </p>
+                        <span class="categoria-eyebrow">{{ $listaServicios->count() }} servicios</span>
+                        <h2 class="categoria-titulo">{{ $categoriaNombre }}</h2>
+                        <p class="categoria-descripcion">{{ $categoriaDescripcion }}</p>
                     </div>
 
                     <div class="carousel-container">
                         <button class="carousel-btn carousel-prev" aria-label="Anterior">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2">
                                 <polyline points="15 18 9 12 15 6"></polyline>
                             </svg>
@@ -43,31 +57,45 @@
 
                         <div class="servicios-carrusel">
                             @foreach($listaServicios as $servicio)
-                                @if($servicio->descripcion) {{-- Solo mostrar servicios con descripción --}}
-                                <div class="servicio-card">
-                                    @if($servicio->imagen_referencial)
-                                        @php
-                                            if (str_starts_with($servicio->imagen_referencial, 'servicios/')) {
-                                                $imagenUrl = asset('storage/' . $servicio->imagen_referencial);
-                                            } else {
-                                                $imagenUrl = asset('images/servicios/' . $servicio->imagen_referencial);
-                                            }
-                                        @endphp
-                                        <img src="{{ $imagenUrl }}" alt="{{ $servicio->nombre_servicio }}">
-                                    @else
-                                        <img src="{{ asset('images/servicios/default.jpg') }}" alt="{{ $servicio->nombre_servicio }}">
-                                    @endif
-                                    <div class="servicio-overlay">
-                                        <p class="servicio-nombre">{{ $servicio->nombre_servicio }}</p>
-                                        <p class="servicio-detalle">{{ $servicio->descripcion }}</p>
+                                <article class="servicio-card">
+                                    <div class="servicio-image-frame">
+                                        @if($servicio->imagen_referencial)
+                                            @php
+                                                if (str_starts_with($servicio->imagen_referencial, 'servicios/')) {
+                                                    $imagenUrl = asset('storage/' . $servicio->imagen_referencial);
+                                                } else {
+                                                    $imagenUrl = asset('images/servicios/' . $servicio->imagen_referencial);
+                                                }
+                                            @endphp
+                                            <img src="{{ $imagenUrl }}" alt="{{ $servicio->nombre_servicio }}">
+                                        @else
+                                            <img src="{{ asset('images/servicios/default.jpg') }}" alt="{{ $servicio->nombre_servicio }}">
+                                        @endif
                                     </div>
-                                </div>
-                                @endif
+
+                                    <div class="servicio-content">
+                                        <div class="servicio-meta">
+                                            <span>S/ {{ number_format($servicio->costo, 2) }}</span>
+                                            @if($servicio->duracion)
+                                                <span>{{ $servicio->duracion }} min</span>
+                                            @endif
+                                        </div>
+                                        <h3 class="servicio-nombre">{{ $servicio->nombre_servicio }}</h3>
+                                        <p class="servicio-detalle">
+                                            {{ $servicio->descripcion ?: 'Disponible para agenda según horario y trabajador.' }}
+                                        </p>
+                                        @auth
+                                            <a href="{{ route('reservas.seleccionMascota') }}" class="servicio-reservar">Reservar</a>
+                                        @else
+                                            <a href="{{ route('login') }}" class="servicio-reservar" data-reserva-login>Reservar</a>
+                                        @endauth
+                                    </div>
+                                </article>
                             @endforeach
                         </div>
 
                         <button class="carousel-btn carousel-next" aria-label="Siguiente">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2">
                                 <polyline points="9 18 15 12 9 6"></polyline>
                             </svg>
@@ -77,79 +105,66 @@
             </div>
 
             @if(!$loop->last)
-            <hr class="categoria-divider">
+                <hr class="categoria-divider">
             @endif
-            @empty
-            <div class="text-center py-5">
+        @empty
+            <div class="catalogo-empty">
                 <h3>No hay servicios disponibles en este momento</h3>
             </div>
-            @endforelse
+        @endforelse
+    </section>
+</main>
 
-        </section>
-    </main>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.categoria-item').forEach(categoria => {
+            const track = categoria.querySelector('.servicios-carrusel');
+            const prevBtn = categoria.querySelector('.carousel-prev');
+            const nextBtn = categoria.querySelector('.carousel-next');
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Configurar carruseles para cada categoría
-            document.querySelectorAll('.categoria-item').forEach(categoria => {
-                const track = categoria.querySelector('.servicios-carrusel');
-                const prevBtn = categoria.querySelector('.carousel-prev');
-                const nextBtn = categoria.querySelector('.carousel-next');
-                
-                if (!track) return;
+            if (!track) return;
 
-                const cards = track.querySelectorAll('.servicio-card');
-                if (cards.length === 0) return;
+            const cards = track.querySelectorAll('.servicio-card');
+            if (cards.length === 0) return;
 
-                const cardWidth = cards[0].offsetWidth + 20; // 20px gap
-                let isDown = false;
-                let startX;
-                let scrollLeft;
+            const cardWidth = cards[0].offsetWidth + 18;
+            let isDown = false;
+            let startX;
+            let scrollLeft;
 
-                // Botón siguiente
-                nextBtn.addEventListener('click', () => {
-                    track.scrollBy({
-                        left: cardWidth * 2,
-                        behavior: 'smooth'
-                    });
-                });
+            nextBtn.addEventListener('click', () => {
+                track.scrollBy({ left: cardWidth * 2, behavior: 'smooth' });
+            });
 
-                // Botón anterior
-                prevBtn.addEventListener('click', () => {
-                    track.scrollBy({
-                        left: -cardWidth * 2,
-                        behavior: 'smooth'
-                    });
-                });
+            prevBtn.addEventListener('click', () => {
+                track.scrollBy({ left: -cardWidth * 2, behavior: 'smooth' });
+            });
 
-                // Drag to scroll
-                track.style.cursor = 'grab';
+            track.addEventListener('mousedown', (e) => {
+                isDown = true;
+                track.classList.add('is-dragging');
+                startX = e.pageX - track.offsetLeft;
+                scrollLeft = track.scrollLeft;
+            });
 
-                track.addEventListener('mousedown', (e) => {
-                    isDown = true;
-                    track.style.cursor = 'grabbing';
-                    startX = e.pageX - track.offsetLeft;
-                    scrollLeft = track.scrollLeft;
-                });
+            track.addEventListener('mouseup', () => {
+                isDown = false;
+                track.classList.remove('is-dragging');
+            });
 
-                track.addEventListener('mouseup', () => {
-                    isDown = false;
-                    track.style.cursor = 'grab';
-                });
+            track.addEventListener('mouseleave', () => {
+                isDown = false;
+                track.classList.remove('is-dragging');
+            });
 
-                track.addEventListener('mouseleave', () => {
-                    isDown = false;
-                    track.style.cursor = 'grab';
-                });
-
-                track.addEventListener('mousemove', (e) => {
-                    if (!isDown) return;
-                    e.preventDefault();
-                    const x = e.pageX - track.offsetLeft;
-                    const walk = (x - startX) * 2;
-                    track.scrollLeft = scrollLeft - walk;
-                });
+            track.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - track.offsetLeft;
+                const walk = (x - startX) * 1.5;
+                track.scrollLeft = scrollLeft - walk;
             });
         });
-    </script>
+    });
+</script>
 @endsection

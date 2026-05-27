@@ -5,117 +5,140 @@
 @endsection
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('css/pago.css') }}">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{{ asset('css/pago.css') }}">
 
-<div class="container reserva-container mt-4">
+@php
+    $subtotalServicios = $servicios->sum('costo') + $adicionales->sum('costo');
+    $costoDelivery = session('requiere_delivery', 0) == 1 ? 20.00 : 0;
+    $total = $subtotalServicios + $costoDelivery;
+@endphp
+
+<div class="container reserva-container pago-container mt-4">
     <div class="progressbar mb-5">
         <ul class="steps">
-            <li>Selección de Mascotas</li>
-            <li>Selección de Servicio</li>
+            <li>Selección de mascotas</li>
+            <li>Selección de servicio</li>
             <li class="active">Pago</li>
             <li>Confirmación</li>
         </ul>
     </div>
 
-    <h2 class="titulo-seccion text-center mb-4">Resumen y Pago</h2>
+    <div class="pago-heading">
+        <span class="pago-eyebrow">Resumen final</span>
+        <h2 class="titulo-seccion text-center mb-2">Confirma y paga tu reserva</h2>
+    </div>
 
-    <div class="row">
-        <!-- Columna izquierda -->
-        <div class="col-md-8">
-            <div class="card shadow-sm p-3 mb-4">
-                <h5 class="mb-3">👤 Datos del Cliente</h5>
-                <p><strong>Nombre:</strong> {{ Auth::user()->persona->nombres }} {{ Auth::user()->persona->apellidos }}</p>
-                <p><strong>Correo:</strong> {{ Auth::user()->correo }}</p>
-            </div>
+    <div class="row g-4 align-items-start">
+        <div class="col-lg-8">
+            <section class="pago-card mb-4">
+                <h5>Datos del cliente</h5>
+                <div class="pago-client-grid">
+                    <p><strong>Nombre:</strong> {{ Auth::user()->persona->nombres }} {{ Auth::user()->persona->apellidos }}</p>
+                    <p><strong>Correo:</strong> {{ Auth::user()->correo }}</p>
+                </div>
+            </section>
 
-            <div class="card shadow-sm p-3 mb-4">
-                <h5 class="mb-3">🐾 Mascotas Seleccionadas</h5>
-                @foreach($mascotas as $m)
-                    <div class="border rounded p-2 mb-2 bg-light">
-                        <p><strong>Nombre:</strong> {{ $m->nombre }}</p>
-                        <p><strong>Especie:</strong> {{ $m->especie }}</p>
-                        <p><strong>Raza:</strong> {{ $m->raza }}</p>
-                    </div>
-                @endforeach
-            </div>
-
-            <div class="card shadow-sm p-3">
-                <h5 class="mb-3">🧴 Servicios Seleccionados</h5>
-                <div class="row">
-                    @foreach($servicios as $s)
-                        <div class="col-md-6 mb-3">
-                            <div class="card border-0 shadow-sm h-100">
-                                <img src="{{ asset('images/razas/'.$s->imagen_referencial) }}" class="card-img-top" alt="{{ $s->nombre_servicio }}">
-                                <div class="card-body">
-                                    <h6 class="card-title">{{ $s->nombre_servicio }}</h6>
-                                    <p class="card-text">S/ {{ number_format($s->costo, 2) }}</p>
-                                </div>
-                            </div>
+            <section class="pago-card mb-4">
+                <h5>Mascotas seleccionadas</h5>
+                <div class="mascotas-resumen">
+                    @foreach($mascotas as $m)
+                        <div class="mascota-resumen-card">
+                            <strong>{{ $m->nombre }}</strong>
+                            <span>{{ $m->especie }} · {{ $m->raza }}</span>
                         </div>
                     @endforeach
-                    @foreach($adicionales as $a)
-                        <div class="col-md-6 mb-3">
-                            <div class="card border-0 shadow-sm h-100">
-                                <img src="{{ asset('images/razas/'.$a->imagen_referencial) }}" class="card-img-top" alt="{{ $a->nombre_servicio }}">
-                                <div class="card-body">
-                                    <h6 class="card-title">{{ $a->nombre_servicio }}</h6>
-                                    <p class="card-text">S/ {{ number_format($a->costo, 2) }}</p>
-                                </div>
+                </div>
+            </section>
+
+            <section class="pago-card">
+                <div class="pago-section-title">
+                    <h5>Servicios seleccionados</h5>
+                    <span>{{ $servicios->count() + $adicionales->count() }} ítems</span>
+                </div>
+
+                <div class="servicios-pago-grid">
+                    @foreach($servicios as $s)
+                        @php
+                            if ($s->imagen_referencial && str_starts_with($s->imagen_referencial, 'servicios/')) {
+                                $imagenUrl = asset('storage/' . $s->imagen_referencial);
+                            } elseif ($s->imagen_referencial) {
+                                $imagenUrl = asset('images/servicios/' . $s->imagen_referencial);
+                            } else {
+                                $imagenUrl = asset('images/servicios/default.jpg');
+                            }
+                        @endphp
+                        <article class="servicio-pago-card">
+                            <img src="{{ $imagenUrl }}" class="pago-servicio-img" alt="{{ $s->nombre_servicio }}">
+                            <div>
+                                <h6>{{ $s->nombre_servicio }}</h6>
+                                <p>S/ {{ number_format($s->costo, 2) }}</p>
                             </div>
-                        </div>
+                        </article>
+                    @endforeach
+
+                    @foreach($adicionales as $a)
+                        @php
+                            if ($a->imagen_referencial && str_starts_with($a->imagen_referencial, 'servicios/')) {
+                                $imagenUrl = asset('storage/' . $a->imagen_referencial);
+                            } elseif ($a->imagen_referencial) {
+                                $imagenUrl = asset('images/servicios/' . $a->imagen_referencial);
+                            } else {
+                                $imagenUrl = asset('images/servicios/default.jpg');
+                            }
+                        @endphp
+                        <article class="servicio-pago-card">
+                            <img src="{{ $imagenUrl }}" class="pago-servicio-img" alt="{{ $a->nombre_servicio }}">
+                            <div>
+                                <h6>{{ $a->nombre_servicio }}</h6>
+                                <p>S/ {{ number_format($a->costo, 2) }}</p>
+                            </div>
+                        </article>
                     @endforeach
                 </div>
 
                 @if(session('requiere_delivery', 0) == 1)
-                    <div class="alert alert-info mt-3">
-                        <h6>🚗 <strong>Servicio de Delivery Incluido</strong></h6>
-                        <p class="mb-1"><strong>Dirección de Recojo:</strong> {{ session('direccion_recojo') }}</p>
-                        <p class="mb-1"><strong>Dirección de Entrega:</strong> {{ session('direccion_entrega') ?: session('direccion_recojo') }}</p>
-                        <p class="mb-0"><strong>Costo Delivery:</strong> <span class="text-success">S/ 20.00</span></p>
+                    <div class="delivery-summary mt-3">
+                        <h6>Servicio de delivery incluido</h6>
+                        <p><strong>Recojo:</strong> {{ session('direccion_recojo') }}</p>
+                        <p><strong>Entrega:</strong> {{ session('direccion_entrega') ?: session('direccion_recojo') }}</p>
+                        <p class="mb-0"><strong>Costo:</strong> S/ 20.00</p>
                     </div>
                 @endif
-            </div>
+            </section>
         </div>
 
-        <!-- Columna derecha -->
-        <div class="col-md-4">
-            <div class="card shadow-sm p-3 text-center">
-                <h5>💰 Total a Pagar</h5>
-                @php
-                    $subtotalServicios = $servicios->sum('costo') + $adicionales->sum('costo');
-                    $costoDelivery = session('requiere_delivery', 0) == 1 ? 20.00 : 0;
-                    $total = $subtotalServicios + $costoDelivery;
-                @endphp
-                
-                <div class="text-start mt-3 mb-3">
-                    <p class="mb-1"><strong>Servicios:</strong> <span class="float-end">S/ {{ number_format($subtotalServicios, 2) }}</span></p>
+        <div class="col-lg-4">
+            <aside class="pago-summary-card">
+                <h5>Total a pagar</h5>
+
+                <div class="pago-total-list">
+                    <p><strong>Servicios</strong> <span>S/ {{ number_format($subtotalServicios, 2) }}</span></p>
                     @if($costoDelivery > 0)
-                        <p class="mb-1"><strong>Delivery:</strong> <span class="float-end">S/ {{ number_format($costoDelivery, 2) }}</span></p>
+                        <p><strong>Delivery</strong> <span>S/ {{ number_format($costoDelivery, 2) }}</span></p>
                     @endif
                     <hr>
-                    <h4 class="text-success"><strong>Total:</strong> <span class="float-end">S/ {{ number_format($total, 2) }}</span></h4>
+                    <h4><strong>Total</strong> <span>S/ {{ number_format($total, 2) }}</span></h4>
                 </div>
 
-                <!-- 🟡 CONTENEDOR DONDE IRÁ EL BOTÓN -->
-                <div id="paypal-button-container" class="mt-4"></div>
+                <div class="paypal-panel">
+                    <div id="paypal-button-container"></div>
+                </div>
 
-                <a href="{{ route('reservas.seleccionServicio') }}" class="btn btn-outline-secondary mt-3">⬅ Volver</a>
-            </div>
+                <button type="button" class="btn-volver" onclick="window.history.back()">Volver</button>
+            </aside>
         </div>
     </div>
 </div>
 @endsection
 
-
 @push('scripts')
-<!-- SDK de PayPal -->
 <script src="https://www.paypal.com/sdk/js?client-id=ARTxzEbR-GgKPnQdy64P9D3zeGlcj9zRJgCTy8ewKh3ZSyhr-lsh20yrYCfP2j-Jr8rAc9ysyLyRB3Xc&currency=USD"></script>
 
 <script>
 window.addEventListener('load', function() {
     if (typeof paypal === 'undefined') {
-        console.error("⚠️ El SDK de PayPal no se cargó correctamente.");
+        console.error("El SDK de PayPal no se cargó correctamente.");
         alert("El SDK de PayPal no se cargó. Revisa tu conexión o el Client ID.");
         return;
     }
@@ -128,28 +151,24 @@ window.addEventListener('load', function() {
             label: 'paypal'
         },
 
-        // ✅ Crea el pedido en PayPal
         createOrder: function(data, actions) {
             return actions.order.create({
                 purchase_units: [{
                     description: 'Pago PetSpa',
                     amount:{
                         currency_code:'USD',
-                        value:"{{ number_format($total / 3.80, 2, '.', '') }}" // Convierte S/ a USD aprox.
+                        value:"{{ number_format($total / 3.80, 2, '.', '') }}"
                     }
                 }]
             });
         },
 
-        // ✅ Cuando el usuario aprueba el pago
         onApprove: function(data, actions) {
             return actions.order.capture().then(function(details) {
-
-                // 1️⃣ Primero: guardar la reserva en tu BD llamando a finalizar()
                 fetch("{{ route('reservas.finalizar') }}", {
                     method: "POST",
                     headers: {
-                        "Accept": "application/json", //    
+                        "Accept": "application/json",
                         "Content-Type": "application/json",
                         "X-CSRF-TOKEN": "{{ csrf_token() }}"
                     },
@@ -158,32 +177,29 @@ window.addEventListener('load', function() {
                 .then(response => response.json())
                 .then(data => {
                     if (!data.success) {
-                        alert("❌ Ocurrió un error al guardar la reserva.");
+                        alert("Ocurrió un error al guardar la reserva.");
                         return;
                     }
 
-                    // 2️⃣ Segundo: redirigir a guardarPago()
-                    alert('✅ Pago completado correctamente por ' + details.payer.name.given_name);
+                    alert('Pago completado correctamente por ' + details.payer.name.given_name);
 
-                    // Espera un instante para que el servidor termine de guardar todo
                     setTimeout(() => {
                         window.location.href = "{{ route('reservas.guardarPago') }}";
                     }, 800);
                 })
                 .catch(err => {
                     console.error("Error al crear la reserva:", err);
-                    alert("❌ Ocurrió un error al crear la reserva en el servidor.");
+                    alert("Ocurrió un error al crear la reserva en el servidor.");
                 });
             });
         },
 
-        // ⚠️ Manejo de errores y cancelaciones
         onCancel: function() {
-            alert("⚠️ El pago fue cancelado por el usuario.");
+            alert("El pago fue cancelado por el usuario.");
         },
         onError: function(err) {
             console.error("Error en PayPal:", err);
-            alert("❌ Ocurrió un error al procesar el pago.");
+            alert("Ocurrió un error al procesar el pago.");
         }
     }).render('#paypal-button-container');
 });

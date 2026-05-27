@@ -149,6 +149,6 @@ document.getElementById('formEditarPerfil').addEventListener('submit', async fun
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Error de conexion: ' + error.message);
+        alert('Error de conexión: ' + error.message);
     }
 });

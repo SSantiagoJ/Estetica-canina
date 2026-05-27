@@ -80,16 +80,7 @@ async function handleLogin(e) {
       showNotification(`¡Bienvenido ${result.usuario.nombre}!`, "success")
 
       setTimeout(() => {
-        switch (result.usuario.rol) {
-          case "Admin":
-            window.location.href = "/admin_dashboard"
-            break
-          case "Empleado":
-            window.location.href = "/empleado/bandeja-reservas"
-             break
-          default:
-            window.location.href = "/dashboard"
-        }
+        window.location.href = result.redirect || "/"
       }, 1500)
     } else {
       const errorMsg = result.message || "Credenciales incorrectas"

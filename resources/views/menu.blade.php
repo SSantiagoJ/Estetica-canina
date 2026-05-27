@@ -4,12 +4,22 @@
 @section('header')
     @include('partials.header')
 @endsection
+
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/estilo_menu.css') }}">
+
 <section class="contenedor1">
     <div class="contenedor2">
+        <span class="hero-eyebrow">Estética canina y felina</span>
         <h2>Belleza y bienestar para todos los amigos peludos</h2>
-        <button class="boton1">RESERVAR</button>
+        <p class="hero-copy">
+            Agenda baños, cortes y tratamientos con una experiencia más clara, rápida y cómoda para tu mascota.
+        </p>
+        @auth
+            <a href="{{ route('reservas.seleccionMascota') }}" class="boton1">Reservar ahora</a>
+        @else
+            <a href="{{ route('login') }}" class="boton1" data-reserva-login>Reservar ahora</a>
+        @endauth
     </div>
     <div class="contenedor-img">
         <img src="{{ asset('perrito1.png') }}" alt="Perrito">
@@ -19,7 +29,6 @@
 <section class="servicios">
     <h2>Descubre nuestros tratamientos, cortes y productos pensados para consentir a tu mascota</h2>
 
-    <!-- Dropdown personalizado -->
     <div class="custom-select" role="combobox" aria-haspopup="listbox" aria-expanded="false" tabindex="0">
         <button type="button" class="select-btn" aria-label="Seleccionar servicio">
             <span class="selected-value">Selecciona un servicio</span>
@@ -34,15 +43,13 @@
         </ul>
     </div>
 
-    <!-- Botón catálogo debajo -->
-    <button class="btn-catalogo">Ver catálogo</button>
+    <a href="{{ route('catalogo') }}" class="btn-catalogo">Ver catálogo</a>
 </section>
 
 <section class="banner-section">
-    <img src="{{ asset('banner.png') }}" alt="banner" class="banner-img">
+    <img src="{{ asset('banner.png') }}" alt="Banner de servicios" class="banner-img">
 </section>
 
-<!-- Sección Servicios Adicionales -->
 <section class="extra-services">
     <h2>Servicios adicionales</h2>
     <p>
@@ -52,23 +59,22 @@
 
     <div class="services-grid">
         <div class="service-column">
-            <img src="{{ asset('i_1.jpg') }}" alt="Servicio 1">
-            <img src="{{ asset('i_3.jpg') }}" alt="Servicio 2">
-            <img src="{{ asset('i_5.jpg') }}" alt="Servicio 3">
+            <img src="{{ asset('i_1.jpg') }}" alt="Servicio adicional 1">
+            <img src="{{ asset('i_3.jpg') }}" alt="Servicio adicional 2">
+            <img src="{{ asset('i_5.jpg') }}" alt="Servicio adicional 3">
         </div>
 
         <div class="service-column">
-            <img src="{{ asset('i_2.jpg') }}" alt="Servicio 4">
-            <img src="{{ asset('i_4.jpg') }}" alt="Servicio 5">
-            <img src="{{ asset('i_6.jpg') }}" alt="Servicio 6">
+            <img src="{{ asset('i_2.jpg') }}" alt="Servicio adicional 4">
+            <img src="{{ asset('i_4.jpg') }}" alt="Servicio adicional 5">
+            <img src="{{ asset('i_6.jpg') }}" alt="Servicio adicional 6">
         </div>
     </div>
 </section>
 
-<!-- Opiniones -->
 <section class="opiniones">
     <div class="opiniones-top">
-        <img src="{{ asset('perrito2.png') }}" alt="Opinión">
+        <img src="{{ asset('perrito2.png') }}" alt="Opinión de clientes">
         <p>
             Tu opinión nos ayuda a seguir consintiendo a los peluditos como se merecen.
             ¡Déjanos tus comentarios!
@@ -113,7 +119,6 @@
         </div>
     </div>
 </section>
-
 @endsection
 
 @push('scripts')
