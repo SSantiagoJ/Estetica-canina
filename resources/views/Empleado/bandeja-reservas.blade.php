@@ -1,16 +1,18 @@
 @extends('layouts.header')
 
-@section('title', 'Gestionar Reserva - Estética Canina')
+@section('title', 'Bandeja de Reservas - Pet Grooming')
 
 @section('header')
     @include('partials.admin_header')
 @endsection
 
-@section('content')
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/admin_toolbar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin_dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/empleado-bandeja.css') }}">
+@endpush
 
-<!-- <CHANGE> Agregar los CSS del admin -->
-<link rel="stylesheet" href="{{ asset('css/admin_toolbar.css') }}">
-<link rel="stylesheet" href="{{ asset('css/admin_dashboard.css') }}">
+@section('content')
 
 <!-- Toolbar lateral para empleado -->
 <aside class="admin-toolbar bg-primary text-white shadow-sm d-flex flex-column pt-4">
@@ -73,12 +75,18 @@
 </aside>
 
 <!-- Mejorar contenedor principal con mejor estructura -->
-<main class="admin-content">
+<main class="admin-content empleado-reservas-panel">
+    @php
+        $totalReservas = $reservas->count();
+        $reservasPendientes = $reservas->whereIn('estado', ['P', 'N'])->count();
+        $reservasAtendidas = $reservas->where('estado', 'A')->count();
+        $reservasCanceladas = $reservas->where('estado', 'C')->count();
+    @endphp
     <!-- Mensajes de éxito/error -->
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <div class="d-flex align-items-center">
-                <i class="bi bi-check-circle-fill me-2"></i>
+                <i class="fas fa-circle-check me-2"></i>
                 <span>{{ session('success') }}</span>
             </div>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -87,22 +95,68 @@
 
     @if(session('error'))
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ session('error') }}
+            <i class="fas fa-triangle-exclamation me-2"></i>{{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
+    <section class="reservas-hero">
+        <div>
+            <span class="reservas-eyebrow">Agenda del equipo</span>
+            <h1>Bandeja de reservas</h1>
+            <p>Consulta, filtra y atiende las citas de las mascotas con una vista m&aacute;s clara y ordenada.</p>
+        </div>
+        <div class="reservas-hero-card">
+            <i class="fas fa-clipboard-list"></i>
+            <div>
+                <strong>{{ $totalReservas }}</strong>
+                <span>Reservas registradas</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="reservas-stats-grid" aria-label="Resumen de reservas">
+        <article class="reserva-stat-card">
+            <span class="reserva-stat-icon reserva-stat-icon--rose"><i class="fas fa-calendar-check"></i></span>
+            <div>
+                <strong>{{ $totalReservas }}</strong>
+                <span>Total</span>
+            </div>
+        </article>
+        <article class="reserva-stat-card">
+            <span class="reserva-stat-icon reserva-stat-icon--honey"><i class="fas fa-hourglass-half"></i></span>
+            <div>
+                <strong>{{ $reservasPendientes }}</strong>
+                <span>Pendientes</span>
+            </div>
+        </article>
+        <article class="reserva-stat-card">
+            <span class="reserva-stat-icon reserva-stat-icon--mint"><i class="fas fa-heart-circle-check"></i></span>
+            <div>
+                <strong>{{ $reservasAtendidas }}</strong>
+                <span>Atendidas</span>
+            </div>
+        </article>
+        <article class="reserva-stat-card">
+            <span class="reserva-stat-icon reserva-stat-icon--lavender"><i class="fas fa-ban"></i></span>
+            <div>
+                <strong>{{ $reservasCanceladas }}</strong>
+                <span>Canceladas</span>
+            </div>
+        </article>
+    </section>
+
     <!-- Card con estructura optimizada -->
-    <div class="card shadow-sm border-0">
+    <div class="reservas-workspace">
             <!-- Título principal fuera del card -->
-        <h2 class="fw-bold text-dark text-center">
-            <i class="fas fa-bell me-2"></i> Bandeja de reservas
+        <h2 class="reservas-section-title">
+            <i class="fas fa-filter me-2"></i> Buscar reservas
         </h2>
-        <div class="card-body">
+        <div class="reservas-workspace-body">
             <!-- Sección de filtros con mejor organización -->
             <div class="filters-section mb-4">
-                <h5 class="mb-3 text-secondary">
-                    <i class="fas fa-filter me-2"></i>Filtros de Búsqueda
+                <h5 class="filters-title">
+                    <i class="fas fa-sliders me-2"></i>Filtros de b&uacute;squeda
                 </h5>
                 
                 <!-- Filtros - Fila 1 -->
@@ -144,14 +198,6 @@
                             <option value="C">CANCELADO</option>
                         </select>
                     </div>
-                    <div class="col-md-2 d-flex align-items-end gap-2">
-                        <button class="btn btn-primary flex-grow-1" onclick="buscarReservas()">
-                            <i class="fas fa-search me-1"></i> Buscar
-                        </button>
-                        <button class="btn btn-secondary" onclick="limpiarFiltros()" title="Limpiar filtros">
-                            <i class="bi bi-arrow-clockwise"> X </i>
-                        </button>
-                    </div>
                 </div>
 
                 <!-- Filtros - Fila 2 -->
@@ -169,20 +215,28 @@
                         <input type="date" class="form-control" id="filtroFechaFin">
                     </div>
                 </div>
+                <div class="filter-actions filter-actions-wide">
+                    <button type="button" class="btn btn-primary btn-reservas-search" onclick="buscarReservas()">
+                        <i class="fas fa-search me-1"></i> Buscar
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-reservas-clean" onclick="limpiarFiltros()" title="Limpiar filtros" aria-label="Limpiar filtros">
+                        <i class="fas fa-rotate-right"></i>
+                    </button>
+                </div>
             </div>
 
             <!-- Separador visual <hr class="my-4"> -->
             <!-- Tabla de reservas con estructura mejorada -->
             <div class="table-section">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="text-secondary mb-0">
-                        <i class="fas fa-list me-2"></i>Listado de Reservas
+                <div class="reservas-table-heading">
+                    <h5>
+                        <i class="fas fa-list me-2"></i>Listado de reservas
                     </h5>
                     
                 </div>
 
-                <div class="table-responsive">
-                    <table class="table table-hover text-align: center">
+                <div class="table-responsive reservas-table-wrap">
+                    <table class="table table-hover reservas-table">
                         <thead>
                             <tr>
                                 <th>Código</th>
@@ -202,7 +256,7 @@
                         </thead>
                         <tbody id="tablaReservas">
                             @forelse($reservas as $index => $reserva)
-                            <tr data-empleado-id="{{ $reserva->id_empleado }}">
+                            <tr data-empleado-id="{{ $reserva->id_empleado }}" data-tipo-doc="{{ $reserva->cliente->persona->tipo_doc ?? $reserva->cliente->persona->tipo_documento ?? '' }}">
                                 <td>{{ $reserva->id_reserva }}</td>
                                 <td>{{ \Carbon\Carbon::parse($reserva->fecha)->format('d/m/Y') }}</td>
                                 <td>{{ \Carbon\Carbon::parse($reserva->hora)->format('H:i') }}</td>
@@ -228,32 +282,32 @@
                                 <td>{{ $reserva->mascota->especie ?? 'N/A' }}</td>
                                 <td class="text-center">
                                     @if($reserva->enfermedad)
-                                        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                                        <i class="fas fa-circle-check health-icon health-icon--ok"></i>
                                     @else
-                                        <i class="bi bi-dash-circle text-muted fs-5"></i>
+                                        <i class="fas fa-circle-minus health-icon health-icon--empty"></i>
                                     @endif
                                 </td>
                                 <td class="text-center">
                                     @if($reserva->vacuna)
-                                        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                                        <i class="fas fa-circle-check health-icon health-icon--ok"></i>
                                     @else
-                                        <i class="bi bi-dash-circle text-muted fs-5"></i>
+                                        <i class="fas fa-circle-minus health-icon health-icon--empty"></i>
                                     @endif
                                 </td>
                                 <td>
-                                    @if($reserva->estado == 'P')
-                                        <span class="badge bg-warning text-dark">PENDIENTE</span>
+                                    @if(in_array($reserva->estado, ['P', 'N']))
+                                        <span class="status-pill status-pill--pending">PENDIENTE</span>
                                     @elseif($reserva->estado == 'A')
-                                        <span class="badge bg-info text-white">ATENDIDO</span>
+                                        <span class="status-pill status-pill--done">ATENDIDO</span>
                                     @elseif($reserva->estado == 'C')
-                                        <span class="badge bg-secondary">CANCELADO</span>
+                                        <span class="status-pill status-pill--cancelled">CANCELADO</span>
                                     @endif
                                 </td>
                                 <td>{{ $reserva->mascota->nombre ?? 'N/A' }}</td>
                                 <td>
-                                    <div class="d-flex gap-2">
+                                    <div class="reservation-action-group">
                                        <button type="button" 
-                                                class="btn btn-sm btn-outline-primary"
+                                                class="btn btn-sm btn-outline-primary reserva-action-btn reserva-action-btn--view"
                                                 onclick="abrirModalVerReserva({
                                                     id_reserva: '{{ $reserva->id_reserva }}',
                                                     fecha: '{{ \Carbon\Carbon::parse($reserva->fecha)->format('d/m/Y') }}',
@@ -266,17 +320,17 @@
                                                     enfermedad: '{{ $reserva->enfermedad ? 'Sí' : 'No' }}',
                                                     alergia: '{{ $reserva->mascota->alergia ?? 'Ninguna' }}',
                                                     descripcion_alergia: '{{ $reserva->mascota->descripcion_alergia ?? 'Sin información' }}',
-                                                    estado: '{{ $reserva->estado == 'P' ? 'PENDIENTE' : ($reserva->estado == 'A' ? 'ATENDIDO' : 'CANCELADO') }}',
+                                                    estado: '{{ in_array($reserva->estado, ['P', 'N']) ? 'PENDIENTE' : ($reserva->estado == 'A' ? 'ATENDIDO' : 'CANCELADO') }}',
                                                     nombre_servicio: '{{ $reserva->detalles->isNotEmpty() ? $reserva->detalles->first()->servicio->nombre : 'N/A' }}',
                                                    descripcion_atencion: '{{ ($reserva->atencion && $reserva->atencion->descripcion) ? addslashes($reserva->atencion->descripcion) : '' }}',
                                                     comentarios_atencion: '{{ ($reserva->atencion && $reserva->atencion->comentarios) ? addslashes($reserva->atencion->comentarios) : '' }}'
                                                 })">
                                             <i class="fas fa-eye me-1"></i> VER
                                         </button>
-                                        @if($reserva->estado == 'P')
+                                        @if(in_array($reserva->estado, ['P', 'N']))
                                             <!-- Cambiar el botón ATENDER para que abra un modal -->
                                             <button type="button" 
-                                                    class="btn btn-sm btn-success"
+                                                    class="btn btn-sm btn-success reserva-action-btn reserva-action-btn--attend"
                                                     onclick="abrirModalAtencion(
                                                         {{ $reserva->id_reserva }},
                                                         '{{ $reserva->mascota->nombre ?? 'N/A' }}',
@@ -289,7 +343,7 @@
                                                     <i class="fas fa-check me-1"></i> ATENDER
                                                 </button>
                                        @elseif($reserva->estado == 'A')
-                                            <button type="button" class="btn btn-sm btn-secondary" disabled>
+                                            <button type="button" class="btn btn-sm btn-secondary reserva-action-btn reserva-action-btn--disabled" disabled>
                                                 <i class="fas fa-check me-1"></i> ATENDIDO
                                             </button>
                                         @endif
@@ -297,18 +351,24 @@
                                 </td>
                             </tr>
                             @empty
-                            <tr>
+                            <tr class="empty-data-row">
                                 <td colspan="13" class="text-center text-muted py-5">
                                     <i class="fas fa-inbox fa-3x mb-3 d-block text-secondary"></i>
                                     No hay reservas registradas
                                 </td>
                             </tr>
                             @endforelse
+                            <tr id="sinResultadosReserva" class="empty-search-row d-none">
+                                <td colspan="13" class="text-center text-muted py-5">
+                                    <i class="fas fa-magnifying-glass fa-3x mb-3 d-block"></i>
+                                    No se encontraron reservas con los filtros seleccionados.
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
-                <div class="mt-3">
-                <span class="badge bg-primary">
+                <div class="reservas-total-row">
+                <span class="total-reservas-badge">
                         Total: <span id="totalRegistros">{{ $reservas->count() }}</span> registros
                     </span>
                     </div>
@@ -735,9 +795,15 @@ function buscarReservas() {
     let filasVisibles = 0;
     
     filas.forEach(function(fila) {
+        if (fila.classList.contains('empty-data-row')) {
+            fila.style.display = 'none';
+            return;
+        }
         if (fila.cells.length === 1) return;
         
         const empleadoId = fila.getAttribute('data-empleado-id');
+        const tipoDoc = (fila.getAttribute('data-tipo-doc') || '').toUpperCase();
+        const tipoDocNormalizado = ['CEDULA', 'CÉDULA'].includes(tipoDoc) ? 'CE' : tipoDoc;
         const fechaTexto = fila.cells[1].textContent.trim();
         const numDocTexto = fila.cells[5].textContent.trim();
         const clienteTexto = fila.cells[6].textContent.trim().toLowerCase();
@@ -750,6 +816,7 @@ function buscarReservas() {
         let coincide = true;
         
         if (filtroEmpleado !== '' && empleadoId !== filtroEmpleado) coincide = false;
+        if (filtroTipoDoc !== '' && tipoDocNormalizado !== filtroTipoDoc) coincide = false;
         if (filtroNumDoc !== '' && !numDocTexto.includes(filtroNumDoc)) coincide = false;
         if (filtroCliente !== '' && !clienteTexto.includes(filtroCliente)) coincide = false;
         if (filtroEstado !== '' && !estadoTexto.includes(filtroEstado === 'P' ? 'PENDIENTE' : filtroEstado === 'A' ? 'ATENDIDO' : 'CANCELADO')) coincide = false;
@@ -765,8 +832,14 @@ function buscarReservas() {
         }
     });
     
-    if (filasVisibles === 0) {
-        alert('No se encontraron reservas con los criterios de búsqueda');
+    const sinResultados = document.getElementById('sinResultadosReserva');
+    if (sinResultados) {
+        sinResultados.classList.toggle('d-none', filasVisibles !== 0);
+    }
+
+    const totalRegistros = document.getElementById('totalRegistros');
+    if (totalRegistros) {
+        totalRegistros.textContent = filasVisibles;
     }
 }
 
@@ -783,8 +856,20 @@ function limpiarFiltros() {
     
     const filas = document.querySelectorAll('#tablaReservas tr');
     filas.forEach(function(fila) {
-        fila.style.display = '';
+        if (!fila.classList.contains('empty-search-row')) {
+            fila.style.display = '';
+        }
     });
+
+    const sinResultados = document.getElementById('sinResultadosReserva');
+    if (sinResultados) {
+        sinResultados.classList.add('d-none');
+    }
+
+    const totalRegistros = document.getElementById('totalRegistros');
+    if (totalRegistros) {
+        totalRegistros.textContent = document.querySelectorAll('#tablaReservas tr:not(.empty-search-row):not(.empty-data-row)').length;
+    }
 }
 </script>
 @endpush

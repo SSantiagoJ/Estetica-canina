@@ -73,46 +73,58 @@ class EmpleadoController extends Controller
         }
         
         // 3. Validación de seguridad
-        if (!$empleadoActual) {
+        if (!$empleadoActual && (!$user || $user->rol !== 'Admin')) {
             return redirect()->route('home')->with('error', 'No tienes una ficha de empleado asignada o no tienes permisos.');
         }
         
         $fechaHoy = now()->format('Y-m-d');
         
         // 4. Obtener reservas del día asignadas al empleado actual
-        $reservasDelDia = Reserva::with([
+        $reservasQuery = Reserva::with([
             'mascota',
             'cliente.persona',
+            'empleado.persona',
             'detalles.servicio'
         ])
-        ->where('fecha', $fechaHoy)
-        ->where('id_empleado', $empleadoActual->id_empleado)
-        ->orderBy('hora', 'asc')
-        ->get();
+        ->where('fecha', $fechaHoy);
+
+        if ($empleadoActual) {
+            $reservasQuery->where('id_empleado', $empleadoActual->id_empleado);
+        }
+
+        $reservasDelDia = $reservasQuery->orderBy('hora', 'asc')->get();
+        $estadosPendientes = ['P', 'N'];
         
         // 5. Estadísticas para dashboards
         $stats = [
-            'reservas_pendientes' => $reservasDelDia->where('estado', 'P')->count(),
+            'reservas_pendientes' => $reservasDelDia->whereIn('estado', $estadosPendientes)->count(),
             'reservas_atendidas' => $reservasDelDia->where('estado', 'A')->count(),
             'total_reservas' => $reservasDelDia->count(),
-            'proxima_reserva' => $reservasDelDia->where('estado', 'P')->first(),
+            'proxima_reserva' => $reservasDelDia->whereIn('estado', $estadosPendientes)->first(),
         ];
         
         // 6. Estadísticas generales para dashboards adicionales
         $statsGenerales = [
             'reservas_mes' => Reserva::whereMonth('fecha', now()->month)
                                ->whereYear('fecha', now()->year)
-                               ->where('id_empleado', $empleadoActual->id_empleado)
+                               ->when($empleadoActual, function ($query) use ($empleadoActual) {
+                                   return $query->where('id_empleado', $empleadoActual->id_empleado);
+                               })
                                ->count(),
             'servicios_populares' => DetalleReserva::join('servicios', 'detalles_reservas.id_servicio', '=', 'servicios.id_servicio')
                                       ->join('reservas', 'detalles_reservas.id_reserva', '=', 'reservas.id_reserva')
-                                      ->where('reservas.id_empleado', $empleadoActual->id_empleado)
+                                      ->when($empleadoActual, function ($query) use ($empleadoActual) {
+                                          return $query->where('reservas.id_empleado', $empleadoActual->id_empleado);
+                                      })
                                       ->selectRaw('servicios.nombre_servicio, COUNT(*) as total')
                                       ->groupBy('servicios.id_servicio', 'servicios.nombre_servicio')
                                       ->orderByDesc('total')
                                       ->limit(3)
                                       ->get(),
-            'clientes_atendidos' => Reserva::where('id_empleado', $empleadoActual->id_empleado)
+            'clientes_atendidos' => Reserva::query()
+                                     ->when($empleadoActual, function ($query) use ($empleadoActual) {
+                                         return $query->where('id_empleado', $empleadoActual->id_empleado);
+                                     })
                                      ->where('estado', 'A')
                                      ->distinct('id_cliente')
                                      ->count('id_cliente')
@@ -125,7 +137,9 @@ class EmpleadoController extends Controller
             // Verificar si el modelo Feedback existe y tiene datos
             if (class_exists('App\Models\Feedback')) {
                 $comentarios5Estrellas = Feedback::whereHas('reserva', function($query) use ($empleadoActual) {
-                        $query->where('id_empleado', $empleadoActual->id_empleado);
+                        if ($empleadoActual) {
+                            $query->where('id_empleado', $empleadoActual->id_empleado);
+                        }
                     })
                     ->where('calificacion', 5)
                     ->whereNotNull('comentarios')
@@ -155,7 +169,9 @@ class EmpleadoController extends Controller
                     ->join('mascotas', 'reservas.id_mascota', '=', 'mascotas.id_mascota')
                     ->join('clientes', 'reservas.id_cliente', '=', 'clientes.id_cliente')
                     ->join('personas', 'clientes.id_persona', '=', 'personas.id_persona')
-                    ->where('reservas.id_empleado', $empleadoActual->id_empleado)
+                    ->when($empleadoActual, function ($query) use ($empleadoActual) {
+                        return $query->where('reservas.id_empleado', $empleadoActual->id_empleado);
+                    })
                     ->where('feedbacks.calificacion', 5)
                     ->whereNotNull('feedbacks.comentarios')
                     ->where('feedbacks.comentarios', '!=', '')
@@ -447,10 +463,14 @@ public function destroyNovedad($id)
      */
     public function filtrarReservas(Request $request)
     {
-        $empleadoActual = Auth::user()->empleado ?? null;
+        $user = Auth::user();
+        $empleadoActual = null;
+        if ($user && $user->rol === 'Empleado') {
+            $empleadoActual = Empleado::where('id_persona', $user->id_persona)->first();
+        }
         $fechaHoy = now()->format('Y-m-d');
         
-        if (!$empleadoActual) {
+        if (!$empleadoActual && (!$user || $user->rol !== 'Admin')) {
             return response()->json(['error' => 'Empleado no encontrado'], 404);
         }
 
@@ -459,8 +479,11 @@ public function destroyNovedad($id)
             'cliente.persona',
             'detalles.servicio'
         ])
-        ->where('fecha', $fechaHoy)
-        ->where('id_empleado', $empleadoActual->id_empleado);
+        ->where('fecha', $fechaHoy);
+
+        if ($empleadoActual) {
+            $query->where('id_empleado', $empleadoActual->id_empleado);
+        }
 
         // Aplicar filtros
         if ($request->filled('estado')) {
@@ -522,7 +545,7 @@ public function destroyNovedad($id)
         try {
             $reserva = Reserva::findOrFail($id);
             
-            if ($reserva->estado !== 'P') {
+            if (!in_array($reserva->estado, ['P', 'N'], true)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'La reserva no está en estado pendiente'

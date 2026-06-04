@@ -19,12 +19,21 @@ class Usuario extends Authenticatable
         'contrasena',
         'rol',
         'estado',
+        'mfa_enabled',
+        'mfa_verified_at',
+        'mfa_bypass',
         'fecha_creacion',
         'fecha_actualizacion'
     ];
 
     protected $hidden = [
         'contrasena'
+    ];
+
+    protected $casts = [
+        'mfa_enabled' => 'boolean',
+        'mfa_verified_at' => 'datetime',
+        'mfa_bypass' => 'boolean',
     ];
 
     // Laravel por defecto espera "password", pero tu campo es "contrasena"

@@ -184,7 +184,26 @@ window.addEventListener('load', function() {
                     alert('Pago completado correctamente por ' + details.payer.name.given_name);
 
                     setTimeout(() => {
-                        window.location.href = "{{ route('reservas.guardarPago') }}";
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = "{{ route('reservas.guardarPago') }}";
+
+                        const tokenInput = document.createElement('input');
+                        tokenInput.type = 'hidden';
+                        tokenInput.name = '_token';
+                        tokenInput.value = "{{ csrf_token() }}";
+                        form.appendChild(tokenInput);
+
+                        if (data.reserva_id) {
+                            const reservaInput = document.createElement('input');
+                            reservaInput.type = 'hidden';
+                            reservaInput.name = 'reserva_id';
+                            reservaInput.value = data.reserva_id;
+                            form.appendChild(reservaInput);
+                        }
+
+                        document.body.appendChild(form);
+                        form.submit();
                     }, 800);
                 })
                 .catch(err => {

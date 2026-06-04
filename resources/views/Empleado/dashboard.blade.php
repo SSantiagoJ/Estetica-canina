@@ -6,11 +6,13 @@
     @include('partials.admin_header')
 @endsection
 
-@section('content')
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/admin_toolbar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin_dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/empleado-ui.css') }}">
+@endpush
 
-<!-- Agregar los CSS del admin -->
-<link rel="stylesheet" href="{{ asset('css/admin_toolbar.css') }}">
-<link rel="stylesheet" href="{{ asset('css/admin_dashboard.css') }}">
+@section('content')
 
 <!-- Toolbar lateral para empleado -->
 <aside class="admin-toolbar bg-primary text-white shadow-sm d-flex flex-column pt-4">
@@ -65,9 +67,9 @@
     </ul>
 </aside>
 
-<main class="admin-content">
+<main class="admin-content empleado-dashboard-panel">
 <!-- Contenido principal -->
-    <div class="card shadow-sm border-0">
+    <div class="card shadow-sm border-0 empleado-shell-card">
             <!-- Título principal fuera del card -->
         <h2 class="fw-bold text-dark text-center">
             <i class="fas fa-bell me-2"></i> Dashboard
@@ -110,7 +112,7 @@
             </iframe>
         </div>
     </div>
-</main>
+    </div>
 </main>
 
 @push('scripts')

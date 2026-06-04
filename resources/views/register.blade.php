@@ -93,7 +93,7 @@
                             <div class="input-group">
                                 <div class="input-wrapper">
                                     <i class="fas fa-lock input-icon"></i>
-                                    <input type="password" name="password" id="registerPassword" placeholder="Contraseña" required autocomplete="new-password">
+                                    <input type="password" name="password" id="registerPassword" placeholder="Contraseña" required autocomplete="new-password" minlength="9" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{9,}" title="Debe tener mas de 8 caracteres, mayuscula, minuscula, numero y simbolo.">
                                     <button type="button" class="toggle-password" onclick="togglePassword('registerPassword')">
                                         <i class="fas fa-eye"></i>
                                     </button>
@@ -103,7 +103,7 @@
                             <div class="input-group">
                                 <div class="input-wrapper">
                                     <i class="fas fa-lock input-icon"></i>
-                                    <input type="password" name="password_confirmation" id="confirmPassword" placeholder="Confirmar contraseña" required autocomplete="new-password">
+                                    <input type="password" name="password_confirmation" id="confirmPassword" placeholder="Confirmar contraseña" required autocomplete="new-password" minlength="9" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{9,}" title="Debe tener mas de 8 caracteres, mayuscula, minuscula, numero y simbolo.">
                                     <button type="button" class="toggle-password" onclick="togglePassword('confirmPassword')">
                                         <i class="fas fa-eye"></i>
                                     </button>
@@ -120,6 +120,26 @@
 
                             <button type="submit" class="btn-primary">
                                 <span>Crear Cuenta</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </form>
+
+                        <form class="auth-form" id="registerMfaFormElement" hidden>
+                            @csrf
+                            <div class="form-header">
+                                <h3>Verifica tu cuenta</h3>
+                                <p id="registerMfaMessageText">Ingresa el codigo de 6 digitos enviado a tu correo.</p>
+                            </div>
+
+                            <div class="input-group">
+                                <div class="input-wrapper">
+                                    <i class="fas fa-shield-halved input-icon"></i>
+                                    <input type="text" name="code" id="registerMfaCode" placeholder="Codigo MFA" required inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-primary">
+                                <span>Verificar codigo</span>
                                 <i class="fas fa-arrow-right"></i>
                             </button>
                         </form>

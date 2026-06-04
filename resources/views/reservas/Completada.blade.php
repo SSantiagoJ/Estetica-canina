@@ -18,8 +18,8 @@
             <a href="{{ route('reservas.boleta', ['id_pago' => $pago->id_pago]) }}" class="btn btn-success" target="_blank">
                 <i class="fa-solid fa-file-pdf"></i> Ver Boleta PDF
             </a>
-            {{-- Descargar archivo guardado en storage (requiere php artisan storage:link) --}}
-            <a href="{{ asset('storage/boletas/'.$pago->series.'.pdf') }}" class="btn btn-outline-primary" download>
+            {{-- Descargar PDF via controlador protegido --}}
+            <a href="{{ route('reservas.boleta.descargar', ['id_pago' => $pago->id_pago]) }}" class="btn btn-outline-primary">
                 <i class="fa-solid fa-download"></i> Descargar ({{ $pago->series }})
             </a>
         </div>

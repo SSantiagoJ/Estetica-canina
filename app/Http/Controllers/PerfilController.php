@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 use App\Models\Mascota;
 use App\Models\Cliente;
 
@@ -142,6 +143,75 @@ class PerfilController extends Controller
         $persona->save();
 
         return response()->json(['success' => true, 'persona' => $persona]);
+    }
+
+    public function intranetPerfil()
+    {
+        $usuario = Auth::user();
+
+        if (!$usuario || !$usuario->persona) {
+            return redirect()->route('intranet.login')
+                ->with('error', 'No se encontro informacion de perfil.');
+        }
+
+        $persona = $usuario->persona;
+        $empleado = $usuario->empleado;
+
+        return view('intranet.perfil', compact('usuario', 'persona', 'empleado'));
+    }
+
+    public function updateIntranetPerfil(Request $request)
+    {
+        $request->validate([
+            'nombres' => 'required|string|max:100',
+            'apellidos' => 'nullable|string|max:150',
+            'telefono' => 'nullable|string|max:20',
+            'direccion' => 'nullable|string|max:200',
+            'fecha_nacimiento' => 'nullable|date'
+        ]);
+
+        $usuario = Auth::user();
+
+        if (!$usuario || !$usuario->persona) {
+            return redirect()->route('intranet.perfil')
+                ->with('error', 'No se encontro informacion de perfil.');
+        }
+
+        $persona = $usuario->persona;
+        $persona->nombres = $request->nombres;
+
+        if (Schema::hasColumn('personas', 'apellidos')) {
+            $persona->apellidos = $request->apellidos;
+        } else {
+            $partesApellido = preg_split('/\s+/', trim((string) $request->apellidos), 2);
+
+            if (Schema::hasColumn('personas', 'apellido_paterno')) {
+                $persona->apellido_paterno = $partesApellido[0] ?? null;
+            }
+
+            if (Schema::hasColumn('personas', 'apellido_materno')) {
+                $persona->apellido_materno = $partesApellido[1] ?? null;
+            }
+        }
+
+        foreach (['telefono', 'direccion', 'fecha_nacimiento'] as $campo) {
+            if (Schema::hasColumn('personas', $campo)) {
+                $persona->{$campo} = $request->{$campo};
+            }
+        }
+
+        if (Schema::hasColumn('personas', 'usuario_actualizacion')) {
+            $persona->usuario_actualizacion = $usuario->correo;
+        }
+
+        if (Schema::hasColumn('personas', 'fecha_actualizacion')) {
+            $persona->fecha_actualizacion = now();
+        }
+
+        $persona->save();
+
+        return redirect()->route('intranet.perfil')
+            ->with('success', 'Perfil actualizado correctamente.');
     }
 
     public function destroy($id)

@@ -14,21 +14,46 @@
             </a>
 
             {{-- Navegación Desktop --}}
+            @php
+                $rolHeader = auth()->check() ? auth()->user()->rol : null;
+                $esPersonalInterno = in_array($rolHeader, ['Empleado', 'Supervisor', 'Admin'], true);
+                $esClientePortal = !$esPersonalInterno;
+                $panelInternoUrl = match ($rolHeader) {
+                    'Admin' => route('admin.dashboard'),
+                    'Empleado', 'Supervisor' => route('empleado.panel.del.dia'),
+                    default => route('intranet.login'),
+                };
+            @endphp
+
             <nav class="navbar-desktop">
                 <a href="{{ url('/catalogo') }}" class="nav-link">
                     <i class="fas fa-book"></i>
                     <span>Catálogo</span>
                 </a>
 
-                <a href="{{ route('reservas.seleccionMascota') }}" class="nav-link nav-link-primary">
-                    <i class="fas fa-calendar-plus"></i>
-                    <span>Genera tu Reserva</span>
-                </a>
+                @if($esClientePortal)
+                    <a href="{{ route('reservas.seleccionMascota') }}" class="nav-link nav-link-primary">
+                        <i class="fas fa-calendar-plus"></i>
+                        <span>Genera tu Reserva</span>
+                    </a>
 
-                <a href="{{ route('reservas.mis-reservas') }}" class="nav-link">
-                    <i class="fas fa-history"></i>
-                    <span>Mis Reservas</span>
-                </a>
+                    <a href="{{ route('reservas.mis-reservas') }}" class="nav-link">
+                        <i class="fas fa-history"></i>
+                        <span>Mis Reservas</span>
+                    </a>
+                @else
+                    <a href="{{ $panelInternoUrl }}" class="nav-link nav-link-primary">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Ir al panel</span>
+                    </a>
+                @endif
+
+                @guest
+                    <a href="{{ route('intranet.login') }}" class="nav-link nav-link-secondary">
+                        <i class="fas fa-shield-halved"></i>
+                        <span>Intranet</span>
+                    </a>
+                @endguest
 
                 @auth
                     @php
@@ -39,10 +64,12 @@
                         $partesNombre = preg_split('/\s+/', $nombreUsuario);
                         $inicialesUsuario = strtoupper(substr($partesNombre[0] ?? 'C', 0, 1) . substr($partesNombre[1] ?? '', 0, 1));
                     @endphp
-                    <a href="{{ url('/perfil') }}" class="nav-link">
-                        <i class="fas fa-user"></i>
-                        <span>Perfil</span>
-                    </a>
+                    @if(!$esPersonalInterno)
+                        <a href="{{ url('/perfil') }}" class="nav-link">
+                            <i class="fas fa-user"></i>
+                            <span>Perfil</span>
+                        </a>
+                    @endif
                     
                     {{-- Información del usuario con menú desplegable --}}
                     <div class="user-info dropdown-container">
@@ -64,14 +91,21 @@
                                 </div>
                             </div>
                             <div class="dropdown-divider"></div>
-                            <a href="{{ url('/perfil') }}" class="dropdown-item">
-                                <i class="fas fa-user"></i>
-                                <span>Mi Perfil</span>
-                            </a>
-                            <a href="{{ route('reservas.mis-reservas') }}" class="dropdown-item">
-                                <i class="fas fa-history"></i>
-                                <span>Mis Reservas</span>
-                            </a>
+                            @if($esPersonalInterno)
+                                <a href="{{ $panelInternoUrl }}" class="dropdown-item">
+                                    <i class="fas fa-briefcase"></i>
+                                    <span>Mi Panel</span>
+                                </a>
+                            @else
+                                <a href="{{ url('/perfil') }}" class="dropdown-item">
+                                    <i class="fas fa-user"></i>
+                                    <span>Mi Perfil</span>
+                                </a>
+                                <a href="{{ route('reservas.mis-reservas') }}" class="dropdown-item">
+                                    <i class="fas fa-history"></i>
+                                    <span>Mis Reservas</span>
+                                </a>
+                            @endif
                             <div class="dropdown-divider"></div>
                             <form method="POST" action="{{ route('logout') }}" class="dropdown-logout-form">
                                 @csrf
@@ -130,20 +164,31 @@
                 <span>Catálogo</span>
             </a>
 
-            <a href="{{ route('reservas.seleccionMascota') }}" class="nav-link-mobile nav-link-mobile-primary">
-                <i class="fas fa-calendar-plus"></i>
-                <span>Genera tu Reserva</span>
-            </a>
+            @if($esClientePortal)
+                <a href="{{ route('reservas.seleccionMascota') }}" class="nav-link-mobile nav-link-mobile-primary">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>Genera tu Reserva</span>
+                </a>
 
-            <a href="{{ route('reservas.mis-reservas') }}" class="nav-link-mobile">
-                <i class="fas fa-history"></i>
-                <span>Mis Reservas</span>
-            </a>
+                <a href="{{ route('reservas.mis-reservas') }}" class="nav-link-mobile">
+                    <i class="fas fa-history"></i>
+                    <span>Mis Reservas</span>
+                </a>
+            @else
+                <a href="{{ $panelInternoUrl }}" class="nav-link-mobile nav-link-mobile-primary">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Ir al panel</span>
+                </a>
+            @endif
 
-            <a href="{{ url('/perfil') }}" class="nav-link-mobile">
-                <i class="fas fa-user"></i>
-                <span>Perfil</span>
-            </a>
+            @auth
+                @if(!$esPersonalInterno)
+                    <a href="{{ url('/perfil') }}" class="nav-link-mobile">
+                        <i class="fas fa-user"></i>
+                        <span>Perfil</span>
+                    </a>
+                @endif
+            @endauth
 
             @auth
                 {{-- Botón de logout en móvil --}}
@@ -159,6 +204,10 @@
             @guest
                 {{-- Botones de Login y Register en móvil si no hay sesión --}}
                 <div class="auth-links-mobile">
+                    <a href="{{ route('intranet.login') }}" class="nav-link-mobile nav-link-mobile-secondary">
+                        <i class="fas fa-shield-halved"></i>
+                        <span>Intranet</span>
+                    </a>
                     <button type="button" class="nav-link-mobile" onclick="openLoginModal()">
                         <i class="fas fa-sign-in-alt"></i>
                         <span>Login</span>
@@ -301,6 +350,39 @@ document.addEventListener('click', function(event) {
                     </button>
                 </form>
 
+                <form class="auth-form mfa-form" id="mfaModalForm" method="POST" action="{{ route('login.mfa') }}" hidden>
+                    @csrf
+                    <div class="mfa-message">
+                        <i class="fas fa-shield-halved"></i>
+                        <span id="mfaModalMessage">Ingresa el codigo de 6 digitos enviado a tu correo.</span>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-wrapper">
+                            <i class="fas fa-key input-icon"></i>
+                            <input
+                                type="text"
+                                name="code"
+                                id="modalMfaCode"
+                                placeholder="Codigo MFA"
+                                required
+                                inputmode="numeric"
+                                pattern="[0-9]{6}"
+                                maxlength="6"
+                                autocomplete="one-time-code">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary">
+                        <span>Verificar codigo</span>
+                        <i class="fas fa-shield-check"></i>
+                    </button>
+
+                    <button type="button" class="switch-modal mfa-back-btn" onclick="resetModalMfaStep()">
+                        Volver al login
+                    </button>
+                </form>
+
                 <div class="form-footer">
                     <p>¿No tienes una cuenta? 
                         <button type="button" class="switch-modal" onclick="switchToRegister()">Regístrate aquí</button>
@@ -396,6 +478,9 @@ document.addEventListener('click', function(event) {
                                 name="password" 
                                 placeholder="Contraseña" 
                                 required 
+                                minlength="9"
+                                pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{9,}"
+                                title="Debe tener mas de 8 caracteres, mayuscula, minuscula, numero y simbolo."
                                 autocomplete="new-password">
                             <button type="button" class="toggle-password" onclick="toggleModalPassword('modalRegisterPassword')">
                                 <i class="fas fa-eye"></i>
@@ -412,6 +497,9 @@ document.addEventListener('click', function(event) {
                                 name="password_confirmation" 
                                 placeholder="Confirmar contraseña" 
                                 required 
+                                minlength="9"
+                                pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{9,}"
+                                title="Debe tener mas de 8 caracteres, mayuscula, minuscula, numero y simbolo."
                                 autocomplete="new-password">
                             <button type="button" class="toggle-password" onclick="toggleModalPassword('modalConfirmPassword')">
                                 <i class="fas fa-eye"></i>
@@ -449,6 +537,7 @@ document.addEventListener('click', function(event) {
 // Funciones para abrir/cerrar modales
 function openLoginModal(redirectTo = null) {
     closeAllDropdowns();
+    resetModalMfaStep();
     if (redirectTo) {
         localStorage.setItem('pet_after_login', redirectTo);
     }
@@ -465,6 +554,9 @@ function openRegisterModal() {
 function closeModal(modalId) {
     document.getElementById(modalId).style.display = 'none';
     document.body.style.overflow = 'auto';
+    if (modalId === 'loginModal') {
+        resetModalMfaStep();
+    }
 }
 
 function switchToRegister() {
@@ -475,6 +567,28 @@ function switchToRegister() {
 function switchToLogin() {
     closeModal('registerModal');
     openLoginModal();
+}
+
+function resetModalMfaStep() {
+    const loginForm = document.getElementById('loginModalForm');
+    const mfaForm = document.getElementById('mfaModalForm');
+    const mfaCode = document.getElementById('modalMfaCode');
+
+    if (loginForm) loginForm.hidden = false;
+    if (mfaForm) mfaForm.hidden = true;
+    if (mfaCode) mfaCode.value = '';
+}
+
+function showModalMfaStep(message) {
+    const loginForm = document.getElementById('loginModalForm');
+    const mfaForm = document.getElementById('mfaModalForm');
+    const mfaMessage = document.getElementById('mfaModalMessage');
+    const mfaCode = document.getElementById('modalMfaCode');
+
+    if (loginForm) loginForm.hidden = true;
+    if (mfaForm) mfaForm.hidden = false;
+    if (mfaMessage && message) mfaMessage.textContent = message;
+    if (mfaCode) mfaCode.focus();
 }
 
 function closeAllDropdowns() {
@@ -526,6 +640,7 @@ document.addEventListener('keydown', function(event) {
 // Manejar formulario de login modal
 document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.getElementById('loginModalForm');
+    const mfaForm = document.getElementById('mfaModalForm');
     const registerForm = document.getElementById('registerModalForm');
     const reservaUrl = "{{ route('reservas.seleccionMascota') }}";
 
@@ -561,6 +676,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     const redirectAfterLogin = localStorage.getItem('pet_after_login');
                     localStorage.removeItem('pet_after_login');
                     window.location.href = redirectAfterLogin || data.redirect;
+                } else if (data.mfa_required) {
+                    showModalMfaStep(data.message || 'Ingresa el codigo MFA enviado a tu correo.');
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
                 } else {
                     alert(data.message || 'Error en el login');
                     submitBtn.innerHTML = originalText;
@@ -570,6 +689,46 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => {
                 console.error('Error:', error);
                 alert('Error de conexión');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
+        });
+    }
+
+    if (mfaForm) {
+        mfaForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+
+            submitBtn.innerHTML = '<span>Verificando...</span>';
+            submitBtn.disabled = true;
+
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const redirectAfterLogin = localStorage.getItem('pet_after_login');
+                    localStorage.removeItem('pet_after_login');
+                    window.location.href = redirectAfterLogin || data.redirect;
+                } else {
+                    alert(data.message || 'Codigo MFA incorrecto');
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error de conexion');
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
             });
@@ -601,6 +760,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     const redirectAfterLogin = localStorage.getItem('pet_after_login');
                     localStorage.removeItem('pet_after_login');
                     window.location.href = redirectAfterLogin || data.redirect;
+                } else if (data.mfa_required) {
+                    closeModal('registerModal');
+                    openLoginModal();
+                    showModalMfaStep(data.message || 'Ingresa el codigo MFA enviado a tu correo.');
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
                 } else {
                     alert(data.message || 'Error en el registro');
                     submitBtn.innerHTML = originalText;

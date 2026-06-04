@@ -36,12 +36,24 @@
 
                     <div class="row g-3">
                         @foreach($servicios as $servicio)
+                            @php
+                                $duracionRaw = (float) ($servicio->duracion ?? 0);
+                                $duracionMinutos = $duracionRaw > 0 && $duracionRaw <= 8
+                                    ? (int) round($duracionRaw * 60)
+                                    : (int) round($duracionRaw);
+                                $duracionMinutos = $duracionMinutos > 0 ? $duracionMinutos : 60;
+                                $horasDuracion = intdiv($duracionMinutos, 60);
+                                $minutosDuracion = $duracionMinutos % 60;
+                                $duracionTexto = $horasDuracion > 0
+                                    ? $horasDuracion . ' h' . ($minutosDuracion ? ' ' . $minutosDuracion . ' min' : '')
+                                    : $duracionMinutos . ' min';
+                            @endphp
                             <div class="col-md-6 col-xl-4">
                                 <label class="servicio-card">
                                     <input type="checkbox"
                                            name="servicios[]"
                                            value="{{ $servicio->id_servicio }}"
-                                           data-duracion="{{ $servicio->duracion }}"
+                                           data-duracion="{{ $duracionMinutos }}"
                                            class="servicio-checkbox">
                                     <div class="card-body text-center">
                                         <span class="selected-indicator">Seleccionado</span>
@@ -61,7 +73,7 @@
                                         <div class="servicio-meta-row">
                                             <span>S/ {{ number_format($servicio->costo, 2) }}</span>
                                             @if($servicio->duracion)
-                                                <span>{{ $servicio->duracion }} min</span>
+                                                <span>{{ $duracionTexto }}</span>
                                             @endif
                                         </div>
                                     </div>
@@ -79,12 +91,24 @@
 
                     <div class="row g-3">
                         @foreach($adicionales as $servicio)
+                            @php
+                                $duracionRaw = (float) ($servicio->duracion ?? 0);
+                                $duracionMinutos = $duracionRaw > 0 && $duracionRaw <= 8
+                                    ? (int) round($duracionRaw * 60)
+                                    : (int) round($duracionRaw);
+                                $duracionMinutos = $duracionMinutos > 0 ? $duracionMinutos : 60;
+                                $horasDuracion = intdiv($duracionMinutos, 60);
+                                $minutosDuracion = $duracionMinutos % 60;
+                                $duracionTexto = $horasDuracion > 0
+                                    ? $horasDuracion . ' h' . ($minutosDuracion ? ' ' . $minutosDuracion . ' min' : '')
+                                    : $duracionMinutos . ' min';
+                            @endphp
                             <div class="col-md-6 col-xl-4">
                                 <label class="servicio-card">
                                     <input type="checkbox"
                                            name="adicionales[]"
                                            value="{{ $servicio->id_servicio }}"
-                                           data-duracion="{{ $servicio->duracion }}"
+                                           data-duracion="{{ $duracionMinutos }}"
                                            class="servicio-checkbox">
                                     <div class="card-body text-center">
                                         <span class="selected-indicator">Seleccionado</span>
@@ -104,7 +128,7 @@
                                         <div class="servicio-meta-row">
                                             <span>S/ {{ number_format($servicio->costo, 2) }}</span>
                                             @if($servicio->duracion)
-                                                <span>{{ $servicio->duracion }} min</span>
+                                                <span>{{ $duracionTexto }}</span>
                                             @endif
                                         </div>
                                     </div>
@@ -122,11 +146,53 @@
 
                         <div class="mb-3">
                             <label for="fecha" class="form-label">Fecha</label>
-                            <input type="date" name="fecha" id="fecha" class="form-control" required>
+                            <input type="hidden" name="fecha" id="fecha" data-min-date="{{ now()->toDateString() }}">
+                            <div class="pet-date-control" id="pet-date-control">
+                                <button type="button" class="date-display-button" id="date-display-button">
+                                    <span class="date-display-icon"><i class="fas fa-calendar-day"></i></span>
+                                    <span>
+                                        <strong id="date-display-text">Selecciona un d&iacute;a</strong>
+                                        <small id="date-display-helper">Elige el d&iacute;a y luego ver&aacute;s los rangos.</small>
+                                    </span>
+                                </button>
+
+                                <div class="pet-calendar-panel" id="pet-calendar-panel" aria-label="Calendario de reserva">
+                                    <div class="pet-calendar-head">
+                                        <button type="button" class="pet-calendar-nav" id="calendar-prev-month" aria-label="Mes anterior">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </button>
+                                        <div class="pet-calendar-title">
+                                            <strong id="calendar-month-label">Mes</strong>
+                                            <span id="calendar-year-label">A&ntilde;o</span>
+                                        </div>
+                                        <button type="button" class="pet-calendar-nav" id="calendar-next-month" aria-label="Mes siguiente">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </button>
+                                    </div>
+                                    <div class="pet-weekdays" aria-hidden="true">
+                                        <span>Dom</span>
+                                        <span>Lun</span>
+                                        <span>Mar</span>
+                                        <span>Mi&eacute;</span>
+                                        <span>Jue</span>
+                                        <span>Vie</span>
+                                        <span>S&aacute;b</span>
+                                    </div>
+                                    <div class="pet-calendar-grid" id="pet-calendar-grid"></div>
+                                </div>
+                            </div>
+                            <div class="fecha-summary-card" id="fecha-summary-card" hidden>
+                                <span class="fecha-summary-icon"><i class="fas fa-calendar-day"></i></span>
+                                <div>
+                                    <strong id="fecha-summary-day">Selecciona un d&iacute;a</strong>
+                                    <small id="fecha-summary-month">El mes y los rangos apareceran aqui.</small>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="mb-3" id="trabajador-horarios-section" style="display: none;">
                             <label class="form-label">Trabajadores disponibles</label>
+                            <p class="agenda-helper">Elige quien atendera a tu mascota para ver los rangos disponibles.</p>
                             <div class="trabajadores-tabs">
                                 @foreach($empleados as $empleado)
                                     <button type="button"
@@ -139,8 +205,16 @@
                             </div>
 
                             <div class="horarios-container mt-3" id="horarios-container" style="display: none;">
-                                <label class="form-label">Horarios para <span id="nombre-trabajador"></span></label>
+                                <label class="form-label">Rangos disponibles para <span id="nombre-trabajador"></span></label>
+                                <p class="agenda-helper" id="duracion-helper">Cada baño considera 1 hora de atencion.</p>
                                 <div class="horarios-grid" id="horarios-grid"></div>
+                                <div class="selected-range-card" id="selected-range-card" hidden>
+                                    <i class="fas fa-paw"></i>
+                                    <div>
+                                        <strong id="selected-range-title">Rango seleccionado</strong>
+                                        <span id="selected-range-copy">Confirma el horario para continuar.</span>
+                                    </div>
+                                </div>
                             </div>
 
                             <input type="hidden" name="hora" id="hora" required>

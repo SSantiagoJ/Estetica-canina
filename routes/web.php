@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmpleadoController;
 use App\Http\Controllers\ReservaController;
@@ -39,13 +38,40 @@ Route::get('/login', function () {
     return view('login');
 })->name('login');
 
-Route::post('/login', [AuthController::class, 'login'])->name('login.process');
+Route::post('/login', [AuthController::class, 'login'])
+    ->middleware('throttle:5,1')
+    ->name('login.process');
+
+Route::post('/login/mfa', [AuthController::class, 'verifyMfa'])
+    ->middleware('throttle:6,1')
+    ->name('login.mfa');
+
+Route::get('/intranet/login', function () {
+    return view('intranet.login');
+})->name('intranet.login');
+
+Route::post('/intranet/login', [AuthController::class, 'intranetLogin'])
+    ->middleware('throttle:5,1')
+    ->name('intranet.login.process');
+
+Route::post('/intranet/login/mfa', [AuthController::class, 'verifyMfa'])
+    ->middleware('throttle:6,1')
+    ->name('intranet.login.mfa');
+
+Route::middleware(['role:Admin,Empleado,Supervisor'])->group(function () {
+    Route::get('/intranet/perfil', [PerfilController::class, 'intranetPerfil'])
+        ->name('intranet.perfil');
+    Route::put('/intranet/perfil/actualizar', [PerfilController::class, 'updateIntranetPerfil'])
+        ->name('intranet.perfil.update');
+});
 
 Route::get('/register', function () {
     return view('register'); // resources/views/register.blade.php
 })->name('register');
 
-Route::post('/register', [AuthController::class, 'register'])->name('register.process');
+Route::post('/register', [AuthController::class, 'register'])
+    ->middleware('throttle:5,1')
+    ->name('register.process');
 
 //logout
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -59,16 +85,14 @@ Route::get('/header', function () {
 // El dashboard se elimina ya que ahora los clientes van directamente al menú
 
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/admin_dashboard', function () {
-        if (Auth::user()->rol !== 'Admin' && Auth::user()->rol !== 'Empleado') {
-            abort(403, 'Acceso no autorizado');
-        }
-        return view('admin_dashboard');
-    })->name('admin.dashboard');
-    
+Route::middleware(['role:Admin,Empleado'])->group(function () {
+    Route::get('/admin_dashboard', [GestorController::class, 'index'])->name('admin.dashboard');
+});
+Route::middleware(['role:Admin'])->group(function () {
     // Rutas adicionales del admin
     Route::get('/admin/usuarios', [GestorController::class, 'usuarios'])->name('admin.usuarios');
+    Route::get('/admin/usuarios/crear', [GestorController::class, 'crearUsuario'])->name('admin.usuarios.create');
+    Route::post('/admin/usuarios', [GestorController::class, 'guardarUsuario'])->name('admin.usuarios.store');
     Route::get('/admin/mascotas', [GestorController::class, 'mascotas'])->name('admin.mascotas');
     Route::get('/admin/reservas', [GestorController::class, 'reservas'])->name('admin.reservas');
     Route::get('/admin/servicios', [GestorController::class, 'servicios'])->name('admin.servicios');
@@ -80,7 +104,7 @@ Route::middleware(['auth'])->group(function () {
 
 
 // Reserva
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'role:Cliente'])->group(function () {
     Route::get('/reservas/seleccion-mascota', [ReservaController::class, 'seleccionMascota'])
         ->name('reservas.seleccionMascota');
 
@@ -95,12 +119,21 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/reservas/finalizar', [ReservaController::class, 'finalizar'])
         ->name('reservas.finalizar');
+
+    Route::get('/reservas/resumen', [ReservaController::class, 'resumenPago'])
+        ->name('reservas.resumen');
+
+    Route::post('/reservas/guardar-pago', [ReservaController::class, 'guardarPago'])
+        ->name('reservas.guardarPago');
+
+    Route::get('/reservas/boleta/{id_pago}', [ReservaController::class, 'generarBoleta'])
+        ->name('reservas.boleta');
+
+    Route::get('/reservas/boleta/{id_pago}/descargar', [ReservaController::class, 'descargarBoleta'])
+        ->name('reservas.boleta.descargar');
 });
 
-Route::get('/reservas/resumen', [ReservaController::class, 'resumenPago'])->name('reservas.resumen');
-Route::get('/reservas/guardar-pago', [ReservaController::class, 'guardarPago'])->name('reservas.guardarPago');
-
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'role:Cliente'])->group(function () {
     Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil.index');
     Route::post('/perfil/mascotas', [PerfilController::class, 'storeMascota'])->name('perfil.mascotas.store');
     Route::put('/perfil/mascotas/{id}', [PerfilController::class, 'updateMascota'])->name('perfil.mascotas.update');
@@ -113,7 +146,7 @@ Route::middleware(['auth'])->group(function () {
 
 
 // Rutas CRUD de Servicios
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['role:Admin'])->group(function () {
     Route::get('/admin/servicios/crear', [ServicioController::class, 'create'])->name('admin.servicios.create');
     Route::post('/admin/servicios', [ServicioController::class, 'store'])->name('admin.servicios.store');
     Route::get('/admin/servicios/{id}/editar', [ServicioController::class, 'edit'])->name('admin.servicios.edit');
@@ -123,13 +156,11 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::post('/admin/reservas/update', [GestorController::class, 'update'])
-    ->name('admin.reservas.update');
-
-    //Boleta
-Route::get('/reservas/boleta/{id_pago}', [ReservaController::class, 'generarBoleta'])->name('reservas.boleta');
+    ->name('admin.reservas.update')
+    ->middleware(['role:Admin']);
 
     //Tester
-    Route::get('/test-pdf', function () {
+    Route::middleware(['role:Admin'])->get('/test-pdf', function () {
     $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadHTML('<h1>Hola Mundo PDF</h1>');
     $path = storage_path('app/public/boletas/test.pdf');
     \Illuminate\Support\Facades\File::ensureDirectoryExists(storage_path('app/public/boletas'));
@@ -140,7 +171,7 @@ Route::get('/reservas/boleta/{id_pago}', [ReservaController::class, 'generarBole
 });
 
 // MIS RESERVAS
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'role:Cliente'])->group(function () {
     // Nuevas rutas para Mis Reservas
     Route::get('/mis-reservas', [ReservaController::class, 'misReservas'])->name('reservas.mis-reservas');
     Route::get('/reservas/{id}', [ReservaController::class, 'show'])->name('reservas.show');
@@ -149,7 +180,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // RUTAS PARA CALIFICACIONES
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'role:Cliente'])->group(function () {
     Route::post('/calificacion/guardar', [CalificacionController::class, 'guardarCalificacion'])->name('calificacion.guardar');
 });
 
@@ -157,6 +188,7 @@ Route::middleware(['auth'])->group(function () {
 // ============================================
 // RUTAS PARA EMPLEADO - PANEL DEL DÍA
 // ============================================
+Route::middleware(['role:Admin,Empleado,Supervisor'])->group(function () {
 Route::prefix('empleado')->name('empleado.')->group(function () {
     
     // Vista del panel del día con reservas asignadas y dashboards
@@ -269,4 +301,5 @@ Route::prefix('empleado/notificaciones')->group(function () {
         [NotificacionController::class, 'enviarCorreoPersonalizado'])
         ->name('empleado.notificaciones.custom');
 
+});
 });

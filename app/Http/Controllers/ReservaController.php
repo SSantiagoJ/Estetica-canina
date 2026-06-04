@@ -91,7 +91,7 @@ class ReservaController extends Controller
     {
         $fecha = $request->input('fecha');
         $idEmpleado = $request->input('id_empleado');
-        $duracionServicios = $request->input('duracion', 0); // en minutos
+        $duracionServicios = max((int) $request->input('duracion', 60), 60); // en minutos
 
         if (!$fecha || !$idEmpleado) {
             return response()->json(['error' => 'Faltan parámetros'], 400);
@@ -134,6 +134,21 @@ class ReservaController extends Controller
         return $fecha->format('H:i');
     }
 
+    private function normalizarDuracionServicio($duracion): int
+    {
+        $valor = (float) ($duracion ?? 0);
+
+        if ($valor <= 0) {
+            return 60;
+        }
+
+        if ($valor <= 8) {
+            return (int) round($valor * 60);
+        }
+
+        return (int) round($valor);
+    }
+
     // Helper: Verificar disponibilidad del empleado
     private function verificarDisponibilidad($fecha, $idEmpleado, $horaInicio, $duracionMinutos)
     {
@@ -150,8 +165,9 @@ class ReservaController extends Controller
         foreach ($reservasExistentes as $reserva) {
             // Calcular duración total de la reserva existente
             $duracionReserva = $reserva->detalles->sum(function($detalle) {
-                return $detalle->servicio->duracion ?? 60; // 60 minutos por defecto
+                return $this->normalizarDuracionServicio($detalle->servicio->duracion ?? 60);
             });
+            $duracionReserva = max((int) $duracionReserva, 60);
 
             $reservaInicio = Carbon::parse($reserva->fecha . ' ' . $reserva->hora);
             $reservaFin = Carbon::parse($reserva->fecha . ' ' . $reserva->hora)->addMinutes($duracionReserva);
@@ -337,35 +353,51 @@ private function handleResponse(Request $request, $success, $message, $extra = [
 
     return view('reservas.pago_resumen', compact('mascotas', 'servicios', 'adicionales'));
 }
-public function guardarPago()
+public function guardarPago(Request $request)
 {
-    // 1) Trae la última reserva del usuario
-    $reserva = Reserva::where('id_usuario', auth()->id())->latest('id_reserva')->first();
+    $request->validate([
+        'reserva_id' => 'nullable|integer',
+    ]);
+
+    $query = Reserva::with(['detalles', 'cliente'])
+        ->where('id_usuario', auth()->id());
+
+    if ($request->filled('reserva_id')) {
+        $query->where('id_reserva', $request->input('reserva_id'));
+    } else {
+        $query->latest('id_reserva');
+    }
+
+    $reserva = $query->first();
+
     if (!$reserva) {
-        return redirect()->route('reservas.pago')->with('error', 'No se encontró la reserva.');
+        return redirect()->route('reservas.mis-reservas')
+            ->with('error', 'No se encontro una reserva asociada a tu usuario.');
     }
 
-    // 2) Calcula el total de servicios
-    $totalServicios = $reserva->detalles->sum('total'); 
+    $pagoExistente = Pago::where('id_reserva', $reserva->id_reserva)
+        ->latest('id_pago')
+        ->first();
+
+    if ($pagoExistente) {
+        $this->guardarArchivoBoleta($pagoExistente);
+        return view('reservas.completada', ['pago' => $pagoExistente]);
+    }
+
+    $totalServicios = $reserva->detalles->sum('total');
     if ($totalServicios == 0) {
-        $totalServicios = $reserva->detalles->sum('precio_unitario') * 1.18; // fallback
+        $totalServicios = $reserva->detalles->sum('precio_unitario') * 1.18;
     }
 
-    // 3) Agregar costo de delivery si existe
     $costoDelivery = \DB::table('deliveries')
         ->where('id_reserva', $reserva->id_reserva)
         ->value('costo_delivery') ?? 0;
-    
-    // Aplicar IGV al delivery
+
     $totalDelivery = $costoDelivery * 1.18;
-    
-    // Total final
     $total = $totalServicios + $totalDelivery;
 
-    // 4) Genera serie
     $serie = 'BOL-' . str_pad(Pago::count() + 1, 5, '0', STR_PAD_LEFT);
 
-    // 5) Crea el pago
     $pago = Pago::create([
         'id_reserva'        => $reserva->id_reserva,
         'monto'             => $total,
@@ -377,53 +409,83 @@ public function guardarPago()
         'series'            => $serie,
     ]);
 
-    // 5) Genera PDF y guarda en storage/app/public/boletas
-    $pdf = Pdf::loadView('reservas.boleta', [
-        'reserva'   => $reserva,
-        'pago'      => $pago,
-        'cliente'   => $reserva->cliente,
-        'servicios' => $reserva->detalles,
-    ])->setPaper('A4', 'portrait');
+    $this->guardarArchivoBoleta($pago);
 
-    $dir = storage_path('app/public/boletas');
-    if (!File::exists($dir)) {
-        File::makeDirectory($dir, 0777, true);
-    }
-    $path = $dir . DIRECTORY_SEPARATOR . $pago->series . '.pdf';
-    $pdf->save($path);
-
-    // 6) Muestra la vista "completada" PASANDO $pago (para evitar "Undefined variable $pago")
     return view('reservas.completada', compact('pago'));
+
 }
 public function generarBoleta($id_pago)
 {
-    $pago = Pago::findOrFail($id_pago);
+    $pago = $this->obtenerPagoAutorizado($id_pago);
+    $path = $this->guardarArchivoBoleta($pago);
+
+    return response()->file($path, [
+        'Content-Type' => 'application/pdf',
+    ]);
+
+}
+
+public function descargarBoleta($id_pago)
+{
+    $pago = $this->obtenerPagoAutorizado($id_pago);
+    $path = $this->guardarArchivoBoleta($pago);
+
+    return response()->download($path, basename($path), [
+        'Content-Type' => 'application/pdf',
+    ]);
+}
+
+private function obtenerPagoAutorizado($idPago): Pago
+{
+    $pago = Pago::with(['reserva.cliente', 'reserva.detalles.servicio'])
+        ->findOrFail($idPago);
+
     $reserva = $pago->reserva;
-    $cliente = $reserva->cliente;
-    $servicios = $reserva->detalles;
-
-    $pdf = Pdf::loadView('reservas.boleta', compact('pago', 'reserva', 'cliente', 'servicios'))
-              ->setPaper('A4', 'portrait');
-
-    // 📂 Ruta personalizada (no storage)
-    $directory = base_path('app/public/Boletas');
-
-    // 🔒 Crear la carpeta si no existe
-    if (!File::exists($directory)) {
-        File::makeDirectory($directory, 0777, true);
+    if (!$reserva) {
+        abort(404);
     }
 
-    // 📄 Nombre del archivo
-    $fileName = 'BOL-' . str_pad($pago->id_pago, 5, '0', STR_PAD_LEFT) . '.pdf';
+    $usuario = Auth::user();
+    $esPersonal = in_array($usuario->rol, ['Admin', 'Empleado'], true);
+    $esDueno = (int) $reserva->id_usuario === (int) $usuario->id_usuario;
 
-    // 🧭 Ruta completa personalizada
+    if (!$esPersonal && !$esDueno) {
+        abort(403, 'No tienes permiso para ver esta boleta.');
+    }
+
+    return $pago;
+}
+
+private function guardarArchivoBoleta(Pago $pago): string
+{
+    $pago->loadMissing(['reserva.cliente', 'reserva.detalles.servicio']);
+
+    $reserva = $pago->reserva;
+    if (!$reserva) {
+        abort(404);
+    }
+
+    $directory = storage_path('app/boletas');
+    if (!File::exists($directory)) {
+        File::makeDirectory($directory, 0755, true);
+    }
+
+    $serie = $pago->series ?: 'BOL-' . str_pad($pago->id_pago, 5, '0', STR_PAD_LEFT);
+    $fileName = preg_replace('/[^A-Za-z0-9_-]/', '_', $serie) . '.pdf';
     $path = $directory . DIRECTORY_SEPARATOR . $fileName;
 
-    // 💾 Guarda directamente en app/public/Boletas/
-    $pdf->save($path);
+    if (!File::exists($path)) {
+        $pdf = Pdf::loadView('reservas.boleta', [
+            'pago' => $pago,
+            'reserva' => $reserva,
+            'cliente' => $reserva->cliente,
+            'servicios' => $reserva->detalles,
+        ])->setPaper('A4', 'portrait');
 
-    // ✅ Muestra el PDF en navegador
-    return response()->file($path);
+        $pdf->save($path);
+    }
+
+    return $path;
 }
 
 //BELEN

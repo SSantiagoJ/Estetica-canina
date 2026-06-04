@@ -1,0 +1,91 @@
+.intranet-login-page {
+  background: linear-gradient(135deg, #f4f1fb 0%, #ffffff 46%, #f9e7f2 100%);
+}
+
+.intranet-wrapper {
+  border: 1px solid rgba(87, 74, 111, 0.12);
+  box-shadow: 0 28px 70px rgba(55, 43, 83, 0.18);
+}
+
+.intranet-left {
+  background: linear-gradient(135deg, #8f37bd 0%, #d9579f 100%);
+}
+
+.intranet-left::before {
+  content: "";
+  position: absolute;
+  inset: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 18px;
+}
+
+.intranet-left .brand-content {
+  max-width: 430px;
+}
+
+.intranet-left .logo i {
+  width: 64px;
+  height: 64px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.18);
+  font-size: 2rem;
+}
+
+.intranet-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.intranet-badges span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.intranet-note {
+  color: var(--gray-600);
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.intranet-footer-link {
+  margin-top: 18px;
+}
+
+.intranet-footer-link a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.intranet-login-page .btn-primary {
+  background: linear-gradient(135deg, #8f37bd 0%, #d9579f 100%);
+}
+
+.intranet-login-page .input-wrapper input:focus {
+  border-color: #b84fd4;
+  box-shadow: 0 0 0 4px rgba(184, 79, 212, 0.12);
+}
+
+@media (max-width: 768px) {
+  .intranet-left::before {
+    inset: 18px;
+  }
+
+  .intranet-badges {
+    margin-top: 20px;
+  }
+}

@@ -4,7 +4,7 @@
 let isProcessing = false
 
 // ========================================
-// INICIALIZACIÓN
+// INICIALIZACION
 // ========================================
 document.addEventListener("DOMContentLoaded", () => {
   initializeLoginApp()
@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function initializeLoginApp() {
   setupLoginEventListeners()
   setupLoginFormValidation()
-  showNotification("¡Bienvenido a PetSpa!", "success")
+  showNotification(document.body.dataset.welcome || "Bienvenido a PetSpa", "success")
 }
 
 // ========================================
@@ -24,6 +24,12 @@ function setupLoginEventListeners() {
   if (loginForm) {
     loginForm.addEventListener("submit", handleLogin)
   }
+
+  const mfaForm = document.getElementById("mfaFormElement")
+  if (mfaForm) {
+    mfaForm.addEventListener("submit", handleMfaVerification)
+  }
+
   setupLoginRealTimeValidation()
 }
 
@@ -37,6 +43,7 @@ async function handleLogin(e) {
 
   const email = document.querySelector("input[name='correo']").value.trim()
   const password = document.querySelector("input[name='password']").value
+  const remember = document.querySelector("input[name='remember']")?.checked || false
 
   if (!validateLoginForm(email, password)) {
     return
@@ -51,48 +58,136 @@ async function handleLogin(e) {
       .querySelector("meta[name='csrf-token']")
       .getAttribute("content")
 
-    const response = await fetch("/login", {
+    const response = await fetch(e.target.getAttribute("action") || "/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "X-CSRF-TOKEN": token,
-        "Accept": "application/json"
+        "Accept": "application/json",
       },
       body: JSON.stringify({
         correo: email,
         password: password,
+        remember: remember,
       }),
     })
 
     const text = await response.text()
-    console.log("Respuesta cruda del servidor:", text)
-
     let result
+
     try {
       result = JSON.parse(text)
     } catch (err) {
-      console.error("No es JSON válido:", err)
+      console.error("Respuesta de login no valida:", err)
       showNotification("Error en el servidor", "error")
       return
     }
 
     if (result && result.success) {
-      showNotification(`¡Bienvenido ${result.usuario.nombre}!`, "success")
+      showNotification(`Bienvenido ${result.usuario.nombre}`, "success")
 
       setTimeout(() => {
         window.location.href = result.redirect || "/"
       }, 1500)
+    } else if (result && result.mfa_required) {
+      showMfaStep(result.message || "Ingresa el codigo MFA enviado a tu correo.")
     } else {
       const errorMsg = result.message || "Credenciales incorrectas"
       showNotification(errorMsg, "error")
     }
   } catch (error) {
     console.error("Error:", error)
-    showNotification("Error de conexión. Verifica tu internet.", "error")
+    showNotification("Error de conexion. Verifica tu internet.", "error")
   } finally {
     setLoadingState(submitBtn, false)
     isProcessing = false
   }
+}
+
+async function handleMfaVerification(e) {
+  e.preventDefault()
+
+  if (isProcessing) return
+
+  const code = document.getElementById("mfaCode").value.trim()
+  const submitBtn = e.target.querySelector('button[type="submit"]')
+  const buttonText = submitBtn.querySelector("span")
+  const originalText = buttonText.textContent
+
+  if (!/^\d{6}$/.test(code)) {
+    showFieldError("mfaCode", "Ingresa un codigo de 6 digitos")
+    return
+  }
+
+  submitBtn.disabled = true
+  buttonText.textContent = "Verificando..."
+  isProcessing = true
+
+  try {
+    const token = document
+      .querySelector("meta[name='csrf-token']")
+      .getAttribute("content")
+
+    const response = await fetch(e.target.getAttribute("action") || "/login/mfa", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-TOKEN": token,
+        "Accept": "application/json",
+      },
+      body: JSON.stringify({ code }),
+    })
+
+    const result = await response.json()
+
+    if (result && result.success) {
+      showNotification(result.message || "Verificacion completada", "success")
+
+      setTimeout(() => {
+        window.location.href = result.redirect || "/"
+      }, 1000)
+    } else {
+      const errorMsg = result.message || "Codigo MFA incorrecto"
+      showFieldError("mfaCode", errorMsg)
+      showNotification(errorMsg, "error")
+    }
+  } catch (error) {
+    console.error("Error MFA:", error)
+    showNotification("Error de conexion al verificar MFA", "error")
+  } finally {
+    submitBtn.disabled = false
+    buttonText.textContent = originalText
+    isProcessing = false
+  }
+}
+
+function showMfaStep(message) {
+  const loginForm = document.getElementById("loginFormElement")
+  const mfaForm = document.getElementById("mfaFormElement")
+  const mfaText = document.getElementById("mfaMessageText")
+  const mfaCode = document.getElementById("mfaCode")
+
+  if (!mfaForm) return
+
+  if (loginForm) {
+    loginForm.hidden = true
+  }
+
+  document.querySelector(".form-footer")?.setAttribute("hidden", "")
+  document.querySelector(".divider")?.setAttribute("hidden", "")
+  document.querySelector(".social-login")?.setAttribute("hidden", "")
+
+  if (mfaText) {
+    mfaText.textContent = message
+  }
+
+  mfaForm.hidden = false
+
+  if (mfaCode) {
+    mfaCode.focus()
+  }
+
+  showNotification(message, "info")
 }
 
 // ========================================
@@ -102,14 +197,14 @@ function validateLoginForm(email, password) {
   let isValid = true
 
   if (!email || !isValidEmail(email)) {
-    showFieldError("loginEmail", "Por favor ingresa un email válido")
+    showFieldError("loginEmail", "Por favor ingresa un email valido")
     isValid = false
   } else {
     showFieldSuccess("loginEmail")
   }
 
-  if (!password || password.length < 6) {
-    showFieldError("loginPassword", "La contraseña debe tener al menos 6 caracteres")
+  if (!password) {
+    showFieldError("loginPassword", "Ingresa tu contrasena")
     isValid = false
   } else {
     showFieldSuccess("loginPassword")
@@ -126,7 +221,7 @@ function setupLoginRealTimeValidation() {
       if (email && isValidEmail(email)) {
         showFieldSuccess("loginEmail")
       } else if (email) {
-        showFieldError("loginEmail", "Por favor ingresa un email válido")
+        showFieldError("loginEmail", "Por favor ingresa un email valido")
       }
     })
   }
@@ -137,7 +232,10 @@ function setupLoginRealTimeValidation() {
 // ========================================
 function showFieldError(fieldId, message) {
   const field = document.getElementById(fieldId)
+  if (!field) return
+
   const wrapper = field.closest(".input-wrapper")
+  if (!wrapper) return
 
   wrapper.classList.remove("success")
   wrapper.classList.add("error")
@@ -153,7 +251,10 @@ function showFieldError(fieldId, message) {
 
 function showFieldSuccess(fieldId) {
   const field = document.getElementById(fieldId)
+  if (!field) return
+
   const wrapper = field.closest(".input-wrapper")
+  if (!wrapper) return
 
   wrapper.classList.remove("error")
   wrapper.classList.add("success")
@@ -179,19 +280,28 @@ function togglePassword(fieldId) {
 }
 
 function setLoadingState(button, isLoading) {
+  const buttonText = button.querySelector("span")
+
   if (isLoading) {
+    if (buttonText && !button.dataset.originalText) {
+      button.dataset.originalText = buttonText.textContent
+    }
+
     button.classList.add("loading")
     button.disabled = true
-    button.querySelector("span").textContent = "Iniciando sesión..."
+    if (buttonText) buttonText.textContent = "Iniciando sesion..."
   } else {
     button.classList.remove("loading")
     button.disabled = false
-    button.querySelector("span").textContent = "Iniciar Sesión"
+    if (buttonText) buttonText.textContent = button.dataset.originalText || "Iniciar Sesion"
+    delete button.dataset.originalText
   }
 }
 
 function showNotification(message, type = "info") {
   const container = document.getElementById("toast-container")
+  if (!container) return
+
   const toast = document.createElement("div")
   toast.className = `toast ${type}`
 

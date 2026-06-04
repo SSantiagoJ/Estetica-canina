@@ -4,12 +4,12 @@
 let isProcessing = false
 
 // ========================================
-// INICIALIZACIÓN
+// INICIALIZACION
 // ========================================
 document.addEventListener("DOMContentLoaded", () => {
   setupRegisterEventListeners()
   setupRegisterFormValidation()
-  showNotification("¡Bienvenido a PetSpa! Crea tu cuenta", "info")
+  showNotification("Bienvenido a PetSpa. Crea tu cuenta", "info")
 })
 
 // ========================================
@@ -19,6 +19,11 @@ function setupRegisterEventListeners() {
   const registerForm = document.getElementById("registerFormElement")
   if (registerForm) {
     registerForm.addEventListener("submit", handleRegister)
+  }
+
+  const mfaForm = document.getElementById("registerMfaFormElement")
+  if (mfaForm) {
+    mfaForm.addEventListener("submit", handleRegisterMfaVerification)
   }
 }
 
@@ -37,7 +42,7 @@ async function handleRegister(e) {
     correo: document.getElementById("registerEmail").value.trim(),
     password: document.getElementById("registerPassword").value,
     password_confirmation: document.getElementById("confirmPassword").value,
-    tipo_persona: "Cliente" // por defecto
+    tipo_persona: "Cliente",
   }
 
   if (!validateRegisterForm(formData)) return
@@ -54,37 +59,109 @@ async function handleRegister(e) {
       headers: {
         "Content-Type": "application/json",
         "X-CSRF-TOKEN": token,
-        "Accept": "application/json"
+        "Accept": "application/json",
       },
-      body: JSON.stringify(formData)
+      body: JSON.stringify(formData),
     })
 
-    const text = await response.text()
-    console.log("Respuesta cruda registro:", text)
-
-    let result
-    try {
-      result = JSON.parse(text)
-    } catch (err) {
-      console.error("Registro: respuesta no JSON:", err)
-      showNotification("Error en el servidor - respuesta inválida", "error")
-      return
-    }
+    const result = await response.json()
 
     if (result && result.success) {
-      showNotification("¡Registro exitoso! Redirigiendo al login...", "success")
-      setTimeout(() => (window.location.href = "/login"), 2000)
+      showNotification("Registro exitoso. Redirigiendo...", "success")
+      setTimeout(() => (window.location.href = result.redirect || "/"), 1500)
+    } else if (result && result.mfa_required) {
+      showRegisterMfaStep(result.message || "Ingresa el codigo MFA enviado a tu correo.")
     } else {
-      const errorMsg = result.message || "Error en el registro"
-      showNotification(errorMsg, "error")
+      showNotification(extractErrorMessage(result, "Error en el registro"), "error")
     }
   } catch (error) {
-    console.error("Error en fetch/registro:", error)
-    showNotification("Error de conexión al servidor", "error")
+    console.error("Error en registro:", error)
+    showNotification("Error de conexion al servidor", "error")
   } finally {
     setLoadingState(submitBtn, false)
     isProcessing = false
   }
+}
+
+async function handleRegisterMfaVerification(e) {
+  e.preventDefault()
+
+  if (isProcessing) return
+
+  const code = document.getElementById("registerMfaCode").value.trim()
+  const submitBtn = e.target.querySelector('button[type="submit"]')
+  const buttonText = submitBtn.querySelector("span")
+  const originalText = buttonText.textContent
+
+  if (!/^\d{6}$/.test(code)) {
+    showFieldError("registerMfaCode", "Ingresa un codigo de 6 digitos")
+    return
+  }
+
+  submitBtn.disabled = true
+  buttonText.textContent = "Verificando..."
+  isProcessing = true
+
+  try {
+    const token = document.querySelector("meta[name='csrf-token']").getAttribute("content")
+
+    const response = await fetch("/login/mfa", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-TOKEN": token,
+        "Accept": "application/json",
+      },
+      body: JSON.stringify({ code }),
+    })
+
+    const result = await response.json()
+
+    if (result && result.success) {
+      showNotification(result.message || "Cuenta verificada", "success")
+      setTimeout(() => (window.location.href = result.redirect || "/"), 1000)
+    } else {
+      const errorMsg = result.message || "Codigo MFA incorrecto"
+      showFieldError("registerMfaCode", errorMsg)
+      showNotification(errorMsg, "error")
+    }
+  } catch (error) {
+    console.error("Error MFA:", error)
+    showNotification("Error de conexion al verificar MFA", "error")
+  } finally {
+    submitBtn.disabled = false
+    buttonText.textContent = originalText
+    isProcessing = false
+  }
+}
+
+function showRegisterMfaStep(message) {
+  const registerForm = document.getElementById("registerFormElement")
+  const mfaForm = document.getElementById("registerMfaFormElement")
+  const mfaText = document.getElementById("registerMfaMessageText")
+  const mfaCode = document.getElementById("registerMfaCode")
+
+  if (!mfaForm) return
+
+  if (registerForm) {
+    registerForm.hidden = true
+  }
+
+  document.querySelector(".form-footer")?.setAttribute("hidden", "")
+  document.querySelector(".divider")?.setAttribute("hidden", "")
+  document.querySelector(".social-login")?.setAttribute("hidden", "")
+
+  if (mfaText) {
+    mfaText.textContent = message
+  }
+
+  mfaForm.hidden = false
+
+  if (mfaCode) {
+    mfaCode.focus()
+  }
+
+  showNotification(message, "info")
 }
 
 // ========================================
@@ -109,22 +186,25 @@ function validateRegisterForm(data) {
   } else showFieldSuccess("documentType")
 
   if (!data.nro_documento) {
-    showFieldError("dni", "Por favor ingresa un documento válido")
+    showFieldError("dni", "Por favor ingresa un documento valido")
     isValid = false
   } else showFieldSuccess("dni")
 
   if (!data.correo || !isValidEmail(data.correo)) {
-    showFieldError("registerEmail", "Por favor ingresa un correo válido")
+    showFieldError("registerEmail", "Por favor ingresa un correo valido")
     isValid = false
   } else showFieldSuccess("registerEmail")
 
-  if (!data.password || data.password.length < 6) {
-    showFieldError("registerPassword", "La contraseña debe tener al menos 6 caracteres")
+  if (!isStrongPassword(data.password)) {
+    showFieldError(
+      "registerPassword",
+      "Debe tener mas de 8 caracteres, mayuscula, minuscula, numero y simbolo"
+    )
     isValid = false
   } else showFieldSuccess("registerPassword")
 
   if (data.password !== data.password_confirmation) {
-    showFieldError("confirmPassword", "Las contraseñas no coinciden")
+    showFieldError("confirmPassword", "Las contrasenas no coinciden")
     isValid = false
   } else showFieldSuccess("confirmPassword")
 
@@ -136,7 +216,10 @@ function validateRegisterForm(data) {
 // ========================================
 function showFieldError(fieldId, message) {
   const field = document.getElementById(fieldId)
+  if (!field) return
+
   const wrapper = field.closest(".input-wrapper")
+  if (!wrapper) return
 
   wrapper.classList.remove("success")
   wrapper.classList.add("error")
@@ -152,7 +235,11 @@ function showFieldError(fieldId, message) {
 
 function showFieldSuccess(fieldId) {
   const field = document.getElementById(fieldId)
+  if (!field) return
+
   const wrapper = field.closest(".input-wrapper")
+  if (!wrapper) return
+
   wrapper.classList.remove("error")
   wrapper.classList.add("success")
 
@@ -196,6 +283,8 @@ function setLoadingState(button, isLoading) {
 // ========================================
 function showNotification(message, type = "info") {
   const container = document.getElementById("toast-container")
+  if (!container) return
+
   const toast = document.createElement("div")
   toast.className = `toast ${type}`
   const icon = getNotificationIcon(type)
@@ -214,7 +303,7 @@ function getNotificationIcon(type) {
     success: "fas fa-check-circle",
     error: "fas fa-exclamation-circle",
     warning: "fas fa-exclamation-triangle",
-    info: "fas fa-info-circle"
+    info: "fas fa-info-circle",
   }
   return icons[type] || icons.info
 }
@@ -225,6 +314,21 @@ function getNotificationIcon(type) {
 function isValidEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   return emailRegex.test(email)
+}
+
+function isStrongPassword(password) {
+  return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{9,}$/.test(password)
+}
+
+function extractErrorMessage(result, fallback) {
+  if (result?.message) return result.message
+
+  const firstError = result?.errors ? Object.values(result.errors)[0] : null
+  if (Array.isArray(firstError) && firstError.length > 0) {
+    return firstError[0]
+  }
+
+  return fallback
 }
 
 function setupRegisterFormValidation() {

@@ -1,16 +1,18 @@
 @extends('layouts.header')
 
-@section('title', 'Gestionar Turnos - Estética Canina')
+@section('title', 'Gestionar Notificaciones - Pet Grooming')
 
 @section('header')
     @include('partials.admin_header')
 @endsection
 
-@section('content')
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/admin_toolbar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin_dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/empleado-ui.css') }}">
+@endpush
 
-<!-- Agregar los CSS del admin -->
-<link rel="stylesheet" href="{{ asset('css/admin_toolbar.css') }}">
-<link rel="stylesheet" href="{{ asset('css/admin_dashboard.css') }}">
+@section('content')
 <aside class="admin-toolbar bg-primary text-white shadow-sm d-flex flex-column pt-4">
     <ul class="nav flex-column px-2">
 <!-- Panel del Día -->
@@ -69,7 +71,7 @@
     </ul>
 </aside>
 
-<main class="admin-content">
+<main class="admin-content empleado-crud-panel">
 
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show">
@@ -375,24 +377,9 @@
     </div>
   </div>
 </div>
-<!-- BOOTSTRAP JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+@endsection
 
-<style>
-.table td {
-    white-space: nowrap;
-}
-.table td .btn {
-    padding: 3px 8px;
-    font-size: 12px;
-}
-.table-responsive {
-    overflow-x: auto;
-}
-</style>
-
-
-
+@push('scripts')
 <script>
 function editarNotificacion(id, tipo, mensaje, fecha, estado) {
     document.getElementById('editId').value = id;
@@ -406,3 +393,4 @@ function editarNotificacion(id, tipo, mensaje, fecha, estado) {
 }
 
 </script>
+@endpush

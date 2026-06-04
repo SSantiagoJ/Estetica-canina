@@ -11,6 +11,11 @@
 @endpush
 
 @section('content')
+@php
+    $mfaOmitido = strtolower((string) data_get($usuario, 'correo')) === 'admin@spa.com'
+        && (bool) data_get($usuario, 'mfa_bypass');
+    $mfaActivo = $mfaOmitido || ((bool) data_get($usuario, 'mfa_enabled') && filled(data_get($usuario, 'mfa_verified_at')));
+@endphp
 <div class="perfil-container">
     <section class="perfil-hero">
         <div>
@@ -27,6 +32,25 @@
                 <i class="fas fa-calendar-plus"></i>
                 <span>Reservar</span>
             </a>
+        </div>
+    </section>
+
+    <section class="mfa-status-card {{ $mfaActivo ? 'mfa-status-card--active' : 'mfa-status-card--pending' }}">
+        <div class="mfa-status-icon">
+            <i class="fas {{ $mfaOmitido ? 'fa-user-shield' : ($mfaActivo ? 'fa-shield-heart' : 'fa-shield-halved') }}"></i>
+        </div>
+        <div>
+            <span class="perfil-eyebrow">Seguridad de cuenta</span>
+            <h2>{{ $mfaOmitido ? 'MFA omitido para admin principal' : ($mfaActivo ? 'MFA activo' : 'Crea tu MFA') }}</h2>
+            <p>
+                @if($mfaOmitido)
+                    Esta cuenta administrativa principal puede ingresar sin codigo MFA por configuracion especial.
+                @elseif($mfaActivo)
+                    Tu cuenta ya tiene verificacion MFA por correo para proteger tus reservas y datos.
+                @else
+                    Tu cuenta aun no tiene MFA activo. En tu proximo inicio de sesion te enviaremos un codigo para crearlo y proteger tu acceso.
+                @endif
+            </p>
         </div>
     </section>
 

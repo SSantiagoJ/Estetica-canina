@@ -6,11 +6,13 @@
     @include('partials.admin_header')
 @endsection
 
-@section('content')
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/admin_toolbar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin_dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/empleado-ui.css') }}">
+@endpush
 
-<!-- Agregar los CSS del admin -->
-<link rel="stylesheet" href="{{ asset('css/admin_toolbar.css') }}">
-<link rel="stylesheet" href="{{ asset('css/admin_dashboard.css') }}">
+@section('content')
 
 <!-- Toolbar lateral para empleado -->
 <aside class="admin-toolbar bg-primary text-white shadow-sm d-flex flex-column pt-4">
@@ -68,7 +70,7 @@
 </aside>
 
 <!-- Mejorar contenedor principal con mejor estructura -->
-<main class="admin-content">
+<main class="admin-content empleado-crud-panel">
     <!-- Mensajes de éxito/error -->
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
