@@ -85,10 +85,11 @@
                             <td>{{ $servicio->especie }}</td>
                             <td>
                                 @if($servicio->imagen_referencial)
-                                    <img src="{{ asset('storage/' . $servicio->imagen_referencial) }}" 
+                                    <img src="{{ $servicio->imagen_url }}"
                                          alt="{{ $servicio->nombre_servicio }}" 
                                          class="rounded"
-                                         style="width: 50px; height: 50px; object-fit: cover;">
+                                         style="width: 50px; height: 50px; object-fit: cover;"
+                                         onerror="this.src='{{ asset('images/servicios/default.jpg') }}'">
                                 @else
                                     <button class="btn btn-sm btn-outline-secondary btn-subir-imagen" 
                                             data-id="{{ $servicio->id_servicio }}">

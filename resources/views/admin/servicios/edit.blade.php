@@ -109,15 +109,10 @@
             <div class="mb-3">
                 <label class="form-label fw-semibold">Imagen actual</label>
                 @if($servicio->imagen_referencial)
-                    @php
-                        if (str_starts_with($servicio->imagen_referencial, 'servicios/')) {
-                            $imagenUrl = asset('storage/' . $servicio->imagen_referencial);
-                        } else {
-                            $imagenUrl = asset('images/servicios/' . $servicio->imagen_referencial);
-                        }
-                    @endphp
                     <div class="admin-current-image">
-                        <img src="{{ $imagenUrl }}" alt="{{ $servicio->nombre_servicio }}">
+                        <img src="{{ $servicio->imagen_url }}"
+                             alt="{{ $servicio->nombre_servicio }}"
+                             onerror="this.src='{{ asset('images/servicios/default.jpg') }}'">
                     </div>
                 @else
                     <p class="text-muted mb-0">No hay imagen cargada.</p>
@@ -127,8 +122,8 @@
             <div class="mb-4">
                 <label for="imagen_referencial" class="form-label fw-semibold">Nueva Imagen Referencial</label>
                 <input type="file" class="form-control" id="imagen_referencial" name="imagen_referencial"
-                       accept="image/jpeg,image/png,image/jpg,image/gif">
-                <small class="text-muted">Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 5MB. Deja este campo vacío para mantener la imagen actual.</small>
+                       accept="image/jpeg,image/png,image/jpg,image/gif,image/webp">
+                <small class="text-muted">Formatos permitidos: JPG, PNG, GIF, WEBP. Tamano maximo: 50MB. Deja este campo vacio para mantener la imagen actual.</small>
             </div>
 
             <div class="admin-form-actions">

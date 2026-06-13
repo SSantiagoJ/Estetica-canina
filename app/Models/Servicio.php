@@ -2,6 +2,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Servicio extends Model
 {
@@ -30,4 +31,18 @@ class Servicio extends Model
         return $this->hasMany(DetalleReserva::class, 'id_servicio', 'id_servicio');
     }
 
+    public function getImagenUrlAttribute(): string
+    {
+        $imagen = (string) $this->imagen_referencial;
+
+        if (blank($imagen)) {
+            return asset('images/servicios/default.jpg');
+        }
+
+        if (Str::startsWith($imagen, ['http://', 'https://', '/'])) {
+            return $imagen;
+        }
+
+        return route('servicios.imagenes.show', $this);
+    }
 }

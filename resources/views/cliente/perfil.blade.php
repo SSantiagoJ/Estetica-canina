@@ -15,7 +15,9 @@
     $mfaOmitido = strtolower((string) data_get($usuario, 'correo')) === 'admin@spa.com'
         && (bool) data_get($usuario, 'mfa_bypass');
     $mfaActivo = $mfaOmitido || ((bool) data_get($usuario, 'mfa_enabled') && filled(data_get($usuario, 'mfa_verified_at')));
+    $razasPorEspecie = $razasPorEspecie ?? ['Perro' => [], 'Gato' => [], 'Otro' => []];
 @endphp
+<script type="application/json" id="razas-data">@json($razasPorEspecie)</script>
 <div class="perfil-container">
     <section class="perfil-hero">
         <div>
@@ -192,7 +194,8 @@
 
                     <div class="form-group">
                         <label for="raza">Raza</label>
-                        <input type="text" id="raza" name="raza">
+                        <input type="text" id="raza" name="raza" list="razasOptions" placeholder="Selecciona o escribe la raza" autocomplete="off">
+                        <datalist id="razasOptions"></datalist>
                     </div>
 
                     <div class="form-group">
@@ -271,7 +274,8 @@
 
                     <div class="form-group">
                         <label for="edit_raza">Raza</label>
-                        <input type="text" id="edit_raza" name="raza">
+                        <input type="text" id="edit_raza" name="raza" list="editRazasOptions" placeholder="Selecciona o escribe la raza" autocomplete="off">
+                        <datalist id="editRazasOptions"></datalist>
                     </div>
 
                     <div class="form-group">

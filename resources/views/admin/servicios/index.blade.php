@@ -88,16 +88,10 @@
                                 </td>
                                 <td class="imagen">
                                     @if($servicio->imagen_referencial)
-                                        @php
-                                            if (str_starts_with($servicio->imagen_referencial, 'servicios/')) {
-                                                $imagenUrl = asset('storage/' . $servicio->imagen_referencial);
-                                            } else {
-                                                $imagenUrl = asset('images/servicios/' . $servicio->imagen_referencial);
-                                            }
-                                        @endphp
-                                        <img src="{{ $imagenUrl }}"
+                                        <img src="{{ $servicio->imagen_url }}"
                                              alt="{{ $servicio->nombre_servicio }}"
                                              class="thumb-imagen"
+                                             onerror="this.src='{{ asset('images/servicios/default.jpg') }}'"
                                              title="{{ $servicio->nombre_servicio }}">
                                     @else
                                         <button class="btn-subir-imagen"

@@ -45,18 +45,9 @@
                             @foreach($listaServicios as $servicio)
                                 @if($servicio->descripcion) {{-- Solo mostrar servicios con descripción --}}
                                 <div class="servicio-card">
-                                    @if($servicio->imagen_referencial)
-                                        @php
-                                            if (str_starts_with($servicio->imagen_referencial, 'servicios/')) {
-                                                $imagenUrl = asset('storage/' . $servicio->imagen_referencial);
-                                            } else {
-                                                $imagenUrl = asset('images/servicios/' . $servicio->imagen_referencial);
-                                            }
-                                        @endphp
-                                        <img src="{{ $imagenUrl }}" alt="{{ $servicio->nombre_servicio }}">
-                                    @else
-                                        <img src="{{ asset('images/servicios/default.jpg') }}" alt="{{ $servicio->nombre_servicio }}">
-                                    @endif
+                                    <img src="{{ $servicio->imagen_url }}"
+                                         alt="{{ $servicio->nombre_servicio }}"
+                                         onerror="this.src='{{ asset('images/servicios/default.jpg') }}'">
                                     <div class="servicio-overlay">
                                         <p class="servicio-nombre">{{ $servicio->nombre_servicio }}</p>
                                         <p class="servicio-detalle">{{ $servicio->descripcion }}</p>

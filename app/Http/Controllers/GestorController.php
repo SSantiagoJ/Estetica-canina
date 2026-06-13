@@ -6,10 +6,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\Password;
 use App\Models\Reserva;
 use App\Models\Usuario;
 use App\Models\Mascota;
+use App\Models\RazaImagen;
 use App\Models\Servicio;
 
 class GestorController extends Controller
@@ -18,7 +22,7 @@ class GestorController extends Controller
     public function index()
     {
         $reservas = Reserva::with(['mascota', 'cliente.persona', 'detalles.servicio'])->latest('id_reserva')->get();
-        return view('admin_dashboard', compact('reservas'));
+        return view('admin.dashboard', compact('reservas'));
     }
 
 
@@ -26,7 +30,7 @@ class GestorController extends Controller
     public function usuarios()
     {
         $usuarios = Usuario::with('persona')->orderBy('id_usuario', 'desc')->get();
-        return view('admin_usuarios', compact('usuarios'));
+        return view('admin.usuarios.index', compact('usuarios'));
     }
 
     public function crearUsuario()
@@ -116,10 +120,15 @@ class GestorController extends Controller
                 ->with('success', 'Usuario creado correctamente. El MFA quedara pendiente hasta su primer inicio de sesion.');
         } catch (\Throwable $e) {
             DB::rollBack();
+            Log::error('No se pudo crear usuario desde admin', [
+                'exception' => $e,
+                'correo' => $data['correo'] ?? null,
+                'rol' => $data['rol'] ?? null,
+            ]);
 
             return back()
                 ->withInput()
-                ->with('error', 'No se pudo crear el usuario. Intenta nuevamente.');
+                ->with('error', 'No se pudo crear el usuario. Revisa que el rol exista en la base de datos y que los campos no esten duplicados.');
         }
     }
 
@@ -127,7 +136,92 @@ class GestorController extends Controller
     public function mascotas()
     {
         $mascotas = Mascota::with('cliente.persona')->orderBy('id_mascota', 'desc')->get();
-        return view('admin_mascotas', compact('mascotas'));
+        $razaImagenes = RazaImagen::orderBy('especie')
+            ->orderBy('raza')
+            ->get();
+
+        return view('admin.mascotas.index', compact('mascotas', 'razaImagenes'));
+    }
+
+    public function guardarFotoRaza(Request $request)
+    {
+        $data = $request->validate([
+            'especie' => 'required|string|in:Perro,Gato,Otro',
+            'raza' => 'required|string|min:2|max:120',
+            'imagen' => 'required|image|mimes:jpg,jpeg,png,webp,gif|max:51200',
+        ], [
+            'imagen.max' => 'La imagen no debe superar los 50 MB.',
+            'imagen.image' => 'El archivo debe ser una imagen valida.',
+            'imagen.mimes' => 'Usa una imagen JPG, JPEG, PNG, WEBP o GIF.',
+        ]);
+
+        $especie = RazaImagen::normalizarEspecie($data['especie']);
+        $raza = trim($data['raza']);
+        $slug = RazaImagen::crearSlugRaza($raza);
+        $archivo = $request->file('imagen');
+        $extension = strtolower($archivo->getClientOriginalExtension() ?: $archivo->extension());
+        $nombreArchivo = Str::slug($especie) . '-' . $slug . '-' . now()->format('YmdHis') . '.' . $extension;
+        $path = $archivo->storeAs('razas', $nombreArchivo, 'public');
+
+        $imagen = RazaImagen::where('especie', $especie)
+            ->where('slug', $slug)
+            ->first();
+
+        if ($imagen && $imagen->imagen_path) {
+            Storage::disk('public')->delete($imagen->imagen_path);
+        }
+
+        RazaImagen::updateOrCreate(
+            [
+                'especie' => $especie,
+                'slug' => $slug,
+            ],
+            [
+                'raza' => $raza,
+                'imagen_path' => $path,
+                'tamano_bytes' => $archivo->getSize(),
+                'mime_type' => $archivo->getMimeType(),
+                'estado' => 'A',
+                'usuario_creacion' => auth()->user()->correo ?? null,
+                'usuario_actualizacion' => auth()->user()->correo ?? null,
+            ]
+        );
+
+        return redirect()
+            ->route('admin.mascotas')
+            ->with('success', 'Foto de raza guardada correctamente. Se aceptan imagenes de hasta 50 MB.');
+    }
+
+    public function eliminarFotoRaza(RazaImagen $razaImagen)
+    {
+        if ($razaImagen->imagen_path) {
+            Storage::disk('public')->delete($razaImagen->imagen_path);
+        }
+
+        $razaImagen->delete();
+
+        return redirect()
+            ->route('admin.mascotas')
+            ->with('success', 'Foto de raza eliminada correctamente.');
+    }
+
+    public function mostrarFotoRaza(RazaImagen $razaImagen)
+    {
+        if ($razaImagen->estado !== 'A' || blank($razaImagen->imagen_path)) {
+            abort(404);
+        }
+
+        if (!Storage::disk('public')->exists($razaImagen->imagen_path)) {
+            abort(404);
+        }
+
+        $path = Storage::disk('public')->path($razaImagen->imagen_path);
+        $mimeType = $razaImagen->mime_type ?: Storage::disk('public')->mimeType($razaImagen->imagen_path);
+
+        return response()->file($path, [
+            'Content-Type' => $mimeType ?: 'image/jpeg',
+            'Cache-Control' => 'public, max-age=86400',
+        ]);
     }
 
     // Gestor de Reservas
@@ -137,7 +231,7 @@ class GestorController extends Controller
             ->latest('id_reserva')
             ->get();
 
-        return view('admin_reservas', compact('reservas'));
+        return view('admin.reservas.index', compact('reservas'));
     }
 
     // Gestor de Servicios
@@ -148,7 +242,7 @@ class GestorController extends Controller
             ->get()
             ->groupBy('categoria');
         
-        return view('admin_servicios', compact('servicios'));
+        return view('admin.servicios.index', compact('servicios'));
     }
       public function update(Request $request)
 {

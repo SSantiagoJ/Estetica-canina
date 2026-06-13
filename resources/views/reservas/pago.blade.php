@@ -59,17 +59,11 @@
 
                 <div class="servicios-pago-grid">
                     @foreach($servicios as $s)
-                        @php
-                            if ($s->imagen_referencial && str_starts_with($s->imagen_referencial, 'servicios/')) {
-                                $imagenUrl = asset('storage/' . $s->imagen_referencial);
-                            } elseif ($s->imagen_referencial) {
-                                $imagenUrl = asset('images/servicios/' . $s->imagen_referencial);
-                            } else {
-                                $imagenUrl = asset('images/servicios/default.jpg');
-                            }
-                        @endphp
                         <article class="servicio-pago-card">
-                            <img src="{{ $imagenUrl }}" class="pago-servicio-img" alt="{{ $s->nombre_servicio }}">
+                            <img src="{{ $s->imagen_url }}"
+                                 class="pago-servicio-img"
+                                 alt="{{ $s->nombre_servicio }}"
+                                 onerror="this.src='{{ asset('images/servicios/default.jpg') }}'">
                             <div>
                                 <h6>{{ $s->nombre_servicio }}</h6>
                                 <p>S/ {{ number_format($s->costo, 2) }}</p>
@@ -78,17 +72,11 @@
                     @endforeach
 
                     @foreach($adicionales as $a)
-                        @php
-                            if ($a->imagen_referencial && str_starts_with($a->imagen_referencial, 'servicios/')) {
-                                $imagenUrl = asset('storage/' . $a->imagen_referencial);
-                            } elseif ($a->imagen_referencial) {
-                                $imagenUrl = asset('images/servicios/' . $a->imagen_referencial);
-                            } else {
-                                $imagenUrl = asset('images/servicios/default.jpg');
-                            }
-                        @endphp
                         <article class="servicio-pago-card">
-                            <img src="{{ $imagenUrl }}" class="pago-servicio-img" alt="{{ $a->nombre_servicio }}">
+                            <img src="{{ $a->imagen_url }}"
+                                 class="pago-servicio-img"
+                                 alt="{{ $a->nombre_servicio }}"
+                                 onerror="this.src='{{ asset('images/servicios/default.jpg') }}'">
                             <div>
                                 <h6>{{ $a->nombre_servicio }}</h6>
                                 <p>S/ {{ number_format($a->costo, 2) }}</p>

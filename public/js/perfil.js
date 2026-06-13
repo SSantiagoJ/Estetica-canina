@@ -1,4 +1,82 @@
+const razasPorEspecie = (() => {
+    const dataNode = document.getElementById('razas-data');
+
+    if (!dataNode) {
+        return {};
+    }
+
+    try {
+        return JSON.parse(dataNode.textContent || '{}');
+    } catch (error) {
+        console.error('No se pudieron cargar las razas:', error);
+        return {};
+    }
+})();
+
+function normalizarEspecieMascota(especie) {
+    const valor = String(especie || '').trim().toLowerCase();
+
+    if (valor === 'perro' || valor === 'canino') {
+        return 'Perro';
+    }
+
+    if (valor === 'gato' || valor === 'felino') {
+        return 'Gato';
+    }
+
+    return valor ? 'Otro' : '';
+}
+
+function poblarListaRazas(especie, datalistId) {
+    const datalist = document.getElementById(datalistId);
+
+    if (!datalist) {
+        return;
+    }
+
+    const claveEspecie = normalizarEspecieMascota(especie);
+    const razas = Array.isArray(razasPorEspecie[claveEspecie])
+        ? razasPorEspecie[claveEspecie]
+        : [];
+
+    datalist.innerHTML = '';
+
+    razas.forEach((raza) => {
+        const option = document.createElement('option');
+        option.value = raza;
+        datalist.appendChild(option);
+    });
+}
+
+function configurarListasDeRazas() {
+    const especieInput = document.getElementById('especie');
+    const razaInput = document.getElementById('raza');
+    const editEspecieInput = document.getElementById('edit_especie');
+    const editRazaInput = document.getElementById('edit_raza');
+
+    if (especieInput) {
+        poblarListaRazas(especieInput.value, 'razasOptions');
+        especieInput.addEventListener('change', function () {
+            poblarListaRazas(this.value, 'razasOptions');
+            if (razaInput) {
+                razaInput.value = '';
+            }
+        });
+    }
+
+    if (editEspecieInput) {
+        poblarListaRazas(editEspecieInput.value, 'editRazasOptions');
+        editEspecieInput.addEventListener('change', function () {
+            poblarListaRazas(this.value, 'editRazasOptions');
+            if (editRazaInput) {
+                editRazaInput.value = '';
+            }
+        });
+    }
+}
+
 function openModal() {
+    poblarListaRazas(document.getElementById('especie').value, 'razasOptions');
     document.getElementById('modalMascota').style.display = 'flex';
 }
 
@@ -14,12 +92,15 @@ function openEditModal(id, nombre, fecha, sexo, tamano, especie, raza, peso, des
     document.getElementById('edit_sexo').value = sexo;
     document.getElementById('edit_tamano').value = tamano || '';
     document.getElementById('edit_especie').value = especie;
+    poblarListaRazas(especie, 'editRazasOptions');
     document.getElementById('edit_raza').value = raza || '';
     document.getElementById('edit_peso').value = peso || '';
     document.getElementById('edit_descripcion').value = descripcion || '';
 
     document.getElementById('modalEditarMascota').style.display = 'flex';
 }
+
+document.addEventListener('DOMContentLoaded', configurarListasDeRazas);
 
 function closeEditModal() {
     document.getElementById('modalEditarMascota').style.display = 'none';

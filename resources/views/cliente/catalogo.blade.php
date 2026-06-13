@@ -1,4 +1,4 @@
-{{-- resources/views/catalogo.blade.php --}}
+{{-- resources/views/cliente/catalogo.blade.php --}}
 
 @extends('layouts.app')
 
@@ -59,18 +59,9 @@
                             @foreach($listaServicios as $servicio)
                                 <article class="servicio-card">
                                     <div class="servicio-image-frame">
-                                        @if($servicio->imagen_referencial)
-                                            @php
-                                                if (str_starts_with($servicio->imagen_referencial, 'servicios/')) {
-                                                    $imagenUrl = asset('storage/' . $servicio->imagen_referencial);
-                                                } else {
-                                                    $imagenUrl = asset('images/servicios/' . $servicio->imagen_referencial);
-                                                }
-                                            @endphp
-                                            <img src="{{ $imagenUrl }}" alt="{{ $servicio->nombre_servicio }}">
-                                        @else
-                                            <img src="{{ asset('images/servicios/default.jpg') }}" alt="{{ $servicio->nombre_servicio }}">
-                                        @endif
+                                        <img src="{{ $servicio->imagen_url }}"
+                                             alt="{{ $servicio->nombre_servicio }}"
+                                             onerror="this.src='{{ asset('images/servicios/default.jpg') }}'">
                                     </div>
 
                                     <div class="servicio-content">

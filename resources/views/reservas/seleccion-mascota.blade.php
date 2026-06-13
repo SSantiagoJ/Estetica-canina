@@ -31,13 +31,18 @@
         @csrf
         <div class="row justify-content-center">
             @forelse($mascotas as $mascota)
+                @php
+                    $razaImagen = strtolower(str_replace(' ', '-', $mascota->raza ?? 'default'));
+                    $fotoMascota = $mascota->foto ?? asset('images/razas/' . $razaImagen . '.png');
+                @endphp
                 <div class="col-md-3 col-sm-6 mb-4">
                     <label class="mascota-card">
                         <input type="checkbox" name="mascotas[]" value="{{ $mascota->id_mascota }}">
                         <div class="card-body text-center">
-                            <img src="{{ asset('images/razas/' . $mascota->raza . '.png') }}"
+                            <img src="{{ $fotoMascota }}"
                                 alt="{{ $mascota->nombre }}"
-                                class="mascota-img">
+                                class="mascota-img"
+                                onerror="this.src='{{ asset('images/default-avatar.png') }}'">
                             <h5 class="mascota-nombre">{{ $mascota->nombre }}</h5>
                         </div>
                     </label>

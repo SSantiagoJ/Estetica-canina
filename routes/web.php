@@ -22,20 +22,26 @@ Route::get('/', function () {
         $calificaciones = collect(); // Colección vacía si hay error
     }
     
-    return view('menu', [
+    return view('cliente.inicio', [
         'calificaciones' => $calificaciones
     ]);
 })->name('home');
 
 // Prueba
 Route::get('/pruebaPaypal', function () {
-    return view('pruebaPaypal');
+    return view('dev.prueba-paypal');
 })->name('pruebaPaypal');
+
+Route::get('/imagenes/razas/{razaImagen}', [GestorController::class, 'mostrarFotoRaza'])
+    ->name('razas.imagenes.show');
+
+Route::get('/imagenes/servicios/{servicio}', [ServicioController::class, 'mostrarImagen'])
+    ->name('servicios.imagenes.show');
 
 
 // Inicio de Sesion 
 Route::get('/login', function () {
-    return view('login');
+    return view('auth.login');
 })->name('login');
 
 Route::post('/login', [AuthController::class, 'login'])
@@ -66,7 +72,7 @@ Route::middleware(['role:Admin,Empleado,Supervisor'])->group(function () {
 });
 
 Route::get('/register', function () {
-    return view('register'); // resources/views/register.blade.php
+    return view('auth.register');
 })->name('register');
 
 Route::post('/register', [AuthController::class, 'register'])
@@ -78,7 +84,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Dashboards
 
 Route::get('/header', function () {
-    return view('header');
+    return view('partials.header');
 })->name('header');
 
 //Proteccion mediante rol
@@ -94,6 +100,8 @@ Route::middleware(['role:Admin'])->group(function () {
     Route::get('/admin/usuarios/crear', [GestorController::class, 'crearUsuario'])->name('admin.usuarios.create');
     Route::post('/admin/usuarios', [GestorController::class, 'guardarUsuario'])->name('admin.usuarios.store');
     Route::get('/admin/mascotas', [GestorController::class, 'mascotas'])->name('admin.mascotas');
+    Route::post('/admin/mascotas/razas', [GestorController::class, 'guardarFotoRaza'])->name('admin.mascotas.razas.store');
+    Route::delete('/admin/mascotas/razas/{razaImagen}', [GestorController::class, 'eliminarFotoRaza'])->name('admin.mascotas.razas.destroy');
     Route::get('/admin/reservas', [GestorController::class, 'reservas'])->name('admin.reservas');
     Route::get('/admin/servicios', [GestorController::class, 'servicios'])->name('admin.servicios');
 });
@@ -162,8 +170,8 @@ Route::post('/admin/reservas/update', [GestorController::class, 'update'])
     //Tester
     Route::middleware(['role:Admin'])->get('/test-pdf', function () {
     $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadHTML('<h1>Hola Mundo PDF</h1>');
-    $path = storage_path('app/public/boletas/test.pdf');
-    \Illuminate\Support\Facades\File::ensureDirectoryExists(storage_path('app/public/boletas'));
+    $path = storage_path('app/boletas/test.pdf');
+    \Illuminate\Support\Facades\File::ensureDirectoryExists(storage_path('app/boletas'));
     $pdf->save($path);
     return 'PDF generado en: ' . $path;
 
@@ -294,10 +302,10 @@ Route::prefix('empleado/notificaciones')->group(function () {
 
     Route::post('/cambiar-estado', [NotificacionController::class, 'cambiarEstado'])
         ->name('empleado.notificaciones.estado');
-    Route::post('/empleado/notificaciones/{id}/ejecutar', 
+    Route::post('/{id}/ejecutar',
     [NotificacionController::class, 'ejecutar']
 )->name('empleado.notificaciones.ejecutar');
-    Route::post('/empleado/notificaciones/custom', 
+    Route::post('/custom',
         [NotificacionController::class, 'enviarCorreoPersonalizado'])
         ->name('empleado.notificaciones.custom');
 

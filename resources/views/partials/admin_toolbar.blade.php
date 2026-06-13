@@ -14,7 +14,7 @@
         ],
         [
             'route' => 'admin.mascotas',
-            'match' => 'admin.mascotas',
+            'match' => 'admin.mascotas*',
             'icon' => 'fas fa-dog',
             'label' => 'Mascotas',
         ],
