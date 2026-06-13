@@ -65,15 +65,18 @@ class EmpleadoController extends Controller
     {
         // 1. Obtener el usuario autenticado
         $user = Auth::user();
+        $rolActual = $user->rol ?? null;
         
         // 2. Buscar el empleado usando la relación usuario->empleado 
         $empleadoActual = null;
-        if ($user && $user->rol == 'Empleado') {
+        if ($rolActual === 'Empleado') {
             $empleadoActual = Empleado::where('id_persona', $user->id_persona)->first();
         }
+
+        $puedeVerPanelGeneral = in_array($rolActual, ['Admin', 'Supervisor'], true);
         
         // 3. Validación de seguridad
-        if (!$empleadoActual && (!$user || $user->rol !== 'Admin')) {
+        if (!$empleadoActual && !$puedeVerPanelGeneral) {
             return redirect()->route('home')->with('error', 'No tienes una ficha de empleado asignada o no tienes permisos.');
         }
         
@@ -464,14 +467,19 @@ public function destroyNovedad($id)
     public function filtrarReservas(Request $request)
     {
         $user = Auth::user();
+        $rolActual = $user->rol ?? null;
         $empleadoActual = null;
-        if ($user && $user->rol === 'Empleado') {
+
+        if ($rolActual === 'Empleado') {
             $empleadoActual = Empleado::where('id_persona', $user->id_persona)->first();
         }
+
+        $puedeVerPanelGeneral = in_array($rolActual, ['Admin', 'Supervisor'], true);
+
         $fechaHoy = now()->format('Y-m-d');
         
-        if (!$empleadoActual && (!$user || $user->rol !== 'Admin')) {
-            return response()->json(['error' => 'Empleado no encontrado'], 404);
+        if (!$empleadoActual && !$puedeVerPanelGeneral) {
+            return response()->json(['error' => 'No tienes permisos para consultar este panel'], 403);
         }
 
         $query = Reserva::with([

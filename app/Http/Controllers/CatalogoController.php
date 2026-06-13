@@ -19,6 +19,6 @@ class CatalogoController extends Controller
             ->get()
             ->groupBy('categoria');
 
-        return view('catalogo', compact('servicios'));
+        return view('cliente.catalogo', compact('servicios'));
     }
 }

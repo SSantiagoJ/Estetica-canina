@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use App\Models\Mascota;
 use App\Models\Cliente;
+use App\Models\RazaImagen;
 
 class PerfilController extends Controller
 {
@@ -27,7 +28,36 @@ class PerfilController extends Controller
             $mascotas = Mascota::where('id_cliente', $cliente->id_cliente)->get();
         }
 
-        return view('perfil', compact('usuario', 'persona', 'mascotas'));
+        $razasDisponibles = Mascota::whereNotNull('raza')
+            ->where('raza', '<>', '')
+            ->select('especie', 'raza')
+            ->distinct()
+            ->get();
+
+        if (Schema::hasTable('raza_imagenes')) {
+            $razasConFoto = RazaImagen::where('estado', 'A')
+                ->select('especie', 'raza')
+                ->get();
+
+            $razasDisponibles = $razasDisponibles->merge($razasConFoto);
+        }
+
+        $razasPorEspecie = array_merge(
+            ['Perro' => [], 'Gato' => [], 'Otro' => []],
+            $razasDisponibles
+                ->map(function ($item) {
+                    return [
+                        'especie' => RazaImagen::normalizarEspecie($item->especie),
+                        'raza' => trim((string) $item->raza),
+                    ];
+                })
+                ->filter(fn ($item) => filled($item['raza']))
+                ->groupBy('especie')
+                ->map(fn ($items) => $items->pluck('raza')->unique()->sort()->values()->all())
+                ->toArray()
+        );
+
+        return view('cliente.perfil', compact('usuario', 'persona', 'mascotas', 'razasPorEspecie'));
     }
 
     public function storeMascota(Request $request)
@@ -36,9 +66,9 @@ class PerfilController extends Controller
             'nombre' => 'required|string|max:100',
             'fecha_nacimiento' => 'required|date',
             'sexo' => 'required|string',
-            'raza' => 'nullable|string|max:50',
+            'raza' => 'nullable|string|max:120',
             'tamano' => 'nullable|string|max:20',
-            'especie' => 'required|string|max:50',
+            'especie' => 'required|string|in:Perro,Gato,Otro',
             'peso' => 'nullable|numeric',
             'descripcion' => 'nullable|string|max:500'
         ]);
@@ -81,9 +111,9 @@ class PerfilController extends Controller
             'nombre' => 'required|string|max:100',
             'fecha_nacimiento' => 'required|date',
             'sexo' => 'required|string',
-            'raza' => 'nullable|string|max:50',
+            'raza' => 'nullable|string|max:120',
             'tamano' => 'nullable|string|max:20',
-            'especie' => 'required|string|max:50',
+            'especie' => 'required|string|in:Perro,Gato,Otro',
             'peso' => 'nullable|numeric',
             'descripcion' => 'nullable|string|max:500'
         ]);

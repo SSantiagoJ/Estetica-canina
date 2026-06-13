@@ -102,7 +102,7 @@ class NotificacionController extends Controller
     {
         $n = Notificacion::findOrFail($id);
 
-        $correo = auth()->user()->email;
+        $correo = auth()->user()->correo;
 
         try {
             Mail::raw($n->mensaje, function ($m) use ($correo, $n) {

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class Mascota extends Model
 {
@@ -41,5 +43,18 @@ class Mascota extends Model
 
         $dt = $this->fecha_nacimiento instanceof Carbon ? $this->fecha_nacimiento : Carbon::parse($this->fecha_nacimiento);
         return $dt->age;
+    }
+
+    public function getFotoAttribute($value): ?string
+    {
+        if (filled($value)) {
+            if (Str::startsWith($value, ['http://', 'https://', '/'])) {
+                return $value;
+            }
+
+            return Storage::disk('public')->url($value);
+        }
+
+        return RazaImagen::fotoPara($this->especie, $this->raza);
     }
 }

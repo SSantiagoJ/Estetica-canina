@@ -44,7 +44,7 @@ class ServicioController extends Controller
             'costo' => 'required|numeric|min:0',
             'especie' => 'required|string',
             'duracion' => 'nullable|numeric|min:0',
-            'imagen_referencial' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'imagen_referencial' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:51200',
         ]);
 
         if ($request->hasFile('imagen_referencial')) {
@@ -88,12 +88,12 @@ class ServicioController extends Controller
             'costo' => 'required|numeric|min:0',
             'especie' => 'required|string',
             'duracion' => 'nullable|numeric|min:0',
-            'imagen_referencial' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'imagen_referencial' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:51200',
         ]);
 
         if ($request->hasFile('imagen_referencial')) {
             // Eliminar imagen anterior si existe
-            if ($servicio->imagen_referencial) {
+            if ($servicio->imagen_referencial && str_starts_with($servicio->getRawOriginal('imagen_referencial'), 'servicios/')) {
                 Storage::disk('public')->delete($servicio->imagen_referencial);
             }
             $path = $request->file('imagen_referencial')->store('servicios', 'public');
@@ -117,8 +117,8 @@ class ServicioController extends Controller
         $servicio = Servicio::findOrFail($id);
 
         // Eliminar imagen si existe
-        if ($servicio->imagen_referencial) {
-            Storage::disk('public')->delete($servicio->imagen_referencial);
+        if ($servicio->imagen_referencial && str_starts_with($servicio->getRawOriginal('imagen_referencial'), 'servicios/')) {
+            Storage::disk('public')->delete($servicio->getRawOriginal('imagen_referencial'));
         }
 
         $servicio->delete();
@@ -132,16 +132,60 @@ class ServicioController extends Controller
      */
     public function uploadImage(Request $request)
     {
-        $request->validate([
-            'imagen' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120',
+        $data = $request->validate([
+            'id_servicio' => 'required|exists:servicios,id_servicio',
+            'imagen' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:51200',
         ]);
 
+        $servicio = Servicio::findOrFail($data['id_servicio']);
+
+        if ($servicio->imagen_referencial && str_starts_with($servicio->getRawOriginal('imagen_referencial'), 'servicios/')) {
+            Storage::disk('public')->delete($servicio->getRawOriginal('imagen_referencial'));
+        }
+
         $path = $request->file('imagen')->store('servicios', 'public');
+        $servicio->update([
+            'imagen_referencial' => $path,
+            'usuario_actualizacion' => auth()->user()->id_usuario ?? 1,
+            'fecha_actualizacion' => now(),
+        ]);
 
         return response()->json([
             'success' => true,
             'path' => $path,
-            'url' => asset('storage/' . $path),
+            'url' => $servicio->fresh()->imagen_url,
+        ]);
+    }
+
+    public function mostrarImagen(Servicio $servicio)
+    {
+        $imagen = (string) $servicio->getRawOriginal('imagen_referencial');
+
+        if (filled($imagen)) {
+            if (str_starts_with($imagen, 'servicios/') && Storage::disk('public')->exists($imagen)) {
+                return $this->responderImagenServicio(Storage::disk('public')->path($imagen));
+            }
+
+            $publicPath = public_path('images/servicios/' . ltrim($imagen, '/'));
+
+            if (is_file($publicPath)) {
+                return $this->responderImagenServicio($publicPath);
+            }
+        }
+
+        $defaultPath = public_path('images/servicios/default.jpg');
+
+        if (is_file($defaultPath)) {
+            return $this->responderImagenServicio($defaultPath);
+        }
+
+        abort(404);
+    }
+
+    private function responderImagenServicio(string $path)
+    {
+        return response()->file($path, [
+            'Cache-Control' => 'public, max-age=86400',
         ]);
     }
 }

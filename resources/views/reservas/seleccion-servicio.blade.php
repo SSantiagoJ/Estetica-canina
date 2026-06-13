@@ -57,18 +57,10 @@
                                            class="servicio-checkbox">
                                     <div class="card-body text-center">
                                         <span class="selected-indicator">Seleccionado</span>
-                                        @if($servicio->imagen_referencial)
-                                            @php
-                                                if (str_starts_with($servicio->imagen_referencial, 'servicios/')) {
-                                                    $imagenUrl = asset('storage/' . $servicio->imagen_referencial);
-                                                } else {
-                                                    $imagenUrl = asset('images/servicios/' . $servicio->imagen_referencial);
-                                                }
-                                            @endphp
-                                            <img src="{{ $imagenUrl }}" alt="{{ $servicio->nombre_servicio }}" class="servicio-img">
-                                        @else
-                                            <img src="{{ asset('images/servicios/default.jpg') }}" alt="{{ $servicio->nombre_servicio }}" class="servicio-img">
-                                        @endif
+                                        <img src="{{ $servicio->imagen_url }}"
+                                             alt="{{ $servicio->nombre_servicio }}"
+                                             class="servicio-img"
+                                             onerror="this.src='{{ asset('images/servicios/default.jpg') }}'">
                                         <h5>{{ $servicio->nombre_servicio }}</h5>
                                         <div class="servicio-meta-row">
                                             <span>S/ {{ number_format($servicio->costo, 2) }}</span>
@@ -112,18 +104,10 @@
                                            class="servicio-checkbox">
                                     <div class="card-body text-center">
                                         <span class="selected-indicator">Seleccionado</span>
-                                        @if($servicio->imagen_referencial)
-                                            @php
-                                                if (str_starts_with($servicio->imagen_referencial, 'servicios/')) {
-                                                    $imagenUrl = asset('storage/' . $servicio->imagen_referencial);
-                                                } else {
-                                                    $imagenUrl = asset('images/servicios/' . $servicio->imagen_referencial);
-                                                }
-                                            @endphp
-                                            <img src="{{ $imagenUrl }}" alt="{{ $servicio->nombre_servicio }}" class="servicio-img">
-                                        @else
-                                            <img src="{{ asset('images/servicios/default.jpg') }}" alt="{{ $servicio->nombre_servicio }}" class="servicio-img">
-                                        @endif
+                                        <img src="{{ $servicio->imagen_url }}"
+                                             alt="{{ $servicio->nombre_servicio }}"
+                                             class="servicio-img"
+                                             onerror="this.src='{{ asset('images/servicios/default.jpg') }}'">
                                         <h5>{{ $servicio->nombre_servicio }}</h5>
                                         <div class="servicio-meta-row">
                                             <span>S/ {{ number_format($servicio->costo, 2) }}</span>

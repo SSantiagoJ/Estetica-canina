@@ -103,8 +103,8 @@
             <div class="mb-4">
                 <label for="imagen_referencial" class="form-label fw-semibold">Imagen Referencial</label>
                 <input type="file" class="form-control" id="imagen_referencial" name="imagen_referencial"
-                       accept="image/jpeg,image/png,image/jpg,image/gif">
-                <small class="text-muted">Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 5MB.</small>
+                       accept="image/jpeg,image/png,image/jpg,image/gif,image/webp">
+                <small class="text-muted">Formatos permitidos: JPG, PNG, GIF, WEBP. Tamano maximo: 50MB.</small>
             </div>
 
             <div class="admin-form-actions">
