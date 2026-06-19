@@ -394,6 +394,8 @@
   padding: 20px;
   background-color: rgba(81, 59, 74, 0.48);
   backdrop-filter: blur(4px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .modal-overlay.active {
@@ -405,12 +407,20 @@
   max-height: 90vh;
   display: flex;
   flex-direction: column;
+  min-height: 0;
   overflow: hidden;
   border: 1px solid var(--pet-line);
   border-radius: 8px;
   background: var(--pet-cream);
   box-shadow: 0 24px 64px rgba(81, 59, 74, 0.22);
   animation: modalSlideIn 0.24s ease-out;
+}
+
+.modal-content form {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  flex-direction: column;
 }
 
 .modal-content.modal-detalles,
@@ -455,8 +465,12 @@
 .modal-body,
 .modal-body-detalles {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 24px;
+  scrollbar-width: thin;
+  scrollbar-color: #e9b5c4 #fff7fb;
 }
 
 .modal-body::-webkit-scrollbar,
@@ -562,6 +576,7 @@
 
 .modal-footer,
 .modal-footer-detalles {
+  flex: 0 0 auto;
   display: flex;
   justify-content: flex-end;
   gap: 12px;
@@ -922,7 +937,22 @@
 
   .modal-content {
     width: 96vw;
-    max-height: 94vh;
+    max-height: calc(100dvh - 24px);
+  }
+
+  .modal-overlay {
+    align-items: flex-start;
+    padding: 12px;
+  }
+
+  .modal-title,
+  .modal-subtitle,
+  .modal-body,
+  .modal-body-detalles,
+  .modal-footer,
+  .modal-footer-detalles {
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
   .health-check {

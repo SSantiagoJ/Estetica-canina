@@ -9,7 +9,9 @@
 <link rel="stylesheet" href="{{ asset('css/pago.css') }}">
 
 @php
-    $subtotalServicios = $servicios->sum('costo') + $adicionales->sum('costo');
+    $subtotalBaseServicios = $servicios->sum('costo') + $adicionales->sum('costo');
+    $igvServicios = $subtotalBaseServicios * 0.18;
+    $subtotalServicios = $subtotalBaseServicios + $igvServicios;
     $costoDelivery = session('requiere_delivery', 0) == 1 ? 20.00 : 0;
     $total = $subtotalServicios + $costoDelivery;
 @endphp
@@ -101,7 +103,8 @@
                 <h5>Total a pagar</h5>
 
                 <div class="pago-total-list">
-                    <p><strong>Servicios</strong> <span>S/ {{ number_format($subtotalServicios, 2) }}</span></p>
+                    <p><strong>Servicios</strong> <span>S/ {{ number_format($subtotalBaseServicios, 2) }}</span></p>
+                    <p><strong>IGV servicios</strong> <span>S/ {{ number_format($igvServicios, 2) }}</span></p>
                     @if($costoDelivery > 0)
                         <p><strong>Delivery</strong> <span>S/ {{ number_format($costoDelivery, 2) }}</span></p>
                     @endif
@@ -109,7 +112,23 @@
                     <h4><strong>Total</strong> <span>S/ {{ number_format($total, 2) }}</span></h4>
                 </div>
 
+                <div class="internal-payment-panel">
+                    <div>
+                        <span class="payment-pill">Pago seguro</span>
+                        <h6>Confirma tu pago</h6>
+                        <p>Al confirmar, generaremos tu boleta electronica y enviaremos los detalles a tu correo.</p>
+                    </div>
+                    <form method="POST" action="{{ route('reservas.pagoSimulado') }}">
+                        @csrf
+                        <button type="submit" class="btn-internal-payment">
+                            <i class="fas fa-shield-heart"></i>
+                            Confirmar pago
+                        </button>
+                    </form>
+                </div>
+
                 <div class="paypal-panel">
+                    <span class="payment-pill payment-pill--paypal">Pago externo</span>
                     <div id="paypal-button-container"></div>
                 </div>
 

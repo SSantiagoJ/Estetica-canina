@@ -1,82 +1,275 @@
-/* === Boleta PetSpa === */
 @page {
-  margin: 1.5cm;
+  margin: 1.1cm;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
-  font-family: 'DejaVu Sans', sans-serif;
-  font-size: 12px;
-  color: #333;
   margin: 0;
-  background-color: #fff;
+  background: #ffffff;
+  color: #493441;
+  font-family: DejaVu Sans, Arial, sans-serif;
+  font-size: 11px;
+  line-height: 1.45;
 }
 
-.boleta-header {
-  text-align: center;
-  border-bottom: 2px solid #0d6efd;
-  padding-bottom: 10px;
-  margin-bottom: 15px;
+.invoice {
+  width: 100%;
 }
 
-.boleta-header img {
-  width: 80px;
-  height: auto;
-}
-
-.boleta-header h2 {
-  margin: 5px 0 0 0;
-  color: #0d6efd;
-  font-size: 18px;
-}
-
-.boleta-info {
-  margin-bottom: 15px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 10px;
-  background: #f8f9fa;
-}
-
-.boleta-info p {
-  margin: 2px 0;
-  font-size: 12px;
-}
-
-table {
+.brand-table,
+.info-grid,
+.payment-strip,
+.items-table,
+.totals-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
 }
 
-th, td {
-  border: 1px solid #ccc;
-  padding: 6px;
-  text-align: left;
+.brand-table {
+  margin-bottom: 16px;
 }
 
-th {
-  background: #e9f2ff;
-  color: #0d6efd;
+.brand-cell {
+  width: 62%;
+  padding: 18px;
+  border: 1px solid #f0d7e2;
+  border-radius: 10px 0 0 10px;
+  background: #fff7fb;
+}
+
+.brand-mark {
+  display: inline-block;
+  width: 46px;
+  height: 46px;
+  margin-right: 12px;
+  border-radius: 50%;
+  background: #e87ba2;
+  color: #ffffff;
+  font-size: 15px;
   font-weight: bold;
-}
-
-tfoot th {
-  text-align: right;
-  background: #f0f0f0;
-}
-
-tfoot td {
-  font-weight: bold;
-  color: #000;
-}
-
-.footer {
+  line-height: 46px;
   text-align: center;
-  margin-top: 25px;
-  font-size: 11px;
-  color: #777;
+  vertical-align: middle;
 }
 
-.footer p {
-  margin: 2px 0;
+.brand-cell div:last-child {
+  display: inline-block;
+  width: 72%;
+  vertical-align: middle;
+}
+
+.brand-cell h1 {
+  margin: 0 0 4px;
+  color: #493441;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.brand-cell p,
+.document-cell small,
+.items-table span,
+.note-cell small,
+.invoice-footer p {
+  color: #806979;
+}
+
+.brand-cell p {
+  margin: 0;
+}
+
+.document-cell {
+  width: 38%;
+  padding: 18px;
+  border: 1px solid #f0d7e2;
+  border-left: 0;
+  background: linear-gradient(135deg, #fff0f6 0%, #f5eeff 100%);
+  text-align: center;
+}
+
+.document-cell span {
+  display: block;
+  color: #c94b86;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.document-cell strong {
+  display: block;
+  margin: 7px 0;
+  color: #493441;
+  font-size: 22px;
+}
+
+.info-grid {
+  margin-bottom: 12px;
+}
+
+.info-grid td {
+  width: 50%;
+  padding: 14px 16px;
+  border: 1px solid #f0d7e2;
+  background: #fffdfb;
+  vertical-align: top;
+}
+
+.info-grid h2,
+.section-title {
+  margin: 0 0 8px;
+  color: #493441;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.info-grid p {
+  margin: 3px 0;
+}
+
+.payment-strip {
+  margin-bottom: 14px;
+  border: 1px solid #efd7e4;
+  background: #fbf7ff;
+}
+
+.payment-strip td {
+  width: 25%;
+  padding: 12px;
+  border-right: 1px solid #efd7e4;
+}
+
+.payment-strip td:last-child {
+  border-right: 0;
+}
+
+.payment-strip span {
+  display: block;
+  color: #8a7282;
+  font-size: 9px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.payment-strip strong {
+  display: block;
+  margin-top: 4px;
+  color: #493441;
+  font-size: 11px;
+  word-break: break-word;
+}
+
+.section-title {
+  margin-top: 8px;
+  padding: 8px 12px;
+  border: 1px solid #f0d7e2;
+  border-bottom: 0;
+  border-radius: 8px 8px 0 0;
+  background: #fff7fb;
+}
+
+.items-table {
+  margin-bottom: 14px;
+  border: 1px solid #f0d7e2;
+}
+
+.items-table th {
+  padding: 10px;
+  border-bottom: 1px solid #f0d7e2;
+  background: #e87ba2;
+  color: #ffffff;
+  font-size: 10px;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.items-table td {
+  padding: 11px 10px;
+  border-bottom: 1px solid #f4e2ea;
+  vertical-align: top;
+}
+
+.items-table tbody tr:nth-child(even) td {
+  background: #fff9fc;
+}
+
+.items-table span {
+  display: block;
+  margin-top: 3px;
+  font-size: 9px;
+}
+
+.text-right {
+  text-align: right !important;
+  white-space: nowrap;
+}
+
+.strong {
+  color: #493441;
+  font-weight: bold;
+}
+
+.totals-table {
+  margin-top: 6px;
+}
+
+.note-cell {
+  width: 58%;
+  padding: 14px;
+  border: 1px dashed #e5b4c7;
+  background: #fffafc;
+  vertical-align: top;
+}
+
+.note-cell strong {
+  color: #c94b86;
+}
+
+.note-cell p {
+  margin: 6px 0;
+  color: #493441;
+  font-weight: bold;
+  word-break: break-word;
+}
+
+.amounts-cell {
+  width: 42%;
+  padding-left: 14px;
+  vertical-align: top;
+}
+
+.amounts-cell table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #f0d7e2;
+}
+
+.amounts-cell td {
+  padding: 9px 10px;
+  border-bottom: 1px solid #f4e2ea;
+}
+
+.amounts-cell td:last-child {
+  text-align: right;
+  font-weight: bold;
+}
+
+.grand-total td {
+  background: #493441;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.invoice-footer {
+  margin-top: 20px;
+  padding: 12px;
+  border-top: 2px solid #e87ba2;
+  text-align: center;
+}
+
+.invoice-footer p {
+  margin: 3px 0;
+  font-size: 10px;
 }

@@ -125,6 +125,9 @@ Route::middleware(['auth', 'role:Cliente'])->group(function () {
     Route::post('/reservas/pago', [ReservaController::class, 'pago'])
         ->name('reservas.pago');
 
+    Route::post('/reservas/confirmar-pago', [ReservaController::class, 'procesarPagoSimulado'])
+        ->name('reservas.pagoSimulado');
+
     Route::post('/reservas/finalizar', [ReservaController::class, 'finalizar'])
         ->name('reservas.finalizar');
 
@@ -134,6 +137,9 @@ Route::middleware(['auth', 'role:Cliente'])->group(function () {
     Route::post('/reservas/guardar-pago', [ReservaController::class, 'guardarPago'])
         ->name('reservas.guardarPago');
 
+});
+
+Route::middleware(['auth', 'role:Cliente,Admin,Empleado,Supervisor'])->group(function () {
     Route::get('/reservas/boleta/{id_pago}', [ReservaController::class, 'generarBoleta'])
         ->name('reservas.boleta');
 
@@ -240,6 +246,12 @@ Route::prefix('empleado')->name('empleado.')->group(function () {
 
     Route::get('dashboard', [EmpleadoController::class, 'dashboardEmpleado'])
         ->name('dashboard');
+
+    Route::get('ingresos', [EmpleadoController::class, 'ingresos'])
+        ->name('ingresos');
+
+    Route::get('ingresos/reporte-excel', [EmpleadoController::class, 'descargarReporteIngresos'])
+        ->name('ingresos.excel');
 
 });
 

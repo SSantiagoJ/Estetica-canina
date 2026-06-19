@@ -12,6 +12,8 @@ use App\Models\Servicio;
 use App\Models\Novedad;
 use App\Models\Atencion;
 use App\Models\Feedback;
+use App\Models\Pago;
+use App\Models\PagoNotificacion;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -250,6 +252,198 @@ class EmpleadoController extends Controller
         
         return redirect()->route('empleado.bandeja.reservas')
             ->with('success', 'Reserva atendida correctamente');
+    }
+
+    /**
+     * Control de ingresos por pagos confirmados.
+     * Admin y Supervisor ven el detalle completo; Empleado solo ve su total del mes.
+     */
+    public function ingresos(Request $request)
+    {
+        $user = Auth::user();
+        $rolActual = $user->rol ?? null;
+        $empleadoActual = null;
+
+        if ($rolActual === 'Empleado') {
+            $empleadoActual = Empleado::where('id_persona', $user->id_persona)->first();
+
+            if (!$empleadoActual) {
+                return redirect()->route('empleado.panel.del.dia')
+                    ->with('error', 'No tienes una ficha de empleado asignada.');
+            }
+        }
+
+        $puedeVerDetalle = in_array($rolActual, ['Admin', 'Supervisor'], true);
+        $mesSeleccionado = $request->input('mes', now()->format('Y-m'));
+
+        try {
+            $inicioMes = Carbon::createFromFormat('Y-m', $mesSeleccionado)->startOfMonth();
+        } catch (\Exception $e) {
+            $inicioMes = now()->startOfMonth();
+            $mesSeleccionado = $inicioMes->format('Y-m');
+        }
+
+        $finMes = $inicioMes->copy()->endOfMonth();
+
+        $pagosBase = Pago::with([
+            'reserva.cliente.persona',
+            'reserva.empleado.persona',
+            'reserva.mascota',
+        ])
+            ->whereBetween('fecha', [$inicioMes->toDateString(), $finMes->toDateString()])
+            ->where(function ($query) {
+                $query->where('estado_gateway', 'APROBADO')
+                    ->orWhereNull('estado_gateway');
+            })
+            ->whereIn('estado', ['P', 'A']);
+
+        if ($empleadoActual) {
+            $pagosBase->whereHas('reserva', function ($query) use ($empleadoActual) {
+                $query->where('id_empleado', $empleadoActual->id_empleado);
+            });
+        }
+
+        $pagos = $pagosBase->latest('id_pago')->get();
+        $totalMes = (float) $pagos->sum('monto');
+        $cantidadPagos = $pagos->count();
+        $ticketPromedio = $cantidadPagos > 0 ? $totalMes / $cantidadPagos : 0;
+
+        $totalHoy = (float) $pagos->where('fecha', now()->toDateString())->sum('monto');
+
+        $ingresosPorEmpleado = collect();
+        $notificacionesPago = collect();
+
+        if ($puedeVerDetalle) {
+            $ingresosPorEmpleado = $pagos
+                ->groupBy(fn ($pago) => $pago->reserva->empleado->id_empleado ?? 'sin_asignar')
+                ->map(function ($items) {
+                    $primerPago = $items->first();
+                    $persona = $primerPago->reserva->empleado->persona ?? null;
+                    $nombre = $persona
+                        ? trim(($persona->nombres ?? '') . ' ' . ($persona->apellidos ?? ''))
+                        : 'Sin empleado asignado';
+
+                    return [
+                        'empleado' => $nombre ?: 'Sin empleado asignado',
+                        'pagos' => $items->count(),
+                        'total' => (float) $items->sum('monto'),
+                    ];
+                })
+                ->sortByDesc('total')
+                ->values();
+
+            $notificacionesPago = PagoNotificacion::with('pago.reserva.cliente.persona')
+                ->whereHas('pago', function ($query) use ($inicioMes, $finMes) {
+                    $query->whereBetween('fecha', [$inicioMes->toDateString(), $finMes->toDateString()]);
+                })
+                ->latest('id_pago_notificacion')
+                ->limit(8)
+                ->get();
+        }
+
+        return view('empleado.ingresos', compact(
+            'rolActual',
+            'empleadoActual',
+            'puedeVerDetalle',
+            'mesSeleccionado',
+            'inicioMes',
+            'finMes',
+            'pagos',
+            'totalMes',
+            'totalHoy',
+            'cantidadPagos',
+            'ticketPromedio',
+            'ingresosPorEmpleado',
+            'notificacionesPago'
+        ));
+    }
+
+    /**
+     * Descarga el reporte mensual de ingresos en un archivo compatible con Excel.
+     * Solo Admin y Supervisor pueden ver el detalle completo.
+     */
+    public function descargarReporteIngresos(Request $request)
+    {
+        $user = Auth::user();
+        $rolActual = $user->rol ?? null;
+
+        if (!in_array($rolActual, ['Admin', 'Supervisor'], true)) {
+            abort(403, 'No tienes permiso para descargar este reporte.');
+        }
+
+        $mesSeleccionado = $request->input('mes', now()->format('Y-m'));
+
+        try {
+            $inicioMes = Carbon::createFromFormat('Y-m', $mesSeleccionado)->startOfMonth();
+        } catch (\Exception $e) {
+            $inicioMes = now()->startOfMonth();
+            $mesSeleccionado = $inicioMes->format('Y-m');
+        }
+
+        $finMes = $inicioMes->copy()->endOfMonth();
+
+        $pagos = Pago::with([
+            'reserva.cliente.persona',
+            'reserva.empleado.persona',
+            'reserva.mascota',
+        ])
+            ->whereBetween('fecha', [$inicioMes->toDateString(), $finMes->toDateString()])
+            ->where(function ($query) {
+                $query->where('estado_gateway', 'APROBADO')
+                    ->orWhereNull('estado_gateway');
+            })
+            ->whereIn('estado', ['P', 'A'])
+            ->latest('id_pago')
+            ->get();
+
+        $totalMes = (float) $pagos->sum('monto');
+        $cantidadPagos = $pagos->count();
+        $ticketPromedio = $cantidadPagos > 0 ? $totalMes / $cantidadPagos : 0;
+
+        $ingresosPorEmpleado = $pagos
+            ->groupBy(fn ($pago) => $pago->reserva->empleado->id_empleado ?? 'sin_asignar')
+            ->map(function ($items) {
+                $primerPago = $items->first();
+                $persona = $primerPago->reserva->empleado->persona ?? null;
+                $nombre = $persona
+                    ? trim(($persona->nombres ?? '') . ' ' . ($persona->apellidos ?? ''))
+                    : 'Sin empleado asignado';
+
+                return [
+                    'empleado' => $nombre ?: 'Sin empleado asignado',
+                    'pagos' => $items->count(),
+                    'total' => (float) $items->sum('monto'),
+                ];
+            })
+            ->sortByDesc('total')
+            ->values();
+
+        $generadoPor = $user->usuario ?? $user->correo ?? 'Sistema';
+        $fechaGeneracion = now()->format('d/m/Y H:i');
+
+        $html = view('empleado.reportes.ingresos-excel', compact(
+            'rolActual',
+            'mesSeleccionado',
+            'inicioMes',
+            'finMes',
+            'pagos',
+            'totalMes',
+            'cantidadPagos',
+            'ticketPromedio',
+            'ingresosPorEmpleado',
+            'generadoPor',
+            'fechaGeneracion'
+        ))->render();
+
+        $filename = 'reporte-ingresos-' . $mesSeleccionado . '.xls';
+
+        return response("\xEF\xBB\xBF" . $html, 200, [
+            'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Cache-Control' => 'max-age=0, no-cache, no-store, must-revalidate',
+            'Pragma' => 'no-cache',
+            'Expires' => '0',
+        ]);
     }
     /**
      * Muestra la vista de gestionar turnos

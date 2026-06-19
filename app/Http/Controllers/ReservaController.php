@@ -3,16 +3,22 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Schema;
 use App\Models\Mascota;
 use App\Models\Cliente;
 use App\Models\Reserva;
 use App\Models\DetalleReserva;
 use App\Models\Servicio;
 use App\Models\Pago; // modelo del pago
+use App\Models\PagoNotificacion;
 use App\Models\Empleado;
 use App\Models\Turno;
+use App\Models\Usuario;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -226,94 +232,10 @@ class ReservaController extends Controller
     public function finalizar(Request $request)
 {
     try {
-        // 🧩 Verificar usuario autenticado
-        if (!Auth::check()) {
-            return $this->handleResponse($request, false, 'Sesión expirada. Inicia sesión nuevamente.');
-        }
+        $reserva = DB::transaction(function () {
+            return $this->crearReservaDesdeSesion();
+        });
 
-        // 🐾 Verificar mascotas seleccionadas
-        $mascotasSeleccionadas = session('mascotas_seleccionadas', []);
-        if (empty($mascotasSeleccionadas)) {
-            return $this->handleResponse($request, false, 'No hay mascotas seleccionadas en la sesión.');
-        }
-
-        // 👤 Verificar cliente asociado
-        $cliente = Cliente::where('id_persona', Auth::user()->id_persona)->first();
-        if (!$cliente) {
-            return $this->handleResponse($request, false, 'No se encontró cliente asociado al usuario.');
-        }
-
-        // 📅 Crear reserva
-        $reserva = new Reserva();
-        $reserva->id_mascota = $mascotasSeleccionadas[0];
-        $reserva->id_cliente = $cliente->id_cliente;
-        $reserva->id_usuario = Auth::id();
-        $reserva->fecha = session('fecha');
-        $reserva->hora = session('hora');
-        $reserva->id_empleado = session('id_empleado'); // Trabajador asignado
-        $reserva->enfermedad = session('enfermedad', 0);
-        $reserva->vacuna = session('vacuna', 0);
-        $reserva->alergia = session('alergia', 0);
-        $reserva->descripcion_alergia = session('descripcion_alergia', null);
-        $reserva->estado = 'P'; // Pendiente
-        $reserva->usuario_creacion = Auth::user()->correo;
-        $reserva->save();
-
-        // 🧴 Detalles de servicios
-        foreach (session('servicios_seleccionados', []) as $idServicio) {
-            $servicio = Servicio::find($idServicio);
-            if ($servicio) {
-                DetalleReserva::create([
-                    'id_reserva' => $reserva->id_reserva,
-                    'id_servicio' => $idServicio,
-                    'precio_unitario' => $servicio->costo,
-                    'igv' => $servicio->costo * 0.18,
-                    'total' => $servicio->costo * 1.18,
-                    'estado' => 'A',
-                    'usuario_creacion' => Auth::user()->correo,
-                ]);
-            }
-        }
-
-        // 🎁 Detalles adicionales
-        foreach (session('adicionales_seleccionados', []) as $idServicio) {
-            $servicio = Servicio::find($idServicio);
-            if ($servicio) {
-                DetalleReserva::create([
-                    'id_reserva' => $reserva->id_reserva,
-                    'id_servicio' => $idServicio,
-                    'precio_unitario' => $servicio->costo,
-                    'igv' => $servicio->costo * 0.18,
-                    'total' => $servicio->costo * 1.18,
-                    'estado' => 'A',
-                    'usuario_creacion' => Auth::user()->correo,
-                ]);
-            }
-        }
-
-        // 🚗 Guardar delivery si fue solicitado - SOLO en tabla deliveries
-        if (session('requiere_delivery', 0) == 1) {
-            // Guardar información de delivery en su propia tabla
-            // Costo: 16.95 (sin IGV) * 1.18 = 20.00 (con IGV)
-            try {
-                \DB::table('deliveries')->insert([
-                    'id_reserva' => $reserva->id_reserva,
-                    'direccion_recojo' => session('direccion_recojo'),
-                    'direccion_entrega' => session('direccion_entrega') ?: session('direccion_recojo'),
-                    'costo_delivery' => 16.95,
-                    'estado' => 'P', // P = Pendiente (el campo solo acepta 1 carácter)
-                    'usuario_creacion' => Auth::user()->correo,
-                    'usuario_actualizacion' => Auth::user()->correo,
-                    'fecha_creacion' => now(),
-                    'fecha_actualizacion' => now(),
-                ]);
-            } catch (\Exception $e) {
-                \Log::error('Error al guardar delivery: ' . $e->getMessage());
-                throw $e; // Re-lanzar para que sea capturado por el catch externo
-            }
-        }
-
-        // ✅ Respuesta
         return $this->handleResponse($request, true, 'Reserva creada correctamente.', [
             'reserva_id' => $reserva->id_reserva
         ]);
@@ -342,6 +264,338 @@ private function handleResponse(Request $request, $success, $message, $extra = [
     } else {
         return redirect()->back()->with('error', $message);
     }
+}
+
+public function procesarPagoSimulado(Request $request)
+{
+    try {
+        $pago = DB::transaction(function () {
+            $reserva = $this->crearReservaDesdeSesion();
+            return $this->registrarPagoReserva($reserva, 'simulado');
+        });
+
+        $path = $this->guardarArchivoBoleta($pago);
+        $this->enviarCorreoConfirmacionPago($pago, $path);
+        $this->enviarCorreoNotificacionReserva($pago->reserva, $pago);
+        $this->limpiarSesionReserva();
+
+        return view('reservas.completada', [
+            'pago' => $pago,
+            'success' => 'Pago aprobado. Enviamos la boleta electronica y la notificacion de reserva al correo registrado.',
+        ]);
+    } catch (\Throwable $e) {
+        Log::error('Error en pago simulado', ['exception' => $e]);
+
+        return redirect()->route('reservas.seleccionMascota')
+            ->with('error', 'No se pudo procesar el pago: ' . $e->getMessage());
+    }
+}
+
+private function crearReservaDesdeSesion(): Reserva
+{
+    if (!Auth::check()) {
+        throw new \RuntimeException('Sesion expirada. Inicia sesion nuevamente.');
+    }
+
+    $mascotasSeleccionadas = session('mascotas_seleccionadas', []);
+    if (empty($mascotasSeleccionadas)) {
+        throw new \RuntimeException('No hay mascotas seleccionadas en la sesion.');
+    }
+
+    $cliente = Cliente::where('id_persona', Auth::user()->id_persona)->first();
+    if (!$cliente) {
+        throw new \RuntimeException('No se encontro cliente asociado al usuario.');
+    }
+
+    $reserva = new Reserva();
+    $reserva->id_mascota = $mascotasSeleccionadas[0];
+    $reserva->id_cliente = $cliente->id_cliente;
+    $reserva->id_usuario = Auth::id();
+    $reserva->fecha = session('fecha');
+    $reserva->hora = session('hora');
+    $reserva->id_empleado = session('id_empleado');
+    $reserva->enfermedad = session('enfermedad', 0);
+    $reserva->vacuna = session('vacuna', 0);
+    $reserva->alergia = session('alergia', 0);
+    $reserva->descripcion_alergia = session('descripcion_alergia', null);
+    $reserva->estado = 'P';
+    $reserva->usuario_creacion = Auth::user()->correo;
+    $reserva->save();
+
+    foreach (session('servicios_seleccionados', []) as $idServicio) {
+        $this->agregarDetalleReserva($reserva, (int) $idServicio);
+    }
+
+    foreach (session('adicionales_seleccionados', []) as $idServicio) {
+        $this->agregarDetalleReserva($reserva, (int) $idServicio);
+    }
+
+    if (session('requiere_delivery', 0) == 1) {
+        $this->guardarDeliveryReserva($reserva);
+    }
+
+    return $reserva;
+}
+
+private function agregarDetalleReserva(Reserva $reserva, int $idServicio): void
+{
+    $servicio = Servicio::find($idServicio);
+
+    if (!$servicio) {
+        return;
+    }
+
+    DetalleReserva::create([
+        'id_reserva' => $reserva->id_reserva,
+        'id_servicio' => $idServicio,
+        'precio_unitario' => $servicio->costo,
+        'igv' => $servicio->costo * 0.18,
+        'total' => $servicio->costo * 1.18,
+        'estado' => 'A',
+        'usuario_creacion' => Auth::user()->correo,
+    ]);
+}
+
+private function guardarDeliveryReserva(Reserva $reserva): void
+{
+    DB::table('deliveries')->insert([
+        'id_reserva' => $reserva->id_reserva,
+        'direccion_recojo' => session('direccion_recojo'),
+        'direccion_entrega' => session('direccion_entrega') ?: session('direccion_recojo'),
+        'costo_delivery' => 16.95,
+        'estado' => 'P',
+        'usuario_creacion' => Auth::user()->correo,
+        'usuario_actualizacion' => Auth::user()->correo,
+        'fecha_creacion' => now(),
+        'fecha_actualizacion' => now(),
+    ]);
+}
+
+private function registrarPagoReserva(Reserva $reserva, string $metodoPago): Pago
+{
+    $total = $this->calcularTotalReserva($reserva);
+    $serie = 'BOL-' . str_pad(((int) Pago::max('id_pago')) + 1, 5, '0', STR_PAD_LEFT);
+    $gateway = $metodoPago === 'simulado' ? 'interno_simulado' : $metodoPago;
+    $codigoPrefix = $metodoPago === 'simulado' ? 'PG' : strtoupper(substr($gateway, 0, 3));
+    $codigoOperacion = $codigoPrefix . '-' . now()->format('YmdHis') . '-' . str_pad($reserva->id_reserva, 5, '0', STR_PAD_LEFT);
+
+    $pago = Pago::create([
+        'id_reserva' => $reserva->id_reserva,
+        'monto' => $total,
+        'monto_neto' => round($total / 1.18, 2),
+        'metodo_pago' => $metodoPago,
+        'gateway' => $gateway,
+        'provider_payment_id' => $codigoOperacion,
+        'estado_gateway' => 'APROBADO',
+        'fecha_confirmacion' => now(),
+        'fecha' => Carbon::now()->toDateString(),
+        'hora' => Carbon::now()->toTimeString(),
+        'estado' => 'P',
+        'usuario_creacion' => Auth::user()->correo,
+        'series' => $serie,
+        'codigo_operacion' => $codigoOperacion,
+    ]);
+
+    $this->registrarNotificacionesPago($pago);
+    $this->registrarNotificacionesReserva($pago);
+
+    return $pago;
+}
+
+private function calcularTotalReserva(Reserva $reserva): float
+{
+    $reserva->loadMissing('detalles');
+
+    $totalServicios = (float) $reserva->detalles->sum('total');
+
+    if ($totalServicios <= 0) {
+        $totalServicios = (float) $reserva->detalles->sum('precio_unitario') * 1.18;
+    }
+
+    $costoDelivery = (float) (DB::table('deliveries')
+        ->where('id_reserva', $reserva->id_reserva)
+        ->value('costo_delivery') ?? 0);
+
+    return round($totalServicios + ($costoDelivery * 1.18), 2);
+}
+
+private function registrarNotificacionesPago(Pago $pago): void
+{
+    $pago->loadMissing(['reserva.cliente.persona']);
+    $reserva = $pago->reserva;
+
+    if (!$reserva) {
+        return;
+    }
+
+    $clienteNombre = trim(($reserva->cliente->persona->nombres ?? '') . ' ' . ($reserva->cliente->persona->apellidos ?? ''));
+    $mensaje = "Pago {$pago->series} aprobado por S/ " . number_format($pago->monto, 2) . " para la reserva {$reserva->id_reserva}.";
+
+    PagoNotificacion::create([
+        'id_pago' => $pago->id_pago,
+        'id_usuario' => $reserva->id_usuario,
+        'rol_destino' => 'Cliente',
+        'canal' => 'correo',
+        'titulo' => 'Pago de reserva confirmado',
+        'mensaje' => $mensaje,
+        'estado' => 'E',
+        'fecha_envio' => now(),
+        'usuario_creacion' => Auth::user()->correo,
+    ]);
+
+    Usuario::whereIn('rol', ['Admin', 'Supervisor'])
+        ->where('estado', 'A')
+        ->get()
+        ->each(function (Usuario $usuario) use ($pago, $mensaje, $clienteNombre) {
+            PagoNotificacion::create([
+                'id_pago' => $pago->id_pago,
+                'id_usuario' => $usuario->id_usuario,
+                'rol_destino' => $usuario->rol,
+                'canal' => 'sistema',
+                'titulo' => 'Nuevo pago registrado',
+                'mensaje' => $mensaje . ($clienteNombre ? " Cliente: {$clienteNombre}." : ''),
+                'estado' => 'P',
+                'fecha_envio' => now(),
+                'usuario_creacion' => Auth::user()->correo,
+            ]);
+        });
+}
+
+private function registrarNotificacionesReserva(Pago $pago): void
+{
+    $pago->loadMissing(['reserva.cliente.persona', 'reserva.mascota', 'reserva.empleado.persona']);
+    $reserva = $pago->reserva;
+
+    if (!$reserva) {
+        return;
+    }
+
+    $mascotaNombre = $reserva->mascota->nombre ?? 'tu mascota';
+    $fecha = Carbon::parse($reserva->fecha)->format('d/m/Y');
+    $hora = substr((string) $reserva->hora, 0, 5);
+    $clienteNombre = trim(($reserva->cliente->persona->nombres ?? '') . ' ' . ($reserva->cliente->persona->apellidos ?? ''));
+    $mensaje = "Reserva confirmada para {$mascotaNombre} el {$fecha} a las {$hora}. Boleta {$pago->series}.";
+
+    PagoNotificacion::create([
+        'id_pago' => $pago->id_pago,
+        'id_usuario' => $reserva->id_usuario,
+        'rol_destino' => 'Cliente',
+        'canal' => 'correo',
+        'titulo' => 'Reserva confirmada',
+        'mensaje' => $mensaje,
+        'estado' => 'E',
+        'fecha_envio' => now(),
+        'usuario_creacion' => Auth::user()->correo,
+    ]);
+
+    $usuariosInternos = Usuario::whereIn('rol', ['Admin', 'Supervisor'])
+        ->where('estado', 'A')
+        ->get();
+
+    if ($reserva->empleado && $reserva->empleado->persona) {
+        $usuarioEmpleado = Usuario::where('id_persona', $reserva->empleado->id_persona)
+            ->where('estado', 'A')
+            ->first();
+
+        if ($usuarioEmpleado) {
+            $usuariosInternos->push($usuarioEmpleado);
+        }
+    }
+
+    $usuariosInternos
+        ->unique('id_usuario')
+        ->each(function (Usuario $usuario) use ($pago, $mensaje, $clienteNombre) {
+            PagoNotificacion::create([
+                'id_pago' => $pago->id_pago,
+                'id_usuario' => $usuario->id_usuario,
+                'rol_destino' => $usuario->rol,
+                'canal' => 'sistema',
+                'titulo' => 'Nueva reserva confirmada',
+                'mensaje' => $mensaje . ($clienteNombre ? " Cliente: {$clienteNombre}." : ''),
+                'estado' => 'P',
+                'fecha_envio' => now(),
+                'usuario_creacion' => Auth::user()->correo,
+            ]);
+        });
+}
+
+private function enviarCorreoConfirmacionPago(Pago $pago, string $path): void
+{
+    $pago->loadMissing(['reserva.cliente.persona', 'reserva.usuario', 'reserva.mascota', 'reserva.detalles.servicio']);
+    $reserva = $pago->reserva;
+
+    if (!$reserva || !$reserva->usuario || !$reserva->usuario->correo) {
+        return;
+    }
+
+    try {
+        Mail::send('emails.pago-confirmado', [
+            'pago' => $pago,
+            'reserva' => $reserva,
+            'cliente' => $reserva->cliente,
+        ], function ($message) use ($pago, $reserva, $path) {
+            $message->to($reserva->usuario->correo)
+                ->subject("Boleta electronica {$pago->series} - Pet Grooming")
+                ->attach($path, [
+                    'as' => "{$pago->series}.pdf",
+                    'mime' => 'application/pdf',
+                ]);
+        });
+    } catch (\Throwable $e) {
+        Log::warning('No se pudo enviar correo de pago confirmado', [
+            'id_pago' => $pago->id_pago,
+            'exception' => $e,
+        ]);
+    }
+}
+
+private function enviarCorreoNotificacionReserva(?Reserva $reserva, ?Pago $pago = null): void
+{
+    if (!$reserva) {
+        return;
+    }
+
+    $reserva->loadMissing(['cliente.persona', 'usuario', 'mascota', 'empleado.persona', 'detalles.servicio']);
+
+    if (!$reserva->usuario || !$reserva->usuario->correo) {
+        return;
+    }
+
+    try {
+        Mail::send('emails.reserva-notificacion', [
+            'reserva' => $reserva,
+            'cliente' => $reserva->cliente,
+            'pago' => $pago,
+        ], function ($message) use ($reserva) {
+            $mascotaNombre = $reserva->mascota->nombre ?? 'tu mascota';
+            $message->to($reserva->usuario->correo)
+                ->subject("Reserva confirmada para {$mascotaNombre} - Pet Grooming");
+        });
+    } catch (\Throwable $e) {
+        Log::warning('No se pudo enviar correo de notificacion de reserva', [
+            'id_reserva' => $reserva->id_reserva,
+            'exception' => $e,
+        ]);
+    }
+}
+
+private function limpiarSesionReserva(): void
+{
+    session()->forget([
+        'mascotas_seleccionadas',
+        'servicios_seleccionados',
+        'adicionales_seleccionados',
+        'fecha',
+        'hora',
+        'id_empleado',
+        'enfermedad',
+        'vacuna',
+        'alergia',
+        'descripcion_alergia',
+        'requiere_delivery',
+        'direccion_recojo',
+        'direccion_entrega',
+    ]);
 }
 
 
@@ -384,32 +638,12 @@ public function guardarPago(Request $request)
         return view('reservas.completada', ['pago' => $pagoExistente]);
     }
 
-    $totalServicios = $reserva->detalles->sum('total');
-    if ($totalServicios == 0) {
-        $totalServicios = $reserva->detalles->sum('precio_unitario') * 1.18;
-    }
-
-    $costoDelivery = \DB::table('deliveries')
-        ->where('id_reserva', $reserva->id_reserva)
-        ->value('costo_delivery') ?? 0;
-
-    $totalDelivery = $costoDelivery * 1.18;
-    $total = $totalServicios + $totalDelivery;
-
-    $serie = 'BOL-' . str_pad(Pago::count() + 1, 5, '0', STR_PAD_LEFT);
-
-    $pago = Pago::create([
-        'id_reserva'        => $reserva->id_reserva,
-        'monto'             => $total,
-        'metodo_pago'       => 'paypal',
-        'fecha'             => Carbon::now()->toDateString(),
-        'hora'              => Carbon::now()->toTimeString(),
-        'estado'            => 'P',
-        'usuario_creacion'  => auth()->user()->correo,
-        'series'            => $serie,
-    ]);
-
-    $this->guardarArchivoBoleta($pago);
+    $metodoPago = $request->input('metodo_pago', 'paypal');
+    $pago = $this->registrarPagoReserva($reserva, $metodoPago);
+    $path = $this->guardarArchivoBoleta($pago);
+    $this->enviarCorreoConfirmacionPago($pago, $path);
+    $this->enviarCorreoNotificacionReserva($pago->reserva, $pago);
+    $this->limpiarSesionReserva();
 
     return view('reservas.completada', compact('pago'));
 
@@ -446,7 +680,7 @@ private function obtenerPagoAutorizado($idPago): Pago
     }
 
     $usuario = Auth::user();
-    $esPersonal = in_array($usuario->rol, ['Admin', 'Empleado'], true);
+    $esPersonal = in_array($usuario->rol, ['Admin', 'Empleado', 'Supervisor'], true);
     $esDueno = (int) $reserva->id_usuario === (int) $usuario->id_usuario;
 
     if (!$esPersonal && !$esDueno) {
@@ -458,7 +692,13 @@ private function obtenerPagoAutorizado($idPago): Pago
 
 private function guardarArchivoBoleta(Pago $pago): string
 {
-    $pago->loadMissing(['reserva.cliente', 'reserva.detalles.servicio']);
+    $pago->loadMissing([
+        'reserva.cliente.persona',
+        'reserva.usuario',
+        'reserva.mascota',
+        'reserva.empleado.persona',
+        'reserva.detalles.servicio',
+    ]);
 
     $reserva = $pago->reserva;
     if (!$reserva) {
@@ -473,16 +713,21 @@ private function guardarArchivoBoleta(Pago $pago): string
     $serie = $pago->series ?: 'BOL-' . str_pad($pago->id_pago, 5, '0', STR_PAD_LEFT);
     $fileName = preg_replace('/[^A-Za-z0-9_-]/', '_', $serie) . '.pdf';
     $path = $directory . DIRECTORY_SEPARATOR . $fileName;
+    $delivery = DB::table('deliveries')->where('id_reserva', $reserva->id_reserva)->first();
 
-    if (!File::exists($path)) {
-        $pdf = Pdf::loadView('reservas.boleta', [
-            'pago' => $pago,
-            'reserva' => $reserva,
-            'cliente' => $reserva->cliente,
-            'servicios' => $reserva->detalles,
-        ])->setPaper('A4', 'portrait');
+    $pdf = Pdf::loadView('reservas.boleta', [
+        'pago' => $pago,
+        'reserva' => $reserva,
+        'cliente' => $reserva->cliente,
+        'servicios' => $reserva->detalles,
+        'delivery' => $delivery,
+    ])->setPaper('A4', 'portrait');
 
-        $pdf->save($path);
+    $pdf->save($path);
+
+    if (Schema::hasColumn('pagos', 'comprobante_path') && !$pago->comprobante_path) {
+        $pago->comprobante_path = $path;
+        $pago->save();
     }
 
     return $path;
