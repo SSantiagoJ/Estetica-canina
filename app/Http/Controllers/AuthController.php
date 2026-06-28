@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Usuario;
+use App\Services\Auth\JwtService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -10,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -69,6 +72,7 @@ class AuthController extends Controller
                 if (!in_array($user->rol, $allowedRoles, true)) {
                     return response()->json([
                         'success' => false,
+                        'status_code' => 403,
                         'message' => $accessType === 'cliente'
                             ? 'Este acceso es solo para clientes. Si eres parte del equipo, ingresa por Intranet.'
                             : 'Este acceso es solo para trabajadores autorizados.',
@@ -84,6 +88,7 @@ class AuthController extends Controller
 
                     return response()->json([
                         'success'  => true,
+                        'status_code' => 200,
                         'message'  => 'Login exitoso. MFA omitido para usuario autorizado.',
                         'redirect' => $redirect,
                         'mfa_bypassed' => true,
@@ -93,7 +98,8 @@ class AuthController extends Controller
                             'nombre'   => $user->nombres,
                             'apellido' => $user->apellidos,
                             'correo'   => $user->correo,
-                        ]
+                        ],
+                        ...$this->jwtPayloadForApi($request, (int) $user->id_usuario),
                     ]);
                 }
 
@@ -104,14 +110,27 @@ class AuthController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Credenciales incorrectas'
-            ]);
+                'status_code' => 401,
+                'message' => 'Credenciales incorrectas',
+            ], 401);
 
+        } catch (ValidationException $e) {
+            if ($request->is('api/*')) {
+                throw $e;
+            }
+
+            return response()->json([
+                'success' => false,
+                'status_code' => 400,
+                'message' => 'Los datos enviados no son validos.',
+                'errors' => $e->errors(),
+            ], 400);
         } catch (\Throwable $e) {
             Log::error('Error en login', ['exception' => $e]);
 
             return response()->json([
                 'success' => false,
+                'status_code' => 500,
                 'message' => 'No se pudo iniciar sesion. Intenta nuevamente.',
             ], 500);
         }
@@ -138,8 +157,9 @@ class AuthController extends Controller
         if (!$challenge) {
             return response()->json([
                 'success' => false,
+                'status_code' => 400,
                 'message' => 'No hay una verificacion MFA pendiente.',
-            ], 422);
+            ], 400);
         }
 
         if (now()->timestamp > ($challenge['expires_at'] ?? 0)) {
@@ -147,8 +167,9 @@ class AuthController extends Controller
 
             return response()->json([
                 'success' => false,
+                'status_code' => 400,
                 'message' => 'El codigo MFA expiro. Vuelve a iniciar sesion.',
-            ], 422);
+            ], 400);
         }
 
         $codeHash = $challenge['code_hash'] ?? null;
@@ -156,8 +177,9 @@ class AuthController extends Controller
         if (!is_string($codeHash) || !Hash::check($data['code'], $codeHash)) {
             return response()->json([
                 'success' => false,
+                'status_code' => 400,
                 'message' => 'Codigo MFA incorrecto.',
-            ], 422);
+            ], 400);
         }
 
         $user = DB::table('usuarios as u')
@@ -177,6 +199,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'success' => false,
+                'status_code' => 404,
                 'message' => 'Usuario no encontrado.',
             ], 404);
         }
@@ -195,6 +218,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success'  => true,
+            'status_code' => 200,
             'message'  => $setupRequired ? 'MFA creado correctamente.' : 'Verificacion MFA exitosa',
             'redirect' => $redirect,
             'mfa_created' => $setupRequired,
@@ -204,7 +228,8 @@ class AuthController extends Controller
                 'nombre'   => $user->nombres,
                 'apellido' => $user->apellidos,
                 'correo'   => $user->correo,
-            ]
+            ],
+            ...$this->jwtPayloadForApi($request, (int) $user->id_usuario),
         ]);
     }
 
@@ -284,8 +309,9 @@ class AuthController extends Controller
 
             return response()->json([
                 'success' => false,
+                'status_code' => 500,
                 'message' => 'No se pudo completar el registro. Intenta nuevamente.',
-            ]);
+            ], 500);
         }
     }
 
@@ -332,12 +358,14 @@ class AuthController extends Controller
 
             return response()->json([
                 'success' => false,
+                'status_code' => 500,
                 'message' => 'No pudimos enviar el codigo de verificacion. Revisa la configuracion de correo.',
             ], 500);
         }
 
         return response()->json([
             'success' => false,
+            'status_code' => 200,
             'mfa_required' => true,
             'mfa_setup_required' => $setupRequired,
             'message' => $setupRequired
@@ -409,6 +437,21 @@ class AuthController extends Controller
         DB::table('usuarios')
             ->where('id_usuario', $idUsuario)
             ->update($data);
+    }
+
+    private function jwtPayloadForApi(Request $request, int $idUsuario): array
+    {
+        if (!$request->is('api/*')) {
+            return [];
+        }
+
+        $usuario = Usuario::find($idUsuario);
+
+        if (!$usuario) {
+            return [];
+        }
+
+        return app(JwtService::class)->issueAccessToken($usuario);
     }
 
 }

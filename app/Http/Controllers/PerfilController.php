@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use App\Models\Mascota;
 use App\Models\Cliente;
+use App\Models\Notificacion;
 use App\Models\RazaImagen;
 
 class PerfilController extends Controller
@@ -186,8 +187,17 @@ class PerfilController extends Controller
 
         $persona = $usuario->persona;
         $empleado = $usuario->empleado;
+        $securityNotifications = collect();
 
-        return view('intranet.perfil', compact('usuario', 'persona', 'empleado'));
+        if ($usuario->rol === 'Admin' && Schema::hasTable('notificaciones')) {
+            $securityNotifications = Notificacion::where('id_usuario', $usuario->id_usuario)
+                ->where('tipo', 'Seguridad')
+                ->latest('fecha_creacion')
+                ->limit(5)
+                ->get();
+        }
+
+        return view('intranet.perfil', compact('usuario', 'persona', 'empleado', 'securityNotifications'));
     }
 
     public function updateIntranetPerfil(Request $request)

@@ -1154,6 +1154,57 @@ iframe[id^="powerbi-dashboard"] {
   gap: 18px !important;
 }
 
+.profile-security-card {
+  border: 1px solid rgba(236, 122, 160, 0.28) !important;
+  background: linear-gradient(135deg, #fff7fb 0%, #ffffff 58%, #f7f0ff 100%) !important;
+}
+
+.profile-security-empty,
+.profile-security-item {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 14px !important;
+  padding: 14px 16px !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(184, 79, 212, 0.14) !important;
+  background: rgba(255, 255, 255, 0.88) !important;
+}
+
+.profile-security-empty > i,
+.profile-security-item > span {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  border-radius: 14px !important;
+  background: #ffe8f0 !important;
+  color: #dd6f98 !important;
+}
+
+.profile-security-empty strong,
+.profile-security-item strong {
+  display: block !important;
+  margin-bottom: 2px !important;
+  color: var(--emp-ink) !important;
+  font-weight: 900 !important;
+}
+
+.profile-security-empty span,
+.profile-security-item p {
+  margin: 0 !important;
+  color: var(--emp-muted) !important;
+  font-weight: 750 !important;
+  line-height: 1.45 !important;
+  overflow-wrap: anywhere !important;
+}
+
+.profile-security-list {
+  display: grid !important;
+  gap: 10px !important;
+}
+
 .admin-user-form {
   display: grid !important;
   gap: 18px !important;

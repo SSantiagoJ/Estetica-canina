@@ -2,18 +2,23 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\Security\SecurityAlertService;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureUserHasRole
 {
+    public function __construct(private readonly SecurityAlertService $securityAlerts)
+    {
+    }
+
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
         $user = $request->user();
 
         if (!$user) {
-            if ($request->expectsJson()) {
+            if ($request->expectsJson() || $request->is('api/*')) {
                 abort(401, 'Debes iniciar sesion.');
             }
 
@@ -27,6 +32,16 @@ class EnsureUserHasRole
         $allowedRoles = array_map('trim', $roles);
 
         if (!in_array($user->rol, $allowedRoles, true)) {
+            if ($request->expectsJson() || $request->is('api/*')) {
+                $this->securityAlerts->reportUnauthorizedApiAccess(
+                    $request,
+                    'token valido sin permisos para el recurso',
+                    $user
+                );
+
+                abort(403, 'No tienes permisos para acceder a esta seccion.');
+            }
+
             abort(403, 'No tienes permisos para acceder a esta seccion.');
         }
 

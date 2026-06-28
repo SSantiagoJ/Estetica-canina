@@ -67,6 +67,49 @@
         </article>
     </section>
 
+    @if($usuario->rol === 'Admin')
+        <section class="admin-page-card intranet-profile-card profile-security-card">
+            <div class="admin-section-heading">
+                <div>
+                    <span class="admin-eyebrow">Seguridad API</span>
+                    <h2>Alertas de accesos no autorizados</h2>
+                </div>
+                <span class="profile-pill profile-pill--warn">
+                    <i class="fas fa-triangle-exclamation"></i>
+                    Monitoreo activo
+                </span>
+            </div>
+
+            @if(($securityNotifications ?? collect())->isEmpty())
+                <div class="profile-security-empty">
+                    <i class="fas fa-shield-heart"></i>
+                    <div>
+                        <strong>Sin alertas recientes</strong>
+                        <span>Los intentos sin token, con token invalido o sin permisos apareceran aqui.</span>
+                    </div>
+                </div>
+            @else
+                <div class="profile-security-list" aria-label="Alertas recientes de seguridad API">
+                    @foreach($securityNotifications as $alerta)
+                        @php
+                            $fechaAlerta = $alerta->fecha_creacion
+                                ? \Illuminate\Support\Carbon::parse($alerta->fecha_creacion)->format('d/m/Y H:i')
+                                : 'Sin fecha';
+                        @endphp
+
+                        <article class="profile-security-item">
+                            <span><i class="fas fa-lock"></i></span>
+                            <div>
+                                <strong>{{ $fechaAlerta }}</strong>
+                                <p>{{ $alerta->mensaje }}</p>
+                            </div>
+                        </article>
+                    @endforeach
+                </div>
+            @endif
+        </section>
+    @endif
+
     <section class="admin-page-card intranet-profile-card">
         <div class="admin-section-heading">
             <div>
