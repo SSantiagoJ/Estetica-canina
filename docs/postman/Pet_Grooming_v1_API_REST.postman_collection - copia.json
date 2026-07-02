@@ -316,9 +316,6 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (!pm.environment.name) {",
-                  "    throw new Error('No hay environment seleccionado. Arriba a la derecha selecciona Pet Grooming Local y ejecuta Obtener CSRF token.');",
-                  "}",
                   "const csrf = pm.environment.get('csrf_token');",
                   "if (!csrf) {",
                   "    throw new Error('Falta csrf_token. Ejecuta primero 01 Preparacion / Obtener CSRF token.');",
@@ -399,9 +396,6 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (!pm.environment.name) {",
-                  "    throw new Error('No hay environment seleccionado. Arriba a la derecha selecciona Pet Grooming Local y ejecuta Obtener CSRF token.');",
-                  "}",
                   "const csrf = pm.environment.get('csrf_token');",
                   "const code = pm.environment.get('mfa_code');",
                   "if (!csrf) {",
@@ -478,9 +472,6 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (!pm.environment.name) {",
-                  "    throw new Error('No hay environment seleccionado. Arriba a la derecha selecciona Pet Grooming Local.');",
-                  "}",
                   "const token = pm.environment.get('jwt_token');",
                   "if (!token) {",
                   "    throw new Error('Falta jwt_token. Ejecuta primero Obtener CSRF token y Login admin. Si el login pide MFA, ejecuta Validar MFA admin.');",
@@ -555,9 +546,6 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (!pm.environment.name) {",
-                  "    throw new Error('No hay environment seleccionado. Arriba a la derecha selecciona Pet Grooming Local.');",
-                  "}",
                   "const token = pm.environment.get('jwt_token');",
                   "const serviceId = pm.environment.get('created_service_id');",
                   "if (!token) {",
@@ -635,9 +623,6 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (!pm.environment.name) {",
-                  "    throw new Error('No hay environment seleccionado. Arriba a la derecha selecciona Pet Grooming Local.');",
-                  "}",
                   "const token = pm.environment.get('jwt_token');",
                   "const serviceId = pm.environment.get('created_service_id');",
                   "if (!token) {",
@@ -810,9 +795,6 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (!pm.environment.name) {",
-                  "    throw new Error('No hay environment seleccionado. Arriba a la derecha selecciona Pet Grooming Local.');",
-                  "}",
                   "const token = pm.environment.get('jwt_token');",
                   "if (!token) {",
                   "    throw new Error('Falta jwt_token. Ejecuta Login admin o Validar MFA admin antes de probar el 403.');",

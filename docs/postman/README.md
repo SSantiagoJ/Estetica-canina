@@ -18,6 +18,7 @@
    - `404 Not Found - Servicio inexistente`
 5. Para validar `201 Created`, ejecuta:
    - `200 OK - Login admin`
+   - Si el login indica MFA pendiente, la ejecucion se detiene para evitar llamadas sin token. Copia el codigo recibido por correo en la variable `mfa_code` del environment y ejecuta `200 OK - Validar MFA admin`.
    - `201 Created - Crear servicio admin`
    - `200 OK - Actualizar servicio admin`
    - `200 OK - Eliminar servicio admin`
@@ -57,7 +58,24 @@ La coleccion guarda automaticamente `access_token` en la variable `jwt_token`. L
 Authorization: Bearer {{jwt_token}}
 ```
 
-Si el login admin devuelve `mfa_required: true`, valida primero el codigo MFA recibido por correo en `POST /api/v1/auth/mfa`. Cuando el MFA sea correcto, la respuesta tambien devolvera `access_token`.
+Si el login admin devuelve `mfa_required: true`, la coleccion deja `jwt_token` vacio y marca `mfa_pending=true`. En ese caso:
+
+1. Revisa el correo del usuario admin.
+2. Copia el codigo de 6 digitos.
+3. Pegalo en el environment como `mfa_code`.
+4. Ejecuta `03 Codigos HTTP autenticados / 200 OK - Validar MFA admin`.
+5. Ese request guarda automaticamente `access_token` en `jwt_token`.
+6. Ejecuta nuevamente desde `201 Created - Crear servicio admin`.
+
+Si `jwt_token` esta vacio, cualquier endpoint protegido como `POST /api/v1/admin/servicios` devolvera:
+
+```json
+{
+  "success": false,
+  "status_code": 401,
+  "message": "Debes enviar un token Bearer para acceder a este recurso."
+}
+```
 
 ## Headers importantes
 

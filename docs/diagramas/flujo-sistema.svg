@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="980" viewBox="0 0 1500 980">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff4f8"/>
+      <stop offset="58%" stop-color="#fffdfa"/>
+      <stop offset="100%" stop-color="#effaf3"/>
+    </linearGradient>
+    <linearGradient id="pink" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ef7fa6"/>
+      <stop offset="100%" stop-color="#c24ac7"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="18" flood-color="#4f3158" flood-opacity="0.14"/>
+    </filter>
+    <marker id="arrow" markerWidth="14" markerHeight="14" refX="10" refY="7" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L11,7 L2,12 Z" fill="#7b6684"/>
+    </marker>
+    <style>
+      .title{font-family:Nunito,Arial,sans-serif;font-size:42px;font-weight:900;fill:#3f3048}
+      .subtitle{font-family:Nunito,Arial,sans-serif;font-size:18px;font-weight:700;fill:#806a86}
+      .box{fill:#fff;stroke:#eadce9;stroke-width:2;rx:24;filter:url(#shadow)}
+      .box-soft{fill:#fff8fb;stroke:#f1cade;stroke-width:2;rx:24;filter:url(#shadow)}
+      .box-green{fill:#f3fff7;stroke:#d1ead7;stroke-width:2;rx:24;filter:url(#shadow)}
+      .label{font-family:Nunito,Arial,sans-serif;font-size:22px;font-weight:900;fill:#3f3048}
+      .small{font-family:Nunito,Arial,sans-serif;font-size:15px;font-weight:750;fill:#6f6075}
+      .pill{fill:url(#pink);rx:20}
+      .pillText{font-family:Nunito,Arial,sans-serif;font-size:15px;font-weight:900;fill:#fff}
+      .line{stroke:#9a849f;stroke-width:3;fill:none;marker-end:url(#arrow)}
+      .line-soft{stroke:#ddb1ca;stroke-width:3;fill:none;marker-end:url(#arrow)}
+      .icon{font-family:Arial,sans-serif;font-size:28px;font-weight:900;fill:#fff}
+    </style>
+  </defs>
+
+  <rect width="1500" height="980" fill="url(#bg)"/>
+  <circle cx="132" cy="112" r="44" fill="url(#pink)" opacity="0.95"/>
+  <text x="112" y="122" class="icon">P</text>
+  <text x="205" y="105" class="title">Flujo del sistema Pet Grooming</text>
+  <text x="208" y="140" class="subtitle">Como se mueve el codigo desde rutas, seguridad, controladores, servicios, modelos y base de datos</text>
+
+  <rect x="90" y="215" width="250" height="116" class="box-soft"/>
+  <text x="124" y="258" class="label">Usuario</text>
+  <text x="124" y="287" class="small">Cliente, empleado,</text>
+  <text x="124" y="310" class="small">supervisor o admin</text>
+
+  <rect x="430" y="160" width="300" height="150" class="box"/>
+  <rect x="458" y="184" width="112" height="34" class="pill"/>
+  <text x="477" y="207" class="pillText">WEB</text>
+  <text x="458" y="255" class="label">routes/web.php</text>
+  <text x="458" y="286" class="small">Pantallas Blade y sesiones Laravel</text>
+
+  <rect x="430" y="390" width="300" height="150" class="box"/>
+  <rect x="458" y="414" width="112" height="34" class="pill"/>
+  <text x="478" y="437" class="pillText">API REST</text>
+  <text x="458" y="485" class="label">routes/api.php</text>
+  <text x="458" y="516" class="small">/api/v1 con JWT y JSON</text>
+
+  <rect x="820" y="105" width="295" height="122" class="box-soft"/>
+  <text x="852" y="153" class="label">Middleware web</text>
+  <text x="852" y="184" class="small">auth + role</text>
+  <text x="852" y="207" class="small">Control de acceso por rol</text>
+
+  <rect x="820" y="277" width="295" height="122" class="box-green"/>
+  <text x="852" y="325" class="label">Controladores web</text>
+  <text x="852" y="356" class="small">Auth, Reserva, Perfil,</text>
+  <text x="852" y="379" class="small">Empleado, Gestor, Servicios</text>
+
+  <rect x="820" y="450" width="295" height="122" class="box-soft"/>
+  <text x="852" y="498" class="label">Seguridad API</text>
+  <text x="852" y="529" class="small">jwt.auth + role</text>
+  <text x="852" y="552" class="small">401, 403 y alertas admin</text>
+
+  <rect x="820" y="622" width="295" height="122" class="box-green"/>
+  <text x="852" y="670" class="label">Controladores API</text>
+  <text x="852" y="701" class="small">AuthApi, ReservaApi,</text>
+  <text x="852" y="724" class="small">ServicioApi, UsuarioApi...</text>
+
+  <rect x="1205" y="190" width="245" height="126" class="box"/>
+  <text x="1238" y="238" class="label">Vistas Blade</text>
+  <text x="1238" y="270" class="small">resources/views</text>
+  <text x="1238" y="293" class="small">Cliente e intranet</text>
+
+  <rect x="1205" y="415" width="245" height="126" class="box"/>
+  <text x="1238" y="463" class="label">Services</text>
+  <text x="1238" y="495" class="small">JWT, horarios,</text>
+  <text x="1238" y="518" class="small">alertas de seguridad</text>
+
+  <rect x="1205" y="640" width="245" height="126" class="box"/>
+  <text x="1238" y="688" class="label">Models</text>
+  <text x="1238" y="720" class="small">Eloquent: Reserva,</text>
+  <text x="1238" y="743" class="small">Usuario, Pago, Mascota</text>
+
+  <rect x="565" y="790" width="370" height="118" class="box-soft"/>
+  <text x="606" y="838" class="label">Base de datos MySQL</text>
+  <text x="606" y="870" class="small">spa_mascotas_base.sql + migraciones</text>
+
+  <path class="line" d="M340 252 C380 230 390 220 430 215"/>
+  <path class="line" d="M340 292 C382 330 392 384 430 430"/>
+  <path class="line" d="M730 230 C770 205 780 170 820 166"/>
+  <path class="line" d="M967 227 L967 277"/>
+  <path class="line" d="M1115 338 C1160 325 1185 285 1205 260"/>
+  <path class="line" d="M730 465 C770 467 780 490 820 506"/>
+  <path class="line" d="M967 572 L967 622"/>
+  <path class="line" d="M1115 683 C1160 642 1180 535 1205 493"/>
+  <path class="line" d="M1115 683 C1165 686 1185 696 1205 702"/>
+  <path class="line" d="M1328 541 L1328 640"/>
+  <path class="line" d="M1205 702 C1100 740 970 795 935 835"/>
+  <path class="line" d="M1205 478 C1060 555 960 710 860 790"/>
+  <path class="line-soft" d="M820 511 C708 595 690 700 720 790"/>
+
+  <rect x="92" y="680" width="360" height="160" class="box"/>
+  <text x="128" y="728" class="label">Estados de seguridad</text>
+  <text x="128" y="762" class="small">Sin token: 401 Unauthorized</text>
+  <text x="128" y="788" class="small">Token invalido: 401 Unauthorized</text>
+  <text x="128" y="814" class="small">Sin permisos: 403 Forbidden</text>
+</svg>
