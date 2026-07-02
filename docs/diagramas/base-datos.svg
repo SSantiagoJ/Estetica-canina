@@ -1,0 +1,182 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="1280" viewBox="0 0 1700 1280">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff4f8"/>
+      <stop offset="56%" stop-color="#fffdfa"/>
+      <stop offset="100%" stop-color="#effaf3"/>
+    </linearGradient>
+    <linearGradient id="pink" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ef7fa6"/>
+      <stop offset="100%" stop-color="#c24ac7"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#4f3158" flood-opacity="0.13"/>
+    </filter>
+    <marker id="arrow" markerWidth="13" markerHeight="13" refX="10" refY="6.5" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6.5 L2,11 Z" fill="#89738e"/>
+    </marker>
+    <style>
+      .title{font-family:Nunito,Arial,sans-serif;font-size:42px;font-weight:900;fill:#3f3048}
+      .subtitle{font-family:Nunito,Arial,sans-serif;font-size:18px;font-weight:700;fill:#806a86}
+      .table{fill:#fff;stroke:#eadce9;stroke-width:2;rx:18;filter:url(#shadow)}
+      .table-core{fill:#fff7fb;stroke:#f1c5dc;stroke-width:2;rx:18;filter:url(#shadow)}
+      .table-money{fill:#f4fff7;stroke:#cfead8;stroke-width:2;rx:18;filter:url(#shadow)}
+      .table-extra{fill:#faf7ff;stroke:#dbcdf1;stroke-width:2;rx:18;filter:url(#shadow)}
+      .head{fill:url(#pink);rx:16}
+      .name{font-family:Nunito,Arial,sans-serif;font-size:18px;font-weight:900;fill:#fff}
+      .field{font-family:Nunito,Arial,sans-serif;font-size:14px;font-weight:750;fill:#5e5165}
+      .relation{stroke:#9a849f;stroke-width:2.4;fill:none;marker-end:url(#arrow)}
+      .relation-soft{stroke:#d7abc6;stroke-width:2.2;fill:none;marker-end:url(#arrow)}
+      .note{font-family:Nunito,Arial,sans-serif;font-size:15px;font-weight:800;fill:#765f7d}
+    </style>
+  </defs>
+
+  <rect width="1700" height="1280" fill="url(#bg)"/>
+  <text x="80" y="86" class="title">Diagrama de base de datos - Pet Grooming</text>
+  <text x="82" y="120" class="subtitle">Relaciones principales segun spa_mascotas_base.sql y migraciones del proyecto</text>
+
+  <!-- Identity -->
+  <rect id="personas" x="80" y="190" width="250" height="136" class="table-core"/>
+  <rect x="96" y="206" width="218" height="38" class="head"/>
+  <text x="116" y="231" class="name">personas</text>
+  <text x="108" y="270" class="field">PK id_persona</text>
+  <text x="108" y="294" class="field">datos personales</text>
+
+  <rect id="usuarios" x="430" y="120" width="280" height="160" class="table-core"/>
+  <rect x="446" y="136" width="248" height="38" class="head"/>
+  <text x="466" y="161" class="name">usuarios</text>
+  <text x="458" y="200" class="field">PK id_usuario</text>
+  <text x="458" y="224" class="field">FK id_persona</text>
+  <text x="458" y="248" class="field">correo, rol, MFA, estado</text>
+
+  <rect id="clientes" x="430" y="330" width="260" height="136" class="table-core"/>
+  <rect x="446" y="346" width="228" height="38" class="head"/>
+  <text x="466" y="371" class="name">clientes</text>
+  <text x="458" y="410" class="field">PK id_cliente</text>
+  <text x="458" y="434" class="field">FK id_persona</text>
+
+  <rect id="empleados" x="430" y="525" width="260" height="136" class="table-core"/>
+  <rect x="446" y="541" width="228" height="38" class="head"/>
+  <text x="466" y="566" class="name">empleados</text>
+  <text x="458" y="605" class="field">PK id_empleado</text>
+  <text x="458" y="629" class="field">FK id_persona</text>
+
+  <!-- Pet / reservation core -->
+  <rect id="mascotas" x="805" y="330" width="270" height="158" class="table"/>
+  <rect x="821" y="346" width="238" height="38" class="head"/>
+  <text x="841" y="371" class="name">mascotas</text>
+  <text x="833" y="410" class="field">PK id_mascota</text>
+  <text x="833" y="434" class="field">FK id_cliente</text>
+  <text x="833" y="458" class="field">especie, raza, foto</text>
+
+  <rect id="reservas" x="805" y="585" width="310" height="185" class="table-core"/>
+  <rect x="821" y="601" width="278" height="38" class="head"/>
+  <text x="841" y="626" class="name">reservas</text>
+  <text x="833" y="665" class="field">PK id_reserva</text>
+  <text x="833" y="689" class="field">FK mascota, cliente, usuario</text>
+  <text x="833" y="713" class="field">FK empleado</text>
+  <text x="833" y="737" class="field">fecha, hora, estado</text>
+
+  <rect id="servicios" x="1240" y="330" width="275" height="160" class="table"/>
+  <rect x="1256" y="346" width="243" height="38" class="head"/>
+  <text x="1276" y="371" class="name">servicios</text>
+  <text x="1268" y="410" class="field">PK id_servicio</text>
+  <text x="1268" y="434" class="field">nombre, costo</text>
+  <text x="1268" y="458" class="field">duracion, imagen</text>
+
+  <rect id="detalles" x="1240" y="585" width="305" height="160" class="table"/>
+  <rect x="1256" y="601" width="273" height="38" class="head"/>
+  <text x="1276" y="626" class="name">detalles_reservas</text>
+  <text x="1268" y="665" class="field">PK id_detalle_reserva</text>
+  <text x="1268" y="689" class="field">FK id_reserva</text>
+  <text x="1268" y="713" class="field">FK id_servicio / promocion</text>
+
+  <!-- Payment / attention -->
+  <rect id="pagos" x="805" y="865" width="300" height="160" class="table-money"/>
+  <rect x="821" y="881" width="268" height="38" class="head"/>
+  <text x="841" y="906" class="name">pagos</text>
+  <text x="833" y="945" class="field">PK id_pago</text>
+  <text x="833" y="969" class="field">FK id_reserva</text>
+  <text x="833" y="993" class="field">monto, gateway, boleta</text>
+
+  <rect id="atenciones" x="1185" y="850" width="275" height="136" class="table-money"/>
+  <rect x="1201" y="866" width="243" height="38" class="head"/>
+  <text x="1221" y="891" class="name">atenciones</text>
+  <text x="1213" y="930" class="field">PK id_atencion</text>
+  <text x="1213" y="954" class="field">FK id_reserva</text>
+
+  <rect id="feedbacks" x="1185" y="1040" width="275" height="136" class="table-money"/>
+  <rect x="1201" y="1056" width="243" height="38" class="head"/>
+  <text x="1221" y="1081" class="name">feedbacks</text>
+  <text x="1213" y="1120" class="field">PK id_feedback</text>
+  <text x="1213" y="1144" class="field">FK id_reserva</text>
+
+  <rect id="deliveries" x="455" y="865" width="260" height="136" class="table-money"/>
+  <rect x="471" y="881" width="228" height="38" class="head"/>
+  <text x="491" y="906" class="name">deliveries</text>
+  <text x="483" y="945" class="field">PK id_delivery</text>
+  <text x="483" y="969" class="field">FK id_reserva</text>
+
+  <rect id="turnos" x="80" y="525" width="260" height="136" class="table-extra"/>
+  <rect x="96" y="541" width="228" height="38" class="head"/>
+  <text x="116" y="566" class="name">turnos_empleados</text>
+  <text x="108" y="605" class="field">PK id_turno</text>
+  <text x="108" y="629" class="field">FK id_empleado</text>
+
+  <!-- Admin / aux -->
+  <rect id="notificaciones" x="80" y="740" width="285" height="150" class="table-extra"/>
+  <rect x="96" y="756" width="253" height="38" class="head"/>
+  <text x="116" y="781" class="name">notificaciones</text>
+  <text x="108" y="820" class="field">PK id_notificacion</text>
+  <text x="108" y="844" class="field">FK id_usuario</text>
+  <text x="108" y="868" class="field">incluye alertas seguridad</text>
+
+  <rect id="razas" x="80" y="950" width="285" height="150" class="table-extra"/>
+  <rect x="96" y="966" width="253" height="38" class="head"/>
+  <text x="116" y="991" class="name">raza_imagenes</text>
+  <text x="108" y="1030" class="field">PK id_raza_imagen</text>
+  <text x="108" y="1054" class="field">especie, raza, imagen_path</text>
+  <text x="108" y="1078" class="field">sin FK directa</text>
+
+  <rect id="promos" x="1240" y="120" width="275" height="136" class="table-extra"/>
+  <rect x="1256" y="136" width="243" height="38" class="head"/>
+  <text x="1276" y="161" class="name">promociones</text>
+  <text x="1268" y="200" class="field">PK id_promocion</text>
+  <text x="1268" y="224" class="field">nombre, descuento</text>
+
+  <rect id="promo_serv" x="1240" y="760" width="305" height="70" class="table-extra"/>
+  <text x="1270" y="803" class="field">promociones_servicios: FK promocion + servicio</text>
+
+  <rect id="pago_notif" x="455" y="1055" width="300" height="136" class="table-extra"/>
+  <rect x="471" y="1071" width="268" height="38" class="head"/>
+  <text x="491" y="1096" class="name">pago_notificaciones</text>
+  <text x="483" y="1135" class="field">FK id_pago</text>
+  <text x="483" y="1159" class="field">id_usuario opcional</text>
+
+  <rect id="jwt" x="805" y="1095" width="300" height="96" class="table-extra"/>
+  <rect x="821" y="1111" width="268" height="38" class="head"/>
+  <text x="841" y="1136" class="name">jwt_revoked_tokens</text>
+  <text x="833" y="1175" class="field">tokens JWT revocados</text>
+
+  <!-- Relations -->
+  <path class="relation" d="M330 226 C375 210 390 202 430 198"/>
+  <path class="relation" d="M330 270 C376 326 386 375 430 398"/>
+  <path class="relation" d="M330 302 C377 420 390 562 430 590"/>
+  <path class="relation" d="M690 398 C735 395 760 397 805 406"/>
+  <path class="relation" d="M690 590 C740 603 760 635 805 668"/>
+  <path class="relation" d="M1075 409 C1125 405 1185 405 1240 410"/>
+  <path class="relation" d="M1115 666 C1160 665 1195 665 1240 665"/>
+  <path class="relation" d="M1515 410 C1565 500 1570 620 1545 680"/>
+  <path class="relation" d="M960 770 L956 865"/>
+  <path class="relation" d="M1115 700 C1160 755 1195 842 1215 850"/>
+  <path class="relation" d="M1115 720 C1180 855 1215 1000 1230 1040"/>
+  <path class="relation" d="M805 730 C720 790 670 850 715 930"/>
+  <path class="relation" d="M430 617 C390 616 370 620 340 620"/>
+  <path class="relation" d="M430 150 C340 260 235 620 222 740"/>
+  <path class="relation" d="M1105 945 C1150 1030 1060 1080 755 1120"/>
+  <path class="relation-soft" d="M1515 188 C1560 310 1535 540 1545 760"/>
+  <path class="relation-soft" d="M1515 410 C1542 515 1535 650 1545 760"/>
+
+  <text x="80" y="1190" class="note">Nota: cache, jobs, sessions, users, password_reset_tokens y migrations son tablas tecnicas de Laravel.</text>
+  <text x="80" y="1218" class="note">La autenticacion real del sistema usa usuarios, no la tabla users por defecto.</text>
+</svg>

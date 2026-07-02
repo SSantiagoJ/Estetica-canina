@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Contracts\Auth\TokenIssuer;
+use App\Contracts\Security\SecurityAlertReporter;
 use App\Models\Usuario;
-use App\Services\Auth\JwtService;
-use App\Services\Security\SecurityAlertService;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,8 +14,8 @@ use Throwable;
 class AuthenticateJwt
 {
     public function __construct(
-        private readonly JwtService $jwt,
-        private readonly SecurityAlertService $securityAlerts
+        private readonly TokenIssuer $jwt,
+        private readonly SecurityAlertReporter $securityAlerts
     )
     {
     }

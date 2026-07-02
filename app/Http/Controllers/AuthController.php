@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\Auth\TokenIssuer;
 use App\Models\Usuario;
-use App\Services\Auth\JwtService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -451,7 +451,7 @@ class AuthController extends Controller
             return [];
         }
 
-        return app(JwtService::class)->issueAccessToken($usuario);
+        return app(TokenIssuer::class)->issueAccessToken($usuario);
     }
 
 }

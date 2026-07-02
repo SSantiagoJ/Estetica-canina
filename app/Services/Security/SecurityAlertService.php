@@ -2,13 +2,14 @@
 
 namespace App\Services\Security;
 
+use App\Contracts\Security\SecurityAlertReporter;
 use App\Models\Notificacion;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use Throwable;
 
-class SecurityAlertService
+class SecurityAlertService implements SecurityAlertReporter
 {
     public function reportUnauthorizedApiAccess(Request $request, string $reason, ?Usuario $actor = null): void
     {

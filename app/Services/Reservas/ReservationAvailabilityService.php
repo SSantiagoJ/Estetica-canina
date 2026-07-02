@@ -2,10 +2,11 @@
 
 namespace App\Services\Reservas;
 
+use App\Contracts\Reservations\AvailabilityProvider;
 use App\Models\Reserva;
 use Carbon\Carbon;
 
-class ReservationAvailabilityService
+class ReservationAvailabilityService implements AvailabilityProvider
 {
     public function availableSlots(string $fecha, int $idEmpleado, int $duracionMinutos = 60): array
     {
