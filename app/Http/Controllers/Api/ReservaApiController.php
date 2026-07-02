@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Contracts\Reservations\AvailabilityProvider;
 use App\Http\Controllers\Api\Concerns\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ReservaResource;
@@ -10,7 +11,6 @@ use App\Models\DetalleReserva;
 use App\Models\Mascota;
 use App\Models\Reserva;
 use App\Models\Servicio;
-use App\Services\Reservas\ReservationAvailabilityService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -21,7 +21,7 @@ class ReservaApiController extends Controller
 {
     use ApiResponse;
 
-    public function horariosDisponibles(Request $request, ReservationAvailabilityService $availability): JsonResponse
+    public function horariosDisponibles(Request $request, AvailabilityProvider $availability): JsonResponse
     {
         $data = $request->validate([
             'fecha' => ['required', 'date'],
@@ -63,7 +63,7 @@ class ReservaApiController extends Controller
         return ReservaResource::collection($query->paginate((int) $request->input('per_page', 15)));
     }
 
-    public function store(Request $request, ReservationAvailabilityService $availability): JsonResponse
+    public function store(Request $request, AvailabilityProvider $availability): JsonResponse
     {
         abort_unless($request->user()->rol === 'Cliente', 403, 'Solo los clientes pueden crear reservas por este endpoint.');
 
@@ -155,7 +155,7 @@ class ReservaApiController extends Controller
         ]));
     }
 
-    public function update(Request $request, Reserva $reserva, ReservationAvailabilityService $availability): JsonResponse
+    public function update(Request $request, Reserva $reserva, AvailabilityProvider $availability): JsonResponse
     {
         $this->autorizarReserva($request, $reserva);
 
@@ -275,7 +275,7 @@ class ReservaApiController extends Controller
         abort_unless((int) $reserva->id_cliente === (int) $this->clienteActual($request)->id_cliente, 403);
     }
 
-    private function duracionServicios(array $idsServicios, ReservationAvailabilityService $availability): int
+    private function duracionServicios(array $idsServicios, AvailabilityProvider $availability): int
     {
         if (empty($idsServicios)) {
             return 60;

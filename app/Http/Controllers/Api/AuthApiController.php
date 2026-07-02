@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Contracts\Auth\TokenIssuer;
 use App\Http\Controllers\Api\Concerns\ApiResponse;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UsuarioResource;
-use App\Services\Auth\JwtService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -44,7 +44,7 @@ class AuthApiController extends Controller
         );
     }
 
-    public function logout(Request $request, JwtService $jwt): JsonResponse
+    public function logout(Request $request, TokenIssuer $jwt): JsonResponse
     {
         if ($token = $request->bearerToken()) {
             $jwt->revokeToken($token);

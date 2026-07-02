@@ -2,6 +2,7 @@
 
 namespace App\Services\Auth;
 
+use App\Contracts\Auth\TokenIssuer;
 use App\Models\Usuario;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use RuntimeException;
 
-class JwtService
+class JwtService implements TokenIssuer
 {
     private const ALGORITHM = 'HS256';
 

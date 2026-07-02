@@ -2,14 +2,14 @@
 
 namespace App\Http\Middleware;
 
-use App\Services\Security\SecurityAlertService;
+use App\Contracts\Security\SecurityAlertReporter;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureUserHasRole
 {
-    public function __construct(private readonly SecurityAlertService $securityAlerts)
+    public function __construct(private readonly SecurityAlertReporter $securityAlerts)
     {
     }
 
